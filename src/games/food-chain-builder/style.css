@@ -1,0 +1,166 @@
+/* Food Chain Builder. Builds on src/engine/ui/ui.css. */
+
+.scene { background: var(--bg); }
+
+.menu, .result, .build, .whatif { width: min(100%, 980px); margin: 0 auto; padding: 8px 16px 32px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+.menu__title, .result h1 { margin: 4px 0 0; font-size: 2.2rem; }
+.menu__intro { max-width: 34rem; margin: 0; font-size: 1.1rem; }
+.menu__learned { margin: 0; font-weight: 700; color: var(--ink-soft); }
+.menu__heading { margin: 4px 0 0; font-size: 1.2rem; color: var(--ink-soft); }
+.menu__stars { display: inline-flex; font-size: 1.5rem; }
+
+/* ---------- Habitat select ---------- */
+
+.places { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; width: 100%; }
+.place {
+  display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 14px 10px; font: inherit; color: var(--ink);
+  border: 4px solid var(--ink); border-radius: 20px; box-shadow: var(--shadow); cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+}
+.place:active { transform: translateY(2px); box-shadow: none; }
+.place:focus-visible { outline: 4px solid var(--primary); outline-offset: 3px; }
+.place__icon { font-size: 2.6rem; line-height: 1.1; }
+.place__name { font-size: 1.3rem; font-weight: 800; }
+.place__count { color: var(--ink-soft); font-size: 0.95rem; font-weight: 700; }
+
+/* Each habitat has its own colours, on the menu card and on the board. */
+.place--forest, .board--forest { background: linear-gradient(#d7f0d6, #98d29d); }
+.place--ocean, .board--ocean { background: linear-gradient(#cdeeff, #62b2e6); }
+.place--pond, .board--pond { background: linear-gradient(#dcf4ec, #86cdbd); }
+.place--grassland, .board--grassland { background: linear-gradient(#f8f2c2, #bfe085); }
+.place--desert, .board--desert { background: linear-gradient(#fde8b8, #f2bb73); }
+
+/* ---------- Builder ---------- */
+
+.build__help { max-width: 40rem; margin: 0; font-size: 1rem; }
+.intro { max-width: 42rem; padding: 10px 16px; background: #fff3c4; border: 3px solid var(--ink); border-radius: 16px; }
+.intro[hidden] { display: none; }
+.intro__title { margin: 0 0 4px; font-size: 1.2rem; }
+.intro__text { margin: 0 0 8px; font-size: 1.05rem; }
+
+.board {
+  position: relative; width: 100%; height: clamp(320px, 54vh, 480px); overflow: hidden;
+  border: 4px solid var(--ink); border-radius: 20px;
+  /* Drags on the board draw arrows, so the page behind must not scroll or zoom there. */
+  touch-action: none; -webkit-user-select: none; user-select: none;
+}
+.board--vertical { height: clamp(540px, 74vh, 700px); }
+
+.cardwrap { position: absolute; z-index: 2; transform: translate(-50%, -50%); }
+.card {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; width: 108px; min-height: 96px; padding: 6px 4px; font: inherit; color: var(--ink);
+  background: #fff; border: 3px solid var(--ink); border-radius: 16px; box-shadow: var(--shadow); cursor: grab; touch-action: none; -webkit-tap-highlight-color: transparent;
+}
+.board--vertical .card { width: 98px; min-height: 76px; padding: 4px 2px; }
+.card:focus-visible { outline: 4px solid var(--primary); outline-offset: 3px; }
+.card__icon { font-size: 2.2rem; line-height: 1.1; }
+.board--vertical .card__icon { font-size: 1.7rem; }
+.board--vertical .card__name { font-size: 0.78rem; }
+.board--vertical .card__role { font-size: 0.65rem; padding: 0 5px; }
+.card__name { max-width: 100%; font-size: 0.95rem; font-weight: 800; line-height: 1.1; overflow-wrap: anywhere; }
+.card__role { padding: 0 8px; font-size: 0.75rem; font-weight: 800; color: var(--ink); background: #eee8d4; border: 2px solid var(--ink); border-radius: 10px; }
+.card__role--producer { background: #c8ecc9; }
+.card__role--herbivore { background: #fff3c4; }
+.card__role--carnivore { background: #ffd6d0; }
+.card__role--omnivore { background: #ffe0b8; }
+
+/* The i button is a full 48 px square so a finger can hit it; only the small circle is drawn. */
+.card__info { position: absolute; top: -20px; right: -26px; display: grid; place-items: center; width: 48px; height: 48px; padding: 0; background: transparent; border: 0; cursor: pointer; touch-action: manipulation; }
+.card__info span { display: grid; place-items: center; width: 26px; height: 26px; font-weight: 800; font-style: italic; color: var(--ink); background: #fff; border: 2px solid var(--ink); border-radius: 50%; }
+.card__info:focus-visible span { outline: 3px solid var(--primary); outline-offset: 2px; }
+
+.cardwrap.is-source .card { background: #efeaff; outline: 4px solid var(--primary); }
+.cardwrap.is-target .card { outline: 4px dashed var(--primary); background: #f6f3ff; }
+.cardwrap.is-hint .card { animation: pulse 0.9s ease infinite; border-style: dashed; }
+@keyframes pulse { 50% { transform: scale(1.08); } }
+@keyframes bob { 50% { transform: translateY(-5px); } }
+@keyframes wiggle { 20% { transform: rotate(-2deg); } 60% { transform: rotate(2deg); } }
+
+/* ---------- Arrows ---------- */
+
+.arrows { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; overflow: visible; pointer-events: none; }
+.arrows--live { z-index: 3; }
+.arrow { outline: none; cursor: pointer; transform-box: fill-box; transform-origin: center; }
+.arrow__hit { fill: none; stroke: transparent; stroke-width: 28; pointer-events: stroke; }
+.arrow__line { fill: none; stroke: #3b4270; stroke-width: 4; stroke-linecap: round; }
+.arrowhead--plain { fill: #3b4270; }
+.arrowhead--correct { fill: var(--good); }
+.arrowhead--wrong { fill: var(--bad); }
+.arrow--correct .arrow__line { stroke: var(--good); stroke-width: 5; }
+/* A wrong arrow is dashed and red, and carries a cross, so it is not shown by colour alone. */
+.arrow--wrong .arrow__line { stroke: var(--bad); stroke-width: 5; stroke-dasharray: 9 7; }
+.arrow--wrong { animation: wiggle 0.5s ease 2; }
+.arrow.is-selected .arrow__line { stroke-width: 7; filter: drop-shadow(0 0 5px rgba(91, 61, 245, 0.9)); }
+.arrow:focus-visible .arrow__line { stroke-width: 7; filter: drop-shadow(0 0 5px rgba(91, 61, 245, 0.9)); }
+.arrow__mark { fill: #fff; stroke: var(--ink); stroke-width: 2; }
+.arrow--correct .arrow__mark { stroke: var(--good); }
+.arrow--wrong .arrow__mark { stroke: var(--bad); }
+.arrow__markmark { font-size: 12px; font-weight: 800; fill: var(--ink); pointer-events: none; }
+.arrow--correct .arrow__markmark { fill: var(--good); }
+.arrow--wrong .arrow__markmark { fill: var(--bad); }
+.arrow-live { stroke: var(--primary); stroke-width: 5; stroke-dasharray: 10 8; stroke-linecap: round; }
+/* When the web is complete, little dots of energy flow along every arrow from food to eater. */
+.arrow__flow { fill: none; stroke: #fff; stroke-width: 4; stroke-linecap: round; stroke-dasharray: 0.1 16; opacity: 0; pointer-events: none; }
+.board.is-alive .arrow__flow { opacity: 1; animation: flow 1s linear infinite; }
+@keyframes flow { to { stroke-dashoffset: -16; } }
+.board.is-alive .card { animation: bob 1.8s ease-in-out infinite; }
+.board.is-alive .cardwrap:nth-child(2n) .card { animation-delay: 0.4s; }
+.board.is-alive .cardwrap:nth-child(3n) .card { animation-delay: 0.8s; }
+
+.build__count { margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--ink-soft); }
+.build__actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.build__status { min-height: 1.6em; max-width: 44rem; margin: 0; font-weight: 700; }
+.build__status--good { color: var(--good); }
+.build__status--bad { color: var(--bad); }
+.build__messages { max-width: 44rem; margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; font-weight: 700; color: var(--bad); text-align: left; }
+.build__messages:empty { display: none; }
+.build__after { display: flex; justify-content: center; }
+
+.build__info { width: 100%; display: flex; justify-content: center; }
+.info { display: flex; align-items: flex-start; gap: 12px; width: min(100%, 560px); padding: 10px 12px; text-align: left; background: #fff; border: 3px solid var(--ink); border-radius: 16px; box-shadow: var(--shadow); }
+.info__icon { font-size: 2.6rem; line-height: 1.1; }
+.info__text { flex: 1; }
+.info__text p { margin: 2px 0; }
+.info__name { margin: 0; font-size: 1.2rem; }
+.info__fact { color: var(--ink-soft); }
+
+/* ---------- What if? ---------- */
+
+.whatif__title { margin: 4px 0 0; font-size: 1.8rem; }
+.whatif__gone { display: inline-flex; align-items: center; gap: 8px; padding: 4px 16px; font-size: 1.2rem; font-weight: 800; background: #ffd6d0; border: 3px dashed var(--bad); border-radius: 16px; }
+.whatif__icon { font-size: 2rem; opacity: 0.6; }
+.whatif__help { max-width: 40rem; margin: 0; }
+.whatif__rows { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 10px; width: 100%; }
+.predict { display: flex; flex-direction: column; gap: 6px; min-width: 0; min-inline-size: 0; margin: 0; padding: 8px 10px; background: #fff; border: 3px solid var(--ink); border-radius: 16px; text-align: left; }
+.predict__who { padding: 0 6px; font-size: 1.1rem; font-weight: 800; }
+.predict__choices { display: flex; gap: 6px; }
+.predict__choice { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 64px; padding: 4px 2px; font-weight: 700; text-align: center; background: #faf6e6; border: 2px solid var(--ink); border-radius: 12px; cursor: pointer; }
+.predict__choice:has(input:checked) { background: #efeaff; border-color: var(--primary); outline: 3px solid var(--primary); }
+.predict__choice input { width: 20px; height: 20px; accent-color: var(--primary); }
+.predict__symbol { font-size: 1.2rem; font-weight: 800; line-height: 1.1; }
+.predict__why { min-height: 0; margin: 0; font-size: 0.95rem; font-weight: 700; }
+.predict.is-right { border-color: var(--good); }
+.predict.is-wrong { border-style: dashed; border-color: var(--bad); }
+.predict.is-right .predict__why > span { color: var(--good); }
+.predict.is-wrong .predict__why > span { color: var(--bad); }
+.whatif__result { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.whatif__result p { margin: 0; }
+.whatif__score { font-size: 1.3rem; font-weight: 800; }
+.whatif__note { max-width: 36rem; color: var(--ink-soft); font-weight: 700; }
+
+/* ---------- Results ---------- */
+
+.result__mode { margin: 0; font-weight: 700; color: var(--ink-soft); }
+.result__stars { display: flex; gap: 8px; font-size: 4rem; line-height: 1; }
+.result__praise { margin: 0; font-size: 1.3rem; font-weight: 700; }
+.result__lines { margin: 0; padding: 0; list-style: none; font-weight: 700; }
+.learned { width: 100%; }
+.learned h2 { margin: 0 0 8px; font-size: 1.2rem; }
+.learned__list { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
+.learned__item { display: flex; align-items: center; gap: 8px; padding: 6px 12px; text-align: left; background: #fff; border: 3px solid var(--ink); border-radius: 14px; }
+.learned__icon { font-size: 1.8rem; }
+.result__actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  .arrow--wrong, .cardwrap.is-hint .card, .board.is-alive .card { animation: none; }
+  .board.is-alive .arrow__flow { animation: none; }
+}

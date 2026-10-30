@@ -1,0 +1,301 @@
+{
+  "organisms": [
+    {
+      "id": "grass",
+      "name": "Grass",
+      "plural": "grass",
+      "role": "producer",
+      "icon": "🌾",
+      "fact": "Grass grows from the bottom of its leaves, so it keeps growing even after it is nibbled."
+    },
+    {
+      "id": "wildflower",
+      "name": "Wildflower",
+      "plural": "wildflowers",
+      "role": "producer",
+      "icon": "🌼",
+      "fact": "Wildflowers make sweet nectar and bright petals to attract bees and other insects."
+    },
+    {
+      "id": "oak",
+      "name": "Oak tree",
+      "plural": "oak trees",
+      "role": "producer",
+      "icon": "🌳",
+      "fact": "A big oak tree can grow thousands of acorns in a year, a feast for many animals."
+    },
+    {
+      "id": "berries",
+      "name": "Berry bush",
+      "plural": "berry bushes",
+      "role": "producer",
+      "icon": "🍓",
+      "fact": "A berry bush wraps its seeds in sweet fruit so animals will eat them and carry the seeds away."
+    },
+    {
+      "id": "pondweed",
+      "name": "Pondweed",
+      "plural": "pondweed",
+      "role": "producer",
+      "icon": "🌱",
+      "fact": "Pondweed grows underwater and gives off the oxygen that fish breathe."
+    },
+    {
+      "id": "waterlily",
+      "name": "Water lily",
+      "plural": "water lilies",
+      "role": "producer",
+      "icon": "🌸",
+      "fact": "A water lily's big flat leaves float on top of the water, where they catch lots of sunlight."
+    },
+    {
+      "id": "seaweed",
+      "name": "Seaweed",
+      "plural": "seaweed",
+      "role": "producer",
+      "icon": "🌿",
+      "fact": "Seaweed is a kind of algae. It makes its own food from sunlight, just like plants on land."
+    },
+    {
+      "id": "cactus",
+      "name": "Cactus",
+      "plural": "cacti",
+      "role": "producer",
+      "icon": "🌵",
+      "fact": "A cactus stores water in its thick stem, so it can live for months without rain."
+    },
+    {
+      "id": "desertflower",
+      "name": "Desert flower",
+      "plural": "desert flowers",
+      "role": "producer",
+      "icon": "🌷",
+      "fact": "After a rare desert rain, seeds that waited for years sprout and bloom within days."
+    },
+    {
+      "id": "rabbit",
+      "name": "Rabbit",
+      "plural": "rabbits",
+      "role": "herbivore",
+      "icon": "🐇",
+      "fact": "A rabbit's front teeth never stop growing, so it chews all day to wear them down.",
+      "diet": "Rabbits eat grass, clover and other plants."
+    },
+    {
+      "id": "cricket",
+      "name": "Cricket",
+      "plural": "crickets",
+      "role": "herbivore",
+      "icon": "🦗",
+      "fact": "A cricket 'sings' by rubbing its wings together.",
+      "diet": "Crickets eat grass, leaves and seeds."
+    },
+    {
+      "id": "caterpillar",
+      "name": "Caterpillar",
+      "plural": "caterpillars",
+      "role": "herbivore",
+      "icon": "🐛",
+      "fact": "A caterpillar spends almost all its time eating, then turns into a butterfly or moth.",
+      "diet": "Caterpillars eat leaves."
+    },
+    {
+      "id": "squirrel",
+      "name": "Squirrel",
+      "plural": "squirrels",
+      "role": "herbivore",
+      "icon": "🐿️",
+      "fact": "Squirrels forget where they buried some acorns, and those acorns grow into new oak trees.",
+      "diet": "Squirrels eat nuts, seeds and acorns."
+    },
+    {
+      "id": "snail",
+      "name": "Snail",
+      "plural": "snails",
+      "role": "herbivore",
+      "icon": "🐌",
+      "fact": "A snail carries its shell like a backpack and can pull its whole body inside.",
+      "diet": "Snails eat soft plants and algae."
+    },
+    {
+      "id": "ant",
+      "name": "Ant",
+      "plural": "ants",
+      "role": "herbivore",
+      "icon": "🐜",
+      "fact": "An ant can carry things many times heavier than itself.",
+      "diet": "Harvester ants collect seeds and carry them to their nest."
+    },
+    {
+      "id": "turtle",
+      "name": "Green sea turtle",
+      "plural": "green sea turtles",
+      "role": "herbivore",
+      "icon": "🐢",
+      "fact": "Sea turtles swim thousands of kilometres, then come back to lay eggs on the beach where they hatched.",
+      "diet": "Green sea turtles graze on seagrass and seaweed."
+    },
+    {
+      "id": "kangaroorat",
+      "name": "Kangaroo rat",
+      "plural": "kangaroo rats",
+      "role": "herbivore",
+      "icon": "🐀",
+      "fact": "A kangaroo rat can live without ever drinking. It gets its water from the seeds it eats.",
+      "diet": "Kangaroo rats eat seeds."
+    },
+    {
+      "id": "mouse",
+      "name": "Mouse",
+      "plural": "mice",
+      "role": "omnivore",
+      "icon": "🐁",
+      "fact": "A mouse uses its whiskers to feel its way around in the dark.",
+      "diet": "Mice eat seeds, berries and insects."
+    },
+    {
+      "id": "fox",
+      "name": "Fox",
+      "plural": "foxes",
+      "role": "omnivore",
+      "icon": "🦊",
+      "fact": "A fox can hear a mouse squeaking under the snow and pounce right on it.",
+      "diet": "Foxes eat small animals, berries and insects."
+    },
+    {
+      "id": "shrimp",
+      "name": "Shrimp",
+      "plural": "shrimp",
+      "role": "omnivore",
+      "icon": "🦐",
+      "fact": "Some shrimp work as cleaners and nibble the bugs off bigger fish.",
+      "diet": "Shrimp eat tiny plants and bits of food that drift past."
+    },
+    {
+      "id": "crab",
+      "name": "Crab",
+      "plural": "crabs",
+      "role": "omnivore",
+      "icon": "🦀",
+      "fact": "A crab walks sideways because of the way its legs bend.",
+      "diet": "Crabs eat seaweed, shellfish and bits of dead animals."
+    },
+    {
+      "id": "carp",
+      "name": "Carp",
+      "plural": "carp",
+      "role": "omnivore",
+      "icon": "🐟",
+      "fact": "A carp can live for more than twenty years.",
+      "diet": "Carp eat water plants, snails and insects."
+    },
+    {
+      "id": "duck",
+      "name": "Duck",
+      "plural": "ducks",
+      "role": "omnivore",
+      "icon": "🦆",
+      "fact": "A duck's feathers are oily, so water rolls right off them.",
+      "diet": "Ducks eat water plants, snails and insects."
+    },
+    {
+      "id": "owl",
+      "name": "Owl",
+      "plural": "owls",
+      "role": "carnivore",
+      "icon": "🦉",
+      "fact": "An owl can turn its head almost all the way round to look behind it.",
+      "diet": "Owls eat mice, squirrels and other small animals."
+    },
+    {
+      "id": "eagle",
+      "name": "Eagle",
+      "plural": "eagles",
+      "role": "carnivore",
+      "icon": "🦅",
+      "fact": "An eagle's eyes are so sharp that it can spot a small animal from very far away.",
+      "diet": "Eagles eat snakes, rabbits, mice and other animals."
+    },
+    {
+      "id": "snake",
+      "name": "Snake",
+      "plural": "snakes",
+      "role": "carnivore",
+      "icon": "🐍",
+      "fact": "A snake swallows its food whole.",
+      "diet": "Snakes eat frogs, mice, lizards and other small animals."
+    },
+    {
+      "id": "frog",
+      "name": "Frog",
+      "plural": "frogs",
+      "role": "carnivore",
+      "icon": "🐸",
+      "fact": "A frog catches its food with a sticky tongue in a split second.",
+      "diet": "Frogs eat insects, snails and worms."
+    },
+    {
+      "id": "otter",
+      "name": "Otter",
+      "plural": "otters",
+      "role": "carnivore",
+      "icon": "🦦",
+      "fact": "An otter's thick fur keeps it warm and dry in the water.",
+      "diet": "Otters eat fish, frogs and crabs."
+    },
+    {
+      "id": "fish",
+      "name": "Small fish",
+      "plural": "small fish",
+      "role": "carnivore",
+      "icon": "🐠",
+      "fact": "Many small fish swim in big groups, called schools, to stay safe.",
+      "diet": "Small fish eat shrimp and other tiny animals."
+    },
+    {
+      "id": "octopus",
+      "name": "Octopus",
+      "plural": "octopuses",
+      "role": "carnivore",
+      "icon": "🐙",
+      "fact": "An octopus has three hearts and blue blood.",
+      "diet": "Octopuses eat crabs, shrimp and fish."
+    },
+    {
+      "id": "tuna",
+      "name": "Tuna",
+      "plural": "tuna",
+      "role": "carnivore",
+      "icon": "🐟",
+      "fact": "Tuna are among the fastest swimmers in the sea.",
+      "diet": "Tuna eat small fish and squid."
+    },
+    {
+      "id": "shark",
+      "name": "Shark",
+      "plural": "sharks",
+      "role": "carnivore",
+      "icon": "🦈",
+      "fact": "A shark loses thousands of teeth in its life, and new ones keep growing.",
+      "diet": "Sharks eat fish, octopuses and sea turtles."
+    },
+    {
+      "id": "lizard",
+      "name": "Lizard",
+      "plural": "lizards",
+      "role": "carnivore",
+      "icon": "🦎",
+      "fact": "Some lizards can drop their tail to escape, and it grows back.",
+      "diet": "Lizards eat ants, crickets and other insects."
+    },
+    {
+      "id": "scorpion",
+      "name": "Scorpion",
+      "plural": "scorpions",
+      "role": "carnivore",
+      "icon": "🦂",
+      "fact": "Scorpions glow bright blue-green under a special light.",
+      "diet": "Scorpions eat insects and spiders."
+    }
+  ]
+}
