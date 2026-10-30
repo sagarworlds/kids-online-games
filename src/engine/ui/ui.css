@@ -220,3 +220,14 @@ p { margin: 0 0 0.75em; }
     scroll-behavior: auto !important;
   }
 }
+
+/* ---------- Drag and drop (src/engine/ui/DragDrop.js) ---------- */
+
+.dd-item { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; cursor: grab; }
+.dd-item.is-dragging { opacity: 0.35; }
+.dd-ghost {
+  position: fixed; left: 0; top: 0; z-index: 1000; margin: 0; pointer-events: none; cursor: grabbing;
+  box-shadow: 0 8px 16px rgba(31, 37, 68, 0.3); transform-origin: top left;
+}
+/* A dashed outline (not just a colour change) shows where the piece will land. */
+.is-over { outline: 4px dashed var(--primary); outline-offset: 3px; }
