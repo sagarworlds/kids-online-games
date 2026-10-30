@@ -1,0 +1,889 @@
+{
+ "packs": [
+  {
+   "id": "animals",
+   "name": "Animals",
+   "icon": "🐾",
+   "words": [
+    {
+     "word": "cat",
+     "emoji": "🐱",
+     "clue": "It says meow."
+    },
+    {
+     "word": "dog",
+     "emoji": "🐶",
+     "clue": "It barks and wags its tail."
+    },
+    {
+     "word": "pig",
+     "emoji": "🐷",
+     "clue": "It oinks and loves mud."
+    },
+    {
+     "word": "cow",
+     "emoji": "🐮",
+     "clue": "It gives us milk."
+    },
+    {
+     "word": "bee",
+     "emoji": "🐝",
+     "clue": "It buzzes and makes honey."
+    },
+    {
+     "word": "ant",
+     "emoji": "🐜",
+     "clue": "A tiny insect that carries crumbs."
+    },
+    {
+     "word": "fox",
+     "emoji": "🦊",
+     "clue": "A clever animal with a bushy tail."
+    },
+    {
+     "word": "owl",
+     "emoji": "🦉",
+     "clue": "It says hoo and is awake at night."
+    },
+    {
+     "word": "bat",
+     "emoji": "🦇",
+     "clue": "It flies at night and sleeps upside down."
+    },
+    {
+     "word": "fish",
+     "emoji": "🐟",
+     "clue": "It swims and breathes with gills."
+    },
+    {
+     "word": "frog",
+     "emoji": "🐸",
+     "clue": "It hops and says ribbit."
+    },
+    {
+     "word": "duck",
+     "emoji": "🦆",
+     "clue": "It says quack and loves ponds."
+    },
+    {
+     "word": "horse",
+     "emoji": "🐴",
+     "clue": "You can ride it and it gallops."
+    },
+    {
+     "word": "sheep",
+     "emoji": "🐑",
+     "clue": "Its wool keeps us warm."
+    },
+    {
+     "word": "tiger",
+     "emoji": "🐯",
+     "clue": "A big cat with orange and black stripes."
+    },
+    {
+     "word": "zebra",
+     "emoji": "🦓",
+     "clue": "A horse-like animal with black and white stripes."
+    },
+    {
+     "word": "panda",
+     "emoji": "🐼",
+     "clue": "A black and white bear that eats bamboo."
+    },
+    {
+     "word": "whale",
+     "emoji": "🐳",
+     "clue": "The biggest animal in the sea."
+    },
+    {
+     "word": "shark",
+     "emoji": "🦈",
+     "clue": "A fish with sharp teeth and a fin on its back."
+    },
+    {
+     "word": "snake",
+     "emoji": "🐍",
+     "clue": "It has no legs and slithers."
+    },
+    {
+     "word": "rabbit",
+     "emoji": "🐰",
+     "clue": "It hops and has long ears."
+    },
+    {
+     "word": "monkey",
+     "emoji": "🐵",
+     "clue": "It climbs trees and loves bananas."
+    },
+    {
+     "word": "parrot",
+     "emoji": "🦜",
+     "clue": "A colourful bird that can copy words."
+    },
+    {
+     "word": "turtle",
+     "emoji": "🐢",
+     "clue": "It carries its house on its back."
+    },
+    {
+     "word": "elephant",
+     "emoji": "🐘",
+     "clue": "The biggest animal on land, with a long trunk."
+    },
+    {
+     "word": "giraffe",
+     "emoji": "🦒",
+     "clue": "It has a very long neck."
+    },
+    {
+     "word": "penguin",
+     "emoji": "🐧",
+     "clue": "A bird that cannot fly but swims well."
+    },
+    {
+     "word": "dolphin",
+     "emoji": "🐬",
+     "clue": "A clever sea animal that jumps over waves."
+    },
+    {
+     "word": "kangaroo",
+     "emoji": "🦘",
+     "clue": "It hops and carries its baby in a pouch."
+    },
+    {
+     "word": "hamster",
+     "emoji": "🐹",
+     "clue": "A small pet that stuffs food in its cheeks."
+    },
+    {
+     "word": "crocodile",
+     "emoji": "🐊",
+     "clue": "A green reptile with a big snout and sharp teeth."
+    },
+    {
+     "word": "butterfly",
+     "emoji": "🦋",
+     "clue": "A flying insect with colourful wings."
+    },
+    {
+     "word": "octopus",
+     "emoji": "🐙",
+     "clue": "A sea animal with eight arms."
+    },
+    {
+     "word": "hedgehog",
+     "emoji": "🦔",
+     "clue": "A small animal covered in spikes."
+    }
+   ]
+  },
+  {
+   "id": "food",
+   "name": "Food",
+   "icon": "🍎",
+   "words": [
+    {
+     "word": "egg",
+     "emoji": "🥚",
+     "clue": "A hen lays it."
+    },
+    {
+     "word": "pie",
+     "emoji": "🥧",
+     "clue": "A baked treat with a crust."
+    },
+    {
+     "word": "tea",
+     "emoji": "🍵",
+     "clue": "A hot drink many people have in the morning."
+    },
+    {
+     "word": "nut",
+     "emoji": "🥜",
+     "clue": "A crunchy snack with a shell."
+    },
+    {
+     "word": "rice",
+     "emoji": "🍚",
+     "clue": "Small white grains we eat with dal or curry."
+    },
+    {
+     "word": "corn",
+     "emoji": "🌽",
+     "clue": "Yellow kernels on a cob."
+    },
+    {
+     "word": "cake",
+     "emoji": "🍰",
+     "clue": "You eat it on your birthday."
+    },
+    {
+     "word": "milk",
+     "emoji": "🥛",
+     "clue": "A white drink from a cow."
+    },
+    {
+     "word": "soup",
+     "emoji": "🍲",
+     "clue": "A hot liquid food you eat with a spoon."
+    },
+    {
+     "word": "pear",
+     "emoji": "🍐",
+     "clue": "A green fruit shaped like a bell."
+    },
+    {
+     "word": "kiwi",
+     "emoji": "🥝",
+     "clue": "A fuzzy brown fruit that is green inside."
+    },
+    {
+     "word": "taco",
+     "emoji": "🌮",
+     "clue": "A folded tortilla with tasty filling."
+    },
+    {
+     "word": "apple",
+     "emoji": "🍎",
+     "clue": "A crunchy red or green fruit."
+    },
+    {
+     "word": "mango",
+     "emoji": "🥭",
+     "clue": "The king of fruits, sweet and yellow."
+    },
+    {
+     "word": "grape",
+     "emoji": "🍇",
+     "clue": "Small round fruits that grow in bunches."
+    },
+    {
+     "word": "lemon",
+     "emoji": "🍋",
+     "clue": "A sour yellow fruit."
+    },
+    {
+     "word": "peach",
+     "emoji": "🍑",
+     "clue": "A soft, fuzzy, pinkish-orange fruit."
+    },
+    {
+     "word": "melon",
+     "emoji": "🍈",
+     "clue": "A big, sweet, juicy fruit."
+    },
+    {
+     "word": "bread",
+     "emoji": "🍞",
+     "clue": "We make toast from it."
+    },
+    {
+     "word": "pizza",
+     "emoji": "🍕",
+     "clue": "A round food with cheese, cut in slices."
+    },
+    {
+     "word": "pasta",
+     "emoji": "🍝",
+     "clue": "Long noodles with sauce."
+    },
+    {
+     "word": "honey",
+     "emoji": "🍯",
+     "clue": "A sweet golden food made by bees."
+    },
+    {
+     "word": "candy",
+     "emoji": "🍬",
+     "clue": "A sweet treat wrapped in paper."
+    },
+    {
+     "word": "donut",
+     "emoji": "🍩",
+     "clue": "A round sweet with a hole in the middle."
+    },
+    {
+     "word": "pancake",
+     "emoji": "🥞",
+     "clue": "A flat round breakfast you can pour syrup on."
+    },
+    {
+     "word": "popcorn",
+     "emoji": "🍿",
+     "clue": "A crunchy snack we eat at the movies."
+    },
+    {
+     "word": "sandwich",
+     "emoji": "🥪",
+     "clue": "Filling between two slices of bread."
+    },
+    {
+     "word": "broccoli",
+     "emoji": "🥦",
+     "clue": "A green vegetable that looks like a little tree."
+    },
+    {
+     "word": "pineapple",
+     "emoji": "🍍",
+     "clue": "A spiky fruit with a crown of leaves."
+    },
+    {
+     "word": "avocado",
+     "emoji": "🥑",
+     "clue": "A green fruit with a big seed, great on toast."
+    },
+    {
+     "word": "coconut",
+     "emoji": "🥥",
+     "clue": "A hairy brown fruit with water inside."
+    },
+    {
+     "word": "cucumber",
+     "emoji": "🥒",
+     "clue": "A long, cool, green vegetable for salad."
+    },
+    {
+     "word": "chocolate",
+     "emoji": "🍫",
+     "clue": "A sweet brown treat made from cocoa."
+    },
+    {
+     "word": "mushroom",
+     "emoji": "🍄",
+     "clue": "A small plant-like food with a cap and stem."
+    }
+   ]
+  },
+  {
+   "id": "home",
+   "name": "Home",
+   "icon": "🏠",
+   "words": [
+    {
+     "word": "bed",
+     "emoji": "🛏️",
+     "clue": "You sleep in it."
+    },
+    {
+     "word": "door",
+     "emoji": "🚪",
+     "clue": "You open it to go in or out."
+    },
+    {
+     "word": "sofa",
+     "emoji": "🛋️",
+     "clue": "A soft seat for several people."
+    },
+    {
+     "word": "bath",
+     "emoji": "🛁",
+     "clue": "You wash in it."
+    },
+    {
+     "word": "key",
+     "emoji": "🔑",
+     "clue": "It opens a lock."
+    },
+    {
+     "word": "bulb",
+     "emoji": "💡",
+     "clue": "It lights up a room."
+    },
+    {
+     "word": "fork",
+     "emoji": "🍴",
+     "clue": "You eat with it, with prongs."
+    },
+    {
+     "word": "bowl",
+     "emoji": "🥣",
+     "clue": "You put soup or cereal in it."
+    },
+    {
+     "word": "soap",
+     "emoji": "🧼",
+     "clue": "You wash your hands with it."
+    },
+    {
+     "word": "home",
+     "emoji": "🏠",
+     "clue": "The place where you live."
+    },
+    {
+     "word": "box",
+     "emoji": "📦",
+     "clue": "A container for keeping or posting things."
+    },
+    {
+     "word": "lock",
+     "emoji": "🔒",
+     "clue": "A key fits into it to keep things safe."
+    },
+    {
+     "word": "clock",
+     "emoji": "⏰",
+     "clue": "It tells you the time."
+    },
+    {
+     "word": "spoon",
+     "emoji": "🥄",
+     "clue": "You eat soup with it."
+    },
+    {
+     "word": "plate",
+     "emoji": "🍽️",
+     "clue": "You put your dinner on it."
+    },
+    {
+     "word": "broom",
+     "emoji": "🧹",
+     "clue": "You sweep the floor with it."
+    },
+    {
+     "word": "phone",
+     "emoji": "📱",
+     "clue": "You use it to call people."
+    },
+    {
+     "word": "radio",
+     "emoji": "📻",
+     "clue": "It plays music and news."
+    },
+    {
+     "word": "candle",
+     "emoji": "🕯️",
+     "clue": "It gives light with a little flame."
+    },
+    {
+     "word": "camera",
+     "emoji": "📷",
+     "clue": "It takes photos."
+    },
+    {
+     "word": "laptop",
+     "emoji": "💻",
+     "clue": "A small computer you can carry."
+    },
+    {
+     "word": "garden",
+     "emoji": "🏡",
+     "clue": "Flowers and plants grow here, outside the house."
+    },
+    {
+     "word": "hammer",
+     "emoji": "🔨",
+     "clue": "You hit nails with it."
+    },
+    {
+     "word": "torch",
+     "emoji": "🔦",
+     "clue": "A light you hold in your hand."
+    },
+    {
+     "word": "kitchen",
+     "emoji": "🍳",
+     "clue": "The room where food is cooked."
+    },
+    {
+     "word": "bedroom",
+     "emoji": "🛏️",
+     "clue": "The room where you sleep."
+    },
+    {
+     "word": "bathroom",
+     "emoji": "🚿",
+     "clue": "The room with a shower."
+    },
+    {
+     "word": "computer",
+     "emoji": "🖥️",
+     "clue": "A machine with a screen for work and games."
+    },
+    {
+     "word": "keyboard",
+     "emoji": "⌨️",
+     "clue": "You type on it."
+    },
+    {
+     "word": "telephone",
+     "emoji": "☎️",
+     "clue": "An old kind of phone with a cord."
+    },
+    {
+     "word": "battery",
+     "emoji": "🔋",
+     "clue": "It stores power for toys and remotes."
+    },
+    {
+     "word": "bathtub",
+     "emoji": "🛁",
+     "clue": "A big tub you fill with water to wash."
+    },
+    {
+     "word": "mailbox",
+     "emoji": "📫",
+     "clue": "Letters are posted into it."
+    },
+    {
+     "word": "lantern",
+     "emoji": "🏮",
+     "clue": "A light you carry, with a handle."
+    }
+   ]
+  },
+  {
+   "id": "school",
+   "name": "School",
+   "icon": "🎒",
+   "words": [
+    {
+     "word": "pen",
+     "emoji": "🖊️",
+     "clue": "You write with ink using it."
+    },
+    {
+     "word": "bag",
+     "emoji": "🎒",
+     "clue": "You carry your books in it."
+    },
+    {
+     "word": "book",
+     "emoji": "📖",
+     "clue": "You read it."
+    },
+    {
+     "word": "map",
+     "emoji": "🗺️",
+     "clue": "It shows where places are."
+    },
+    {
+     "word": "pin",
+     "emoji": "📌",
+     "clue": "A small sharp tack for a notice board."
+    },
+    {
+     "word": "art",
+     "emoji": "🎨",
+     "clue": "Drawing and painting class."
+    },
+    {
+     "word": "bus",
+     "emoji": "🚌",
+     "clue": "A big vehicle that takes you to school."
+    },
+    {
+     "word": "clip",
+     "emoji": "📎",
+     "clue": "A bent wire that holds papers together."
+    },
+    {
+     "word": "note",
+     "emoji": "📝",
+     "clue": "A short message you write down."
+    },
+    {
+     "word": "bike",
+     "emoji": "🚲",
+     "clue": "A two-wheeled ride you pedal."
+    },
+    {
+     "word": "ball",
+     "emoji": "⚽",
+     "clue": "Round, you kick or throw it in games."
+    },
+    {
+     "word": "drum",
+     "emoji": "🥁",
+     "clue": "You hit it to make a beat."
+    },
+    {
+     "word": "pencil",
+     "emoji": "✏️",
+     "clue": "You write with it and can rub it out."
+    },
+    {
+     "word": "ruler",
+     "emoji": "📏",
+     "clue": "You draw straight lines with it."
+    },
+    {
+     "word": "paper",
+     "emoji": "📄",
+     "clue": "You write or draw on it."
+    },
+    {
+     "word": "crayon",
+     "emoji": "🖍️",
+     "clue": "A waxy colour stick for drawing."
+    },
+    {
+     "word": "globe",
+     "emoji": "🌍",
+     "clue": "A round model of the Earth."
+    },
+    {
+     "word": "school",
+     "emoji": "🏫",
+     "clue": "The place where you learn."
+    },
+    {
+     "word": "music",
+     "emoji": "🎵",
+     "clue": "Songs and tunes."
+    },
+    {
+     "word": "piano",
+     "emoji": "🎹",
+     "clue": "An instrument with black and white keys."
+    },
+    {
+     "word": "guitar",
+     "emoji": "🎸",
+     "clue": "An instrument with strings you strum."
+    },
+    {
+     "word": "violin",
+     "emoji": "🎻",
+     "clue": "An instrument you play with a bow."
+    },
+    {
+     "word": "medal",
+     "emoji": "🏅",
+     "clue": "You win it for coming first."
+    },
+    {
+     "word": "trophy",
+     "emoji": "🏆",
+     "clue": "A golden cup for the winner."
+    },
+    {
+     "word": "notebook",
+     "emoji": "📓",
+     "clue": "A book of blank pages for writing."
+    },
+    {
+     "word": "library",
+     "emoji": "📚",
+     "clue": "A place full of books you can borrow."
+    },
+    {
+     "word": "calendar",
+     "emoji": "📅",
+     "clue": "It shows the days and months."
+    },
+    {
+     "word": "backpack",
+     "emoji": "🎒",
+     "clue": "A bag you wear on your back."
+    },
+    {
+     "word": "homework",
+     "emoji": "✍️",
+     "clue": "Work from school you do at home."
+    },
+    {
+     "word": "trumpet",
+     "emoji": "🎺",
+     "clue": "A brass instrument you blow into."
+    },
+    {
+     "word": "football",
+     "emoji": "⚽",
+     "clue": "A game where two teams kick a ball."
+    },
+    {
+     "word": "cricket",
+     "emoji": "🏏",
+     "clue": "A game played with a bat and ball."
+    },
+    {
+     "word": "telescope",
+     "emoji": "🔭",
+     "clue": "You look through it to see faraway stars."
+    },
+    {
+     "word": "scissors",
+     "emoji": "✂️",
+     "clue": "You cut paper with them."
+    }
+   ]
+  },
+  {
+   "id": "nature",
+   "name": "Nature",
+   "icon": "🌳",
+   "words": [
+    {
+     "word": "sun",
+     "emoji": "☀️",
+     "clue": "It shines in the sky in the day."
+    },
+    {
+     "word": "tree",
+     "emoji": "🌳",
+     "clue": "It has a trunk, branches and leaves."
+    },
+    {
+     "word": "leaf",
+     "emoji": "🍃",
+     "clue": "A green part of a plant that grows on a branch."
+    },
+    {
+     "word": "moon",
+     "emoji": "🌙",
+     "clue": "It glows in the night sky."
+    },
+    {
+     "word": "star",
+     "emoji": "⭐",
+     "clue": "It twinkles in the night sky."
+    },
+    {
+     "word": "rain",
+     "emoji": "🌧️",
+     "clue": "Water that falls from clouds."
+    },
+    {
+     "word": "snow",
+     "emoji": "❄️",
+     "clue": "White, cold flakes that fall in winter."
+    },
+    {
+     "word": "wind",
+     "emoji": "💨",
+     "clue": "Moving air that blows kites."
+    },
+    {
+     "word": "rose",
+     "emoji": "🌹",
+     "clue": "A red flower with thorns."
+    },
+    {
+     "word": "fire",
+     "emoji": "🔥",
+     "clue": "It is hot and has flames."
+    },
+    {
+     "word": "wave",
+     "emoji": "🌊",
+     "clue": "Water rolling up onto the beach."
+    },
+    {
+     "word": "palm",
+     "emoji": "🌴",
+     "clue": "A tall tree that grows on tropical beaches."
+    },
+    {
+     "word": "cloud",
+     "emoji": "☁️",
+     "clue": "A white or grey puff in the sky."
+    },
+    {
+     "word": "flower",
+     "emoji": "🌸",
+     "clue": "It blooms and smells sweet."
+    },
+    {
+     "word": "beach",
+     "emoji": "🏖️",
+     "clue": "Sandy land beside the sea."
+    },
+    {
+     "word": "forest",
+     "emoji": "🌲",
+     "clue": "A big area full of trees."
+    },
+    {
+     "word": "plant",
+     "emoji": "🌱",
+     "clue": "It grows from a seed."
+    },
+    {
+     "word": "cactus",
+     "emoji": "🌵",
+     "clue": "A prickly plant that grows in the desert."
+    },
+    {
+     "word": "desert",
+     "emoji": "🏜️",
+     "clue": "A very dry place with lots of sand."
+    },
+    {
+     "word": "island",
+     "emoji": "🏝️",
+     "clue": "Land with water all around it."
+    },
+    {
+     "word": "comet",
+     "emoji": "☄️",
+     "clue": "A space rock with a glowing tail."
+    },
+    {
+     "word": "storm",
+     "emoji": "⛈️",
+     "clue": "Wind, rain and thunder together."
+    },
+    {
+     "word": "tulip",
+     "emoji": "🌷",
+     "clue": "A cup-shaped spring flower."
+    },
+    {
+     "word": "daisy",
+     "emoji": "🌼",
+     "clue": "A flower with white petals and a yellow middle."
+    },
+    {
+     "word": "rainbow",
+     "emoji": "🌈",
+     "clue": "Colours in the sky after rain."
+    },
+    {
+     "word": "mountain",
+     "emoji": "⛰️",
+     "clue": "A very high hill."
+    },
+    {
+     "word": "volcano",
+     "emoji": "🌋",
+     "clue": "A mountain that can erupt with lava."
+    },
+    {
+     "word": "tornado",
+     "emoji": "🌪️",
+     "clue": "A spinning funnel of wind."
+    },
+    {
+     "word": "sunflower",
+     "emoji": "🌻",
+     "clue": "A tall yellow flower that follows the sun."
+    },
+    {
+     "word": "blossom",
+     "emoji": "🌸",
+     "clue": "A flower on a tree in spring."
+    },
+    {
+     "word": "snowflake",
+     "emoji": "❄️",
+     "clue": "One tiny piece of frozen snow."
+    },
+    {
+     "word": "lightning",
+     "emoji": "⚡",
+     "clue": "A flash of light in a storm."
+    },
+    {
+     "word": "evergreen",
+     "emoji": "🌲",
+     "clue": "A tree that stays green all year."
+    },
+    {
+     "word": "hurricane",
+     "emoji": "🌀",
+     "clue": "A huge spinning storm over the sea."
+    }
+   ]
+  }
+ ]
+}

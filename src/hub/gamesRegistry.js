@@ -36,7 +36,7 @@ export const GAMES = Object.freeze([
 
   game('times-table-racing', 'Times-Table Racing', 'math', '🏎️', 'Times tables', true),
 
-  game('word-builder-bubbles', 'Word Builder Bubbles', 'language', '🔤', 'Spelling'),
+  game('word-builder-bubbles', 'Word Builder Bubbles', 'language', '🔤', 'Spelling', true),
 
   game('hindi-english-match', 'Hindi–English Match', 'language', '🃏', 'Vocabulary', true),
 

@@ -1,0 +1,90 @@
+/* Word Builder Bubbles. Builds on src/engine/ui/ui.css. */
+
+.scene:not(.wb-scene) { background: var(--bg); }
+
+.menu, .result { width: min(100%, 760px); margin: 0 auto; padding: 8px 16px 32px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+.menu__title, .result h1 { margin: 4px 0 0; font-size: 2.2rem; }
+.menu__intro { max-width: 32rem; margin: 0; font-size: 1.1rem; }
+.menu__packs-wrap .chips { justify-content: center; }
+.menu__packs-wrap .field__label { margin-bottom: 8px; font-weight: 700; }
+.menu__best { width: 100%; }
+.menu__best h2 { font-size: 1.1rem; margin-bottom: 8px; color: var(--ink-soft); }
+.menu__best ul { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin: 0; padding: 0; list-style: none; }
+.menu__best li { display: flex; flex-direction: column; align-items: center; gap: 2px; font-weight: 700; }
+.menu__stars { display: inline-flex; font-size: 1.5rem; }
+
+/* ---------- Play ---------- */
+
+.wb-scene { overflow: hidden; background: transparent; }
+.wb { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+/* Everything but the sea has the page colour; the sea is left clear so the canvas behind it shows through. */
+.wb__card, .wb__slots, .wb__status { background: var(--bg); }
+
+.wb__card { display: flex; align-items: flex-start; gap: 12px; padding: 8px 12px; }
+.wb__picture {
+  flex: none; display: flex; align-items: center; justify-content: center; width: 84px; height: 84px; font-size: 3.2rem; line-height: 1;
+  background: #fff; border: 4px solid var(--ink); border-radius: var(--radius);
+}
+.wb__picture.is-celebrating { animation: wb-pop 0.7s ease; }
+@keyframes wb-pop { 30% { transform: scale(1.25) rotate(-6deg); } 60% { transform: scale(0.95) rotate(4deg); } }
+.wb__text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.wb__clue { margin: 0; font-size: 1.15rem; font-weight: 700; }
+.wb__actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.wb__slots { display: flex; flex-wrap: nowrap; justify-content: center; gap: 6px; padding: 4px 12px 8px; }
+.slot {
+  display: inline-flex; align-items: center; justify-content: center; flex: 0 1 52px; min-width: 28px; height: 60px;
+  font-size: 2rem; font-weight: 800; color: var(--ink); background: #fff; border: 4px solid var(--ink); border-radius: 12px;
+}
+.slot.is-filled { background: #e3f6e8; border-color: var(--good); }
+/* The next slot is outlined with a dashed border and pulses, so it is not shown by colour alone. */
+.slot.is-next { border-style: dashed; background: #fff3c4; animation: wb-next 1s ease-in-out infinite; }
+@keyframes wb-next { 50% { transform: translateY(-4px); } }
+.wb__slots.shake { animation: wb-shake 0.4s; }
+@keyframes wb-shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+.wb__slots.is-complete .slot { animation: wb-pop 0.7s ease; }
+
+.wb__status { min-height: 1.5em; margin: 0; padding: 0 12px; font-weight: 800; text-align: center; }
+/* The canvas draws the sea behind this empty box. */
+.wb__sea { flex: 1 1 auto; min-height: 220px; }
+.wb__next { display: flex; justify-content: center; min-height: 0; padding: 8px 12px 12px; background: var(--bg); }
+.wb__next:empty { padding: 0; }
+
+.fly {
+  position: absolute; z-index: 20; display: flex; align-items: center; justify-content: center; pointer-events: none;
+  font-size: 1.6rem; font-weight: 800; color: #0b2a5b; background: radial-gradient(circle at 30% 30%, #fff, #b0e4ff); border: 3px solid #fff; border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+}
+
+.wb__pause {
+  position: absolute; inset: 0; z-index: 30; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+  text-align: center; color: #fff; background: rgba(11, 42, 91, 0.92);
+}
+.wb__pause h2 { font-size: 2.4rem; margin: 0; }
+.wb__pause p { margin: 0; font-size: 1.1rem; }
+
+@media (max-width: 520px) {
+  .wb__picture { width: 64px; height: 64px; font-size: 2.3rem; border-width: 3px; }
+  .wb__clue { font-size: 1rem; }
+  .slot { height: 48px; font-size: 1.4rem; border-width: 3px; }
+  .wb__slots { gap: 4px; }
+}
+
+/* ---------- Results ---------- */
+
+.result__stars { display: flex; gap: 8px; font-size: 4rem; line-height: 1; }
+.result__praise { margin: 0; font-size: 1.3rem; font-weight: 700; }
+.result__learned { margin: 0; font-weight: 700; }
+.words { width: 100%; margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; text-align: left; }
+.word-row { display: flex; align-items: center; gap: 10px; padding: 6px 10px; background: #fff; border: 3px solid var(--line); border-radius: var(--radius); }
+.word-row.is-tricky { border-color: var(--bad); background: var(--bad-bg); }
+.word-row__emoji { font-size: 1.6rem; }
+.word-row__word { flex: 1; font-weight: 800; }
+.word-row__note { font-size: 0.8rem; font-weight: 700; color: var(--good); }
+.word-row.is-tricky .word-row__note { color: var(--bad); }
+.word-row__note svg { vertical-align: -0.1em; }
+.tricky { width: 100%; padding: 10px 14px; background: #fff3c4; border: 3px solid var(--ink); border-radius: var(--radius); }
+.tricky h2 { margin: 0 0 4px; font-size: 1.2rem; }
+.tricky p { margin: 0; font-weight: 800; font-size: 1.15rem; }
+.tricky--none { background: var(--good-bg); font-weight: 800; }
+.result__actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
