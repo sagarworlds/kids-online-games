@@ -1,0 +1,166 @@
+/* Plant Grower. Builds on src/engine/ui/ui.css. */
+
+.scene { background: var(--bg); }
+
+.menu, .result, .garden { width: min(100%, 980px); margin: 0 auto; padding: 8px 16px 32px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+.menu__title, .result h1 { margin: 4px 0 0; font-size: 2.2rem; }
+.menu__intro { max-width: 36rem; margin: 0; font-size: 1.1rem; }
+.menu__heading { margin: 4px 0 0; font-size: 1.2rem; color: var(--ink-soft); }
+.menu__stars { display: inline-flex; font-size: 1.5rem; }
+
+/* ---------- Seed picker ---------- */
+
+.seeds { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; width: 100%; }
+.seed {
+  display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 14px 12px; font: inherit; color: var(--ink); background: #fff;
+  border: 4px solid var(--ink); border-radius: 20px; box-shadow: var(--shadow); cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+}
+.seed:active:not(.is-locked) { transform: translateY(2px); box-shadow: none; }
+.seed:focus-visible { outline: 4px solid var(--primary); outline-offset: 3px; }
+.seed.is-locked { opacity: 0.6; border-style: dashed; cursor: default; }
+.seed__icon { font-size: 2.8rem; line-height: 1.1; }
+.seed__name { font-size: 1.3rem; font-weight: 800; }
+.seed__lock { font-weight: 700; color: var(--ink-soft); }
+.seed__fact { margin-top: 4px; font-size: 0.9rem; color: var(--ink-soft); }
+
+/* ---------- The plant ---------- */
+
+.plantart { display: block; overflow: visible; }
+.plantart .part { opacity: 0; transform: scale(0.3); transform-box: fill-box; transform-origin: 50% 100%; transition: opacity 0.6s ease, transform 0.6s ease; }
+.plantart .part.is-grown { opacity: 1; transform: none; }
+.plantart .stem { transition: transform 0.8s ease, opacity 0.4s ease; }
+.plantart .plantbody { transform-origin: 100px 200px; transition: transform 0.8s ease, filter 0.6s ease; }
+.plantart .puddle { opacity: 0; transition: opacity 0.6s ease; }
+.plantart .sweat { opacity: 0; transition: opacity 0.4s ease; }
+.plantart.no-anim .part, .plantart.no-anim .stem, .plantart.no-anim .plantbody, .plantart.no-anim .puddle { transition: none; }
+
+/* A happy plant sways; a thirsty one droops a little; a wilting one droops a lot and fades. */
+.plantart.is-happy .plantbody { animation: sway 4s ease-in-out infinite; }
+.plantart.is-ok .plantbody { filter: saturate(0.85); }
+.plantart.is-wilting .plantbody { transform: rotate(20deg); filter: saturate(0.5) brightness(1.05); }
+.plantart.has-thirsty .plantbody { transform: rotate(10deg); filter: saturate(0.7) brightness(1.05); animation: none; }
+.plantart.has-hungry .plantbody { filter: saturate(0.55) brightness(1.12); }
+.plantart.has-burnt .plantbody { filter: sepia(0.9) hue-rotate(-30deg) saturate(1.6); }
+.plantart.has-shady { filter: brightness(0.82); }
+.plantart.has-puddle .puddle { opacity: 1; }
+.plantart.has-sweaty .sweat { opacity: 1; }
+.plantart .sweat__drop { animation: drip 1.5s ease-in infinite; }
+.plantart .sweat__drop--1 { animation-delay: 0.5s; }
+.plantart .sweat__drop--2 { animation-delay: 1s; }
+@keyframes sway { 50% { transform: rotate(2.5deg); } 0%, 100% { transform: rotate(-2.5deg); } }
+@keyframes drip { from { transform: translateY(0); opacity: 1; } to { transform: translateY(26px); opacity: 0; } }
+
+/* ---------- The garden ---------- */
+
+.weatherbar { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 6px 12px; text-align: left; font-size: 1rem; background: #e8f6ff; border: 3px solid var(--ink); border-radius: 16px; }
+.weatherbar__icon { font-size: 2rem; line-height: 1; }
+.weatherbar--rainy { background: #d3e1f0; }
+.weatherbar--cloudy { background: #e3e7ec; }
+.weatherbar--heat { background: #ffe6bd; }
+
+.garden__body { display: flex; flex-direction: column; align-items: stretch; gap: 12px; width: 100%; }
+@media (min-width: 860px) { .garden__body { flex-direction: row; align-items: flex-start; } .garden__stage { flex: 0 0 340px; } .garden__side { flex: 1; } }
+.garden__stage { position: relative; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 12px; padding: 34px 10px 8px; border: 4px solid var(--ink); border-radius: 20px; box-shadow: var(--shadow); }
+.garden__plant { flex: none; }
+.garden__stage .plantart { width: 104px; height: auto; }
+.garden__vitals { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+@media (min-width: 860px) {
+  .garden__stage { flex-direction: column; padding: 44px 12px 12px; }
+  .garden__stage .plantart { width: 210px; }
+  .garden__vitals { flex: none; width: 100%; }
+}
+.weather--sunny { background: linear-gradient(#bfe6ff, #f4fbff 75%); }
+.weather--rainy { background: linear-gradient(#8aa5c4, #d3e1f0 75%); }
+.weather--cloudy { background: linear-gradient(#b9c2cc, #e8ecf0 75%); }
+.weather--heat { background: linear-gradient(#ffd08a, #fff1d6 75%); }
+.garden__health { margin: 0; font-weight: 800; }
+.garden__stage .progress { width: min(100%, 260px); }
+.garden__health { text-align: center; }
+
+.bubble { position: absolute; top: 6px; left: 50%; transform: translateX(-50%); max-width: 90%; padding: 4px 14px; font-weight: 800; background: #fff; border: 3px solid var(--ink); border-radius: 18px; }
+.bubble[hidden] { display: none; }
+.bubble::after { content: ''; position: absolute; left: 50%; bottom: -12px; width: 14px; height: 14px; margin-left: -7px; background: #fff; border: 3px solid var(--ink); border-top: 0; border-left: 0; transform: rotate(45deg); }
+
+.garden__side { display: flex; flex-direction: column; gap: 10px; width: 100%; min-width: 0; }
+.garden__controls, .summary { display: flex; flex-direction: column; gap: 6px; padding: 8px 14px; text-align: left; background: #fff; border: 4px solid var(--ink); border-radius: 20px; }
+.garden__controls[hidden], .summary[hidden] { display: none; }
+.garden__heading { margin: 0; font-size: 1.05rem; color: var(--ink-soft); }
+.garden__effect:empty { display: none; }
+.garden__effect { margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--ink-soft); }
+/* The main button stays at the bottom of the screen while the page scrolls, so it is always in reach, even on a small phone
+   with a long weather note. */
+.garden__actions { position: sticky; bottom: 0; z-index: 5; display: flex; justify-content: center; padding: 8px 0 6px; background: linear-gradient(rgba(255, 248, 231, 0), var(--bg) 35%); }
+/* On a phone the heading above the sliders is only for screen readers: the screen has no room to spare. */
+@media (max-width: 639px) {
+  .garden__heading--prompt { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+}
+
+/* ---------- Sliders ---------- */
+
+.need { display: flex; flex-direction: column; gap: 0; }
+.need__head { display: flex; align-items: baseline; gap: 10px; }
+.need__label { font-weight: 800; font-size: 1.1rem; }
+.need__best { margin-left: auto; font-size: 0.9rem; font-weight: 700; color: var(--good); }
+.need__value { margin-left: auto; min-width: 2ch; font-size: 1.5rem; font-weight: 800; font-variant-numeric: tabular-nums; text-align: right; }
+.need__best + .need__value { margin-left: 0; }
+.need__track { position: relative; }
+.need__ideal {
+  position: absolute; top: 50%; height: 26px; transform: translateY(-50%); pointer-events: none;
+  left: calc(20px + (100% - 40px) * var(--from)); width: calc((100% - 40px) * (var(--to) - var(--from)));
+  background: #b6e8b6; border: 3px dashed var(--good); border-radius: 10px;
+}
+.need__input { position: relative; z-index: 1; display: block; width: 100%; height: 48px; margin: 0; background: transparent; -webkit-appearance: none; appearance: none; cursor: pointer; touch-action: pan-y; }
+.need__input::-webkit-slider-runnable-track { height: 16px; background: rgba(230, 223, 200, 0.7); border: 3px solid var(--ink); border-radius: 10px; }
+.need__input::-moz-range-track { height: 10px; background: rgba(230, 223, 200, 0.7); border: 3px solid var(--ink); border-radius: 10px; }
+.need__input::-webkit-slider-thumb { -webkit-appearance: none; width: 40px; height: 40px; margin-top: -15px; background: var(--primary); border: 4px solid var(--ink); border-radius: 50%; }
+.need__input::-moz-range-thumb { width: 32px; height: 32px; background: var(--primary); border: 4px solid var(--ink); border-radius: 50%; }
+.need__input:focus-visible { outline: none; }
+.need__input:focus-visible::-webkit-slider-thumb { outline: 4px solid var(--accent); outline-offset: 2px; }
+.need__input:focus-visible::-moz-range-thumb { outline: 4px solid var(--accent); outline-offset: 2px; }
+.need__input:disabled { opacity: 0.55; cursor: default; }
+.need--water .need__input::-webkit-slider-thumb { background: #1e88e5; }
+.need--sun .need__input::-webkit-slider-thumb { background: #f9a825; }
+.need--food .need__input::-webkit-slider-thumb { background: #8d6e63; }
+.need--water .need__input::-moz-range-thumb { background: #1e88e5; }
+.need--sun .need__input::-moz-range-thumb { background: #f9a825; }
+.need--food .need__input::-moz-range-thumb { background: #8d6e63; }
+.need__ends { display: none; justify-content: space-between; padding: 0 4px; font-size: 0.8rem; font-weight: 700; color: var(--ink-soft); }
+/* The None / Lots labels only fit where there is room to spare; on a phone the number beside each slider says enough. */
+@media (min-width: 640px) { .need__ends { display: flex; } }
+
+/* ---------- The day card ---------- */
+
+.summary p { margin: 0; }
+.summary__health { font-size: 1.2rem; font-weight: 800; }
+.summary__stage { font-weight: 700; }
+.summary__needs { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 2px; font-weight: 700; }
+.mark { font-weight: 800; }
+.mark--ok { color: var(--good); }
+.mark--near { color: #8a5a00; }
+.mark--off { color: var(--bad); }
+.summary__reason { padding: 6px 10px; font-weight: 800; background: #fff3c4; border-radius: 12px; }
+
+/* ---------- Results and journal ---------- */
+
+.result__mode { margin: 0; font-weight: 700; color: var(--ink-soft); }
+.result__plant { margin: 0; font-weight: 700; }
+.result__stars { display: flex; gap: 8px; font-size: 4rem; line-height: 1; }
+.result__praise { margin: 0; font-size: 1.3rem; font-weight: 700; }
+.result__tip { max-width: 34rem; margin: 0; color: var(--ink-soft); font-weight: 700; }
+.result__actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+.journal { width: 100%; }
+.journal h2 { margin: 8px 0; font-size: 1.4rem; }
+.journal__list { display: flex; flex-direction: column; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.entry { display: flex; gap: 12px; align-items: flex-start; padding: 8px 12px; text-align: left; background: #fff; border: 3px solid var(--ink); border-radius: 16px; }
+.entry__art { flex: none; width: 84px; display: flex; justify-content: center; }
+.entry__text { flex: 1; min-width: 0; }
+.entry__text p { margin: 2px 0; }
+.entry__title { margin: 0; font-size: 1.1rem; }
+.entry__inputs { color: var(--ink-soft); font-weight: 700; }
+.entry__change { font-weight: 800; }
+.entry__why { margin: 4px 0 0; padding-left: 1.2rem; font-size: 0.95rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .plantart.is-happy .plantbody, .plantart .sweat__drop { animation: none; }
+  .plantart .part, .plantart .stem, .plantart .plantbody, .plantart .puddle { transition: none; }
+}
