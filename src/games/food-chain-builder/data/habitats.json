@@ -1,0 +1,811 @@
+{
+  "places": [
+    {
+      "id": "forest",
+      "name": "Forest",
+      "icon": "🌲",
+      "ambient": "forest"
+    },
+    {
+      "id": "ocean",
+      "name": "Ocean",
+      "icon": "🌊",
+      "ambient": "ocean"
+    },
+    {
+      "id": "pond",
+      "name": "Pond",
+      "icon": "🐸",
+      "ambient": "pond"
+    },
+    {
+      "id": "grassland",
+      "name": "Grassland",
+      "icon": "🌾",
+      "ambient": "grassland"
+    },
+    {
+      "id": "desert",
+      "name": "Desert",
+      "icon": "🏜️",
+      "ambient": "desert"
+    }
+  ],
+  "habitats": [
+    {
+      "id": "grassland-easy",
+      "place": "grassland",
+      "name": "Grassland",
+      "level": "easy",
+      "organisms": [
+        "grass",
+        "rabbit",
+        "fox"
+      ],
+      "required": [
+        {
+          "from": "grass",
+          "to": "rabbit"
+        },
+        {
+          "from": "rabbit",
+          "to": "fox"
+        }
+      ],
+      "allowed": []
+    },
+    {
+      "id": "grassland-medium",
+      "place": "grassland",
+      "name": "Grassland",
+      "level": "medium",
+      "organisms": [
+        "grass",
+        "rabbit",
+        "fox",
+        "cricket",
+        "frog",
+        "snake"
+      ],
+      "required": [
+        {
+          "from": "grass",
+          "to": "rabbit"
+        },
+        {
+          "from": "rabbit",
+          "to": "fox"
+        },
+        {
+          "from": "grass",
+          "to": "cricket"
+        },
+        {
+          "from": "cricket",
+          "to": "frog"
+        },
+        {
+          "from": "frog",
+          "to": "snake"
+        }
+      ],
+      "allowed": [
+        {
+          "from": "rabbit",
+          "to": "snake"
+        }
+      ]
+    },
+    {
+      "id": "grassland-hard",
+      "place": "grassland",
+      "name": "Grassland",
+      "level": "hard",
+      "organisms": [
+        "grass",
+        "wildflower",
+        "cricket",
+        "rabbit",
+        "mouse",
+        "snake",
+        "fox",
+        "eagle"
+      ],
+      "required": [
+        {
+          "from": "grass",
+          "to": "cricket"
+        },
+        {
+          "from": "grass",
+          "to": "rabbit"
+        },
+        {
+          "from": "grass",
+          "to": "mouse"
+        },
+        {
+          "from": "wildflower",
+          "to": "rabbit"
+        },
+        {
+          "from": "wildflower",
+          "to": "cricket"
+        },
+        {
+          "from": "cricket",
+          "to": "mouse"
+        },
+        {
+          "from": "mouse",
+          "to": "snake"
+        },
+        {
+          "from": "rabbit",
+          "to": "fox"
+        },
+        {
+          "from": "snake",
+          "to": "eagle"
+        }
+      ],
+      "allowed": [
+        {
+          "from": "mouse",
+          "to": "fox"
+        },
+        {
+          "from": "mouse",
+          "to": "eagle"
+        },
+        {
+          "from": "rabbit",
+          "to": "eagle"
+        },
+        {
+          "from": "rabbit",
+          "to": "snake"
+        },
+        {
+          "from": "wildflower",
+          "to": "mouse"
+        }
+      ],
+      "whatIf": {
+        "removed": "rabbit",
+        "effects": {
+          "grass": "up",
+          "wildflower": "up",
+          "cricket": "same",
+          "mouse": "same",
+          "snake": "down",
+          "fox": "down",
+          "eagle": "down"
+        }
+      }
+    },
+    {
+      "id": "forest-easy",
+      "place": "forest",
+      "name": "Forest",
+      "level": "easy",
+      "organisms": [
+        "oak",
+        "squirrel",
+        "owl"
+      ],
+      "required": [
+        {
+          "from": "oak",
+          "to": "squirrel"
+        },
+        {
+          "from": "squirrel",
+          "to": "owl"
+        }
+      ],
+      "allowed": []
+    },
+    {
+      "id": "forest-medium",
+      "place": "forest",
+      "name": "Forest",
+      "level": "medium",
+      "organisms": [
+        "oak",
+        "squirrel",
+        "owl",
+        "caterpillar",
+        "mouse",
+        "fox"
+      ],
+      "required": [
+        {
+          "from": "oak",
+          "to": "squirrel"
+        },
+        {
+          "from": "squirrel",
+          "to": "owl"
+        },
+        {
+          "from": "oak",
+          "to": "caterpillar"
+        },
+        {
+          "from": "caterpillar",
+          "to": "mouse"
+        },
+        {
+          "from": "mouse",
+          "to": "fox"
+        }
+      ],
+      "allowed": [
+        {
+          "from": "mouse",
+          "to": "owl"
+        },
+        {
+          "from": "oak",
+          "to": "mouse"
+        },
+        {
+          "from": "squirrel",
+          "to": "fox"
+        }
+      ]
+    },
+    {
+      "id": "forest-hard",
+      "place": "forest",
+      "name": "Forest",
+      "level": "hard",
+      "organisms": [
+        "oak",
+        "berries",
+        "caterpillar",
+        "rabbit",
+        "squirrel",
+        "mouse",
+        "fox",
+        "owl"
+      ],
+      "required": [
+        {
+          "from": "oak",
+          "to": "caterpillar"
+        },
+        {
+          "from": "oak",
+          "to": "squirrel"
+        },
+        {
+          "from": "berries",
+          "to": "rabbit"
+        },
+        {
+          "from": "berries",
+          "to": "mouse"
+        },
+        {
+          "from": "caterpillar",
+          "to": "mouse"
+        },
+        {
+          "from": "rabbit",
+          "to": "fox"
+        },
+        {
+          "from": "squirrel",
+          "to": "owl"
+        },
+        {
+          "from": "mouse",
+          "to": "owl"
+        },
+        {
+          "from": "mouse",
+          "to": "fox"
+        }
+      ],
+      "allowed": [
+        {
+          "from": "oak",
+          "to": "mouse"
+        },
+        {
+          "from": "berries",
+          "to": "fox"
+        },
+        {
+          "from": "rabbit",
+          "to": "owl"
+        },
+        {
+          "from": "squirrel",
+          "to": "fox"
+        },
+        {
+          "from": "berries",
+          "to": "caterpillar"
+        }
+      ],
+      "whatIf": {
+        "removed": "mouse",
+        "effects": {
+          "oak": "up",
+          "berries": "up",
+          "caterpillar": "up",
+          "rabbit": "same",
+          "squirrel": "same",
+          "fox": "down",
+          "owl": "down"
+        }
+      }
+    },
+    {
+      "id": "pond-easy",
+      "place": "pond",
+      "name": "Pond",
+      "level": "easy",
+      "organisms": [
+        "pondweed",
+        "snail",
+        "frog",
+        "snake"
+      ],
+      "required": [
+        {
+          "from": "pondweed",
+          "to": "snail"
+        },
+        {
+          "from": "snail",
+          "to": "frog"
+        },
+        {
+          "from": "frog",
+          "to": "snake"
+        }
+      ],
+      "allowed": []
+    },
+    {
+      "id": "pond-medium",
+      "place": "pond",
+      "name": "Pond",
+      "level": "medium",
+      "organisms": [
+        "pondweed",
+        "snail",
+        "frog",
+        "snake",
+        "carp",
+        "otter"
+      ],
+      "required": [
+        {
+          "from": "pondweed",
+          "to": "snail"
+        },
+        {
+          "from": "snail",
+          "to": "frog"
+        },
+        {
+          "from": "frog",
+          "to": "snake"
+        },
+        {
+          "from": "pondweed",
+          "to": "carp"
+        },
+        {
+          "from": "carp",
+          "to": "otter"
+        }
+      ],
+      "allowed": [
+        {
+          "from": "frog",
+          "to": "otter"
+        },
+        {
+          "from": "snail",
+          "to": "carp"
+        }
+      ]
+    },
+    {
+      "id": "pond-hard",
+      "place": "pond",
+      "name": "Pond",
+      "level": "hard",
+      "organisms": [
+        "pondweed",
+        "waterlily",
+        "snail",
+        "carp",
+        "duck",
+        "frog",
+        "snake",
+        "otter"
+      ],
+      "required": [
+        {
+          "from": "pondweed",
+          "to": "snail"
+        },
+        {
+          "from": "waterlily",
+          "to": "snail"
+        },
+        {
+          "from": "pondweed",
+          "to": "carp"
+        },
+        {
+          "from": "pondweed",
+          "to": "duck"
+        },
+        {
+          "from": "snail",
+          "to": "frog"
+        },
+        {
+          "from": "carp",
+          "to": "otter"
+        },
+        {
+          "from": "frog",
+          "to": "snake"
+        },
+        {
+          "from": "frog",
+          "to": "otter"
+        }
+      ],
+      "allowed": [
+        {
+          "from": "snail",
+          "to": "carp"
+        },
+        {
+          "from": "snail",
+          "to": "duck"
+        },
+        {
+          "from": "waterlily",
+          "to": "duck"
+        }
+      ],
+      "whatIf": {
+        "removed": "frog",
+        "effects": {
+          "pondweed": "same",
+          "waterlily": "same",
+          "snail": "up",
+          "carp": "same",
+          "duck": "same",
+          "snake": "down",
+          "otter": "down"
+        }
+      }
+    },
+    {
+      "id": "ocean-easy",
+      "place": "ocean",
+      "name": "Ocean",
+      "level": "easy",
+      "organisms": [
+        "seaweed",
+        "shrimp",
+        "fish",
+        "shark"
+      ],
+      "required": [
+        {
+          "from": "seaweed",
+          "to": "shrimp"
+        },
+        {
+          "from": "shrimp",
+          "to": "fish"
+        },
+        {
+          "from": "fish",
+          "to": "shark"
+        }
+      ],
+      "allowed": []
+    },
+    {
+      "id": "ocean-medium",
+      "place": "ocean",
+      "name": "Ocean",
+      "level": "medium",
+      "organisms": [
+        "seaweed",
+        "shrimp",
+        "fish",
+        "shark",
+        "crab",
+        "octopus"
+      ],
+      "required": [
+        {
+          "from": "seaweed",
+          "to": "shrimp"
+        },
+        {
+          "from": "shrimp",
+          "to": "fish"
+        },
+        {
+          "from": "fish",
+          "to": "shark"
+        },
+        {
+          "from": "seaweed",
+          "to": "crab"
+        },
+        {
+          "from": "crab",
+          "to": "octopus"
+        }
+      ],
+      "allowed": [
+        {
+          "from": "octopus",
+          "to": "shark"
+        },
+        {
+          "from": "shrimp",
+          "to": "octopus"
+        },
+        {
+          "from": "fish",
+          "to": "octopus"
+        }
+      ]
+    },
+    {
+      "id": "ocean-hard",
+      "place": "ocean",
+      "name": "Ocean",
+      "level": "hard",
+      "organisms": [
+        "seaweed",
+        "shrimp",
+        "crab",
+        "turtle",
+        "fish",
+        "octopus",
+        "tuna",
+        "shark"
+      ],
+      "required": [
+        {
+          "from": "seaweed",
+          "to": "shrimp"
+        },
+        {
+          "from": "seaweed",
+          "to": "crab"
+        },
+        {
+          "from": "seaweed",
+          "to": "turtle"
+        },
+        {
+          "from": "shrimp",
+          "to": "fish"
+        },
+        {
+          "from": "shrimp",
+          "to": "octopus"
+        },
+        {
+          "from": "crab",
+          "to": "octopus"
+        },
+        {
+          "from": "fish",
+          "to": "tuna"
+        },
+        {
+          "from": "tuna",
+          "to": "shark"
+        },
+        {
+          "from": "octopus",
+          "to": "shark"
+        }
+      ],
+      "allowed": [
+        {
+          "from": "turtle",
+          "to": "shark"
+        },
+        {
+          "from": "fish",
+          "to": "octopus"
+        },
+        {
+          "from": "fish",
+          "to": "shark"
+        }
+      ],
+      "whatIf": {
+        "removed": "shrimp",
+        "effects": {
+          "seaweed": "up",
+          "crab": "same",
+          "turtle": "same",
+          "fish": "down",
+          "octopus": "down",
+          "tuna": "same",
+          "shark": "same"
+        }
+      }
+    },
+    {
+      "id": "desert-easy",
+      "place": "desert",
+      "name": "Desert",
+      "level": "easy",
+      "organisms": [
+        "cactus",
+        "kangaroorat",
+        "snake",
+        "eagle"
+      ],
+      "required": [
+        {
+          "from": "cactus",
+          "to": "kangaroorat"
+        },
+        {
+          "from": "kangaroorat",
+          "to": "snake"
+        },
+        {
+          "from": "snake",
+          "to": "eagle"
+        }
+      ],
+      "allowed": []
+    },
+    {
+      "id": "desert-medium",
+      "place": "desert",
+      "name": "Desert",
+      "level": "medium",
+      "organisms": [
+        "cactus",
+        "kangaroorat",
+        "snake",
+        "eagle",
+        "ant",
+        "lizard"
+      ],
+      "required": [
+        {
+          "from": "cactus",
+          "to": "kangaroorat"
+        },
+        {
+          "from": "kangaroorat",
+          "to": "snake"
+        },
+        {
+          "from": "snake",
+          "to": "eagle"
+        },
+        {
+          "from": "cactus",
+          "to": "ant"
+        },
+        {
+          "from": "ant",
+          "to": "lizard"
+        },
+        {
+          "from": "lizard",
+          "to": "eagle"
+        }
+      ],
+      "allowed": [
+        {
+          "from": "lizard",
+          "to": "snake"
+        },
+        {
+          "from": "kangaroorat",
+          "to": "eagle"
+        }
+      ]
+    },
+    {
+      "id": "desert-hard",
+      "place": "desert",
+      "name": "Desert",
+      "level": "hard",
+      "organisms": [
+        "cactus",
+        "desertflower",
+        "ant",
+        "kangaroorat",
+        "lizard",
+        "scorpion",
+        "snake",
+        "eagle"
+      ],
+      "required": [
+        {
+          "from": "cactus",
+          "to": "kangaroorat"
+        },
+        {
+          "from": "desertflower",
+          "to": "kangaroorat"
+        },
+        {
+          "from": "desertflower",
+          "to": "ant"
+        },
+        {
+          "from": "cactus",
+          "to": "ant"
+        },
+        {
+          "from": "ant",
+          "to": "lizard"
+        },
+        {
+          "from": "ant",
+          "to": "scorpion"
+        },
+        {
+          "from": "kangaroorat",
+          "to": "snake"
+        },
+        {
+          "from": "lizard",
+          "to": "snake"
+        },
+        {
+          "from": "snake",
+          "to": "eagle"
+        }
+      ],
+      "allowed": [
+        {
+          "from": "lizard",
+          "to": "eagle"
+        },
+        {
+          "from": "kangaroorat",
+          "to": "eagle"
+        },
+        {
+          "from": "scorpion",
+          "to": "lizard"
+        }
+      ],
+      "whatIf": {
+        "removed": "ant",
+        "effects": {
+          "cactus": "up",
+          "desertflower": "up",
+          "kangaroorat": "same",
+          "lizard": "down",
+          "scorpion": "down",
+          "snake": "same",
+          "eagle": "same"
+        }
+      }
+    }
+  ]
+}
