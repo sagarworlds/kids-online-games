@@ -196,6 +196,16 @@ export function getBlock(program, blockId) {
   return listAt(program, parentListId(blockId))[indexInParent(blockId)];
 }
 
+/**
+ * Reads a list (a section or a repeat block's body) without copying, for rendering.
+ * @param {Program} program
+ * @param {string} listId "main", "f", or a repeat block's id.
+ * @returns {Command[]}
+ */
+export function getList(program, listId) {
+  return listAt(program, listId);
+}
+
 /** True once the program holds at least one block that does something. */
 export function hasBlocks(program) {
   return countBlocks(program) > 0;
