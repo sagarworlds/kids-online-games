@@ -24,6 +24,9 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
+/* Classes below set `display`, which would otherwise beat the `hidden` attribute. */
+[hidden] { display: none !important; }
+
 html { font-size: 20px; }
 
 body {
@@ -108,6 +111,12 @@ p { margin: 0 0 0.75em; }
   min-height: 40px; padding: 2px 12px;
   background: var(--bg); border: 2px solid var(--line); border-radius: 999px;
 }
+/* From tablet width up, keep the HUD on one row: the title shrinks (with an ellipsis) instead of wrapping. */
+@media (min-width: 640px) {
+  .hud { flex-wrap: nowrap; }
+  .hud__title { flex: 1 1 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hud__stat { flex: 0 0 auto; }
+}
 .hud__label { font-size: 0.8rem; font-weight: 700; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.04em; }
 .hud__value { font-size: 1.15rem; font-weight: 800; font-variant-numeric: tabular-nums; display: inline-flex; gap: 2px; align-items: center; }
 
@@ -130,11 +139,11 @@ p { margin: 0 0 0.75em; }
 
 .segmented { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; border: 0; justify-content: center; }
 .segmented legend { padding: 0; margin-bottom: 8px; font-weight: 700; }
-.segmented__item { position: relative; }
+.segmented__item { position: relative; flex: 1 1 190px; max-width: 230px; }
 .segmented__item input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
 .segmented__item label {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  min-width: 104px; min-height: 64px; padding: 6px 14px;
+  height: 100%; min-width: 104px; min-height: 64px; padding: 6px 14px; text-align: center;
   font-weight: 800; background: var(--surface);
   border: 3px solid var(--ink); border-radius: var(--radius); box-shadow: var(--shadow);
 }
