@@ -1,0 +1,213 @@
+/* Shared look and feel for the hub and every game.
+   Rules from the spec: tap targets >= 48px, body text >= 20px, contrast >= 4.5:1,
+   visible focus rings, and no motion when the player prefers reduced motion. */
+
+:root {
+  --bg: #fff8e7;
+  --surface: #ffffff;
+  --ink: #1f2544;          /* 14:1 on --bg */
+  --ink-soft: #4a5173;     /* 7:1 on --bg */
+  --primary: #5b3df5;      /* white text on it: 6.1:1 */
+  --primary-ink: #ffffff;
+  --accent: #ff8a00;       /* --ink text on it: 6.3:1 */
+  --good: #1b7f3b;         /* 5.1:1 on white */
+  --good-bg: #e3f6e8;
+  --bad: #b3261e;          /* 6.5:1 on white */
+  --bad-bg: #fde8e6;
+  --star: #ffd23f;
+  --line: #d9d3c3;
+  --radius: 16px;
+  --shadow: 0 4px 0 rgba(31, 37, 68, 0.18);
+  --tap: 48px;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', 'Noto Sans Devanagari', 'Mangal', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { font-size: 20px; }
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: 1rem;
+  line-height: 1.4;
+  color: var(--ink);
+  background: var(--bg);
+}
+
+h1, h2, h3 { line-height: 1.15; margin: 0 0 0.5em; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.5rem; }
+p { margin: 0 0 0.75em; }
+
+/* Always-visible keyboard focus. Dark ring + white halo reads on any background. */
+:focus-visible {
+  outline: 4px solid var(--ink);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 7px #fff;
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+
+/* ---------- Game page frame ---------- */
+
+.game-page { margin: 0; height: 100vh; height: 100dvh; overflow: hidden; }
+
+.game-root {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.game-root > canvas { position: absolute; inset: 0; display: block; }
+
+.scene { position: absolute; inset: 0; display: flex; flex-direction: column; overflow: auto; }
+.scene[hidden] { display: none; }
+.scene--centered { align-items: center; justify-content: center; text-align: center; padding: 16px; gap: 12px; }
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.4em;
+  min-width: var(--tap); min-height: var(--tap);
+  padding: 0.5rem 1.1rem;
+  font: inherit; font-weight: 700; text-decoration: none; cursor: pointer;
+  color: var(--ink); background: var(--surface);
+  border: 3px solid var(--ink); border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: transform 0.08s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px 0 rgba(31, 37, 68, 0.18); }
+.btn:disabled, .btn[aria-disabled='true'] { opacity: 0.55; cursor: not-allowed; }
+.btn--primary { background: var(--primary); color: var(--primary-ink); }
+.btn--accent { background: var(--accent); color: var(--ink); }
+.btn--good { background: var(--good); color: #fff; }
+.btn--ghost { background: transparent; box-shadow: none; border-color: transparent; }
+.btn--ghost:hover { background: rgba(31, 37, 68, 0.08); }
+.btn--big { min-height: 64px; padding: 0.75rem 1.6rem; font-size: 1.3rem; }
+.btn--icon { padding: 0.4rem; font-size: 1.4rem; }
+
+/* ---------- Heads-up display ---------- */
+
+.hud {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.94);
+  border-bottom: 3px solid var(--ink);
+}
+.hud__title { font-weight: 800; margin-right: auto; }
+.hud__stat {
+  display: flex; align-items: baseline; gap: 6px;
+  min-height: 40px; padding: 2px 12px;
+  background: var(--bg); border: 2px solid var(--line); border-radius: 999px;
+}
+.hud__label { font-size: 0.8rem; font-weight: 700; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.04em; }
+.hud__value { font-size: 1.15rem; font-weight: 800; font-variant-numeric: tabular-nums; display: inline-flex; gap: 2px; align-items: center; }
+
+/* ---------- Progress bar ---------- */
+
+.progress { height: 14px; background: var(--line); border-radius: 999px; overflow: hidden; }
+.progress__fill { height: 100%; width: 0; background: var(--primary); border-radius: inherit; transition: width 0.25s ease; }
+
+/* ---------- Chips and segmented choices ---------- */
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; border: 0; }
+.chip {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.4em;
+  min-height: var(--tap); padding: 0.4rem 1rem;
+  font: inherit; font-weight: 700; cursor: pointer;
+  color: var(--ink); background: var(--surface);
+  border: 3px solid var(--ink); border-radius: 999px;
+}
+.chip[aria-pressed='true'], .chip.is-selected { background: var(--ink); color: #fff; }
+
+.segmented { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; border: 0; justify-content: center; }
+.segmented legend { padding: 0; margin-bottom: 8px; font-weight: 700; }
+.segmented__item { position: relative; }
+.segmented__item input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.segmented__item label {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-width: 104px; min-height: 64px; padding: 6px 14px;
+  font-weight: 800; background: var(--surface);
+  border: 3px solid var(--ink); border-radius: var(--radius); box-shadow: var(--shadow);
+}
+.segmented__item label small { font-weight: 500; font-size: 0.75rem; color: var(--ink-soft); }
+.segmented__item input:checked + label { background: var(--primary); color: #fff; }
+.segmented__item input:checked + label small { color: #e8e3ff; }
+.segmented__item input:focus-visible + label { outline: 4px solid var(--ink); outline-offset: 2px; box-shadow: 0 0 0 7px #fff; }
+.segmented__item input:disabled + label { opacity: 0.5; }
+.segmented__item input:disabled { cursor: not-allowed; }
+.lock-note { margin: 8px 0 0; font-size: 0.85rem; font-weight: 700; color: var(--ink-soft); }
+
+/* ---------- Modal (native <dialog>) ---------- */
+
+.modal {
+  width: min(92vw, 520px); max-height: 90vh; overflow: auto; padding: 24px;
+  color: var(--ink); background: var(--surface);
+  border: 4px solid var(--ink); border-radius: 24px; box-shadow: 0 10px 0 rgba(31, 37, 68, 0.25);
+}
+.modal::backdrop { background: rgba(31, 37, 68, 0.6); }
+.modal__title { margin: 0 0 12px; font-size: 1.5rem; }
+.modal__body { margin-bottom: 16px; }
+.modal__actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: flex-end; }
+
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.field label, .field .field__label { font-weight: 700; }
+.input, .select {
+  min-height: var(--tap); padding: 0.4rem 0.8rem; font: inherit;
+  color: var(--ink); background: #fff; border: 3px solid var(--ink); border-radius: 12px;
+}
+.toggle { display: flex; align-items: center; gap: 12px; min-height: var(--tap); font-weight: 700; cursor: pointer; }
+.toggle input { width: 28px; height: 28px; accent-color: var(--primary); }
+
+.message { min-height: 1.4em; font-weight: 700; }
+.message--bad { color: var(--bad); }
+.message--good { color: var(--good); }
+
+/* ---------- Toast ---------- */
+
+.toast {
+  position: fixed; left: 50%; bottom: 16px; z-index: 50; transform: translateX(-50%);
+  max-width: min(92vw, 520px); padding: 12px 18px;
+  font-weight: 700; color: #fff; background: var(--ink); border-radius: 999px;
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.25);
+}
+
+/* ---------- Error screen ---------- */
+
+.error-screen {
+  position: absolute; inset: 0; z-index: 60;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; padding: 24px; text-align: center; background: var(--bg);
+}
+.error-screen__emoji { font-size: 4rem; }
+
+/* ---------- Confetti canvas ---------- */
+
+.confetti { position: fixed; inset: 0; z-index: 40; width: 100%; height: 100%; pointer-events: none; }
+
+/* ---------- Motion helpers ---------- */
+
+@keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
+@keyframes pop { 0% { transform: scale(0.6); opacity: 0; } 70% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+.shake { animation: shake 0.35s ease; }
+.pop-in { animation: pop 0.3s ease both; }
+
+/* Reduced motion: switch off shakes, pulses and transitions everywhere.
+   (Canvas animation and confetti check prefersReducedMotion() in JS.) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
