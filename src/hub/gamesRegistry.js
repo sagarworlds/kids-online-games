@@ -34,7 +34,7 @@ export const GAMES = Object.freeze([
 
   game('shop-keeper', 'Shop Keeper', 'math', '🛒', 'Money', true),
 
-  game('times-table-racing', 'Times-Table Racing', 'math', '🏎️', 'Times tables'),
+  game('times-table-racing', 'Times-Table Racing', 'math', '🏎️', 'Times tables', true),
 
   game('word-builder-bubbles', 'Word Builder Bubbles', 'language', '🔤', 'Spelling'),
 
