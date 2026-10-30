@@ -1,0 +1,17 @@
+{
+  "code": "INR",
+  "symbol": "₹",
+  "name": "Indian Rupee",
+  "denominations": [
+    { "value": 1, "kind": "coin", "label": "1 rupee coin", "color": "#d9dde3" },
+    { "value": 2, "kind": "coin", "label": "2 rupee coin", "color": "#d9dde3" },
+    { "value": 5, "kind": "coin", "label": "5 rupee coin", "color": "#f2d15c" },
+    { "value": 10, "kind": "coin", "label": "10 rupee coin", "color": "#f2d15c" },
+    { "value": 10, "kind": "note", "label": "10 rupee note", "color": "#d9b99b" },
+    { "value": 20, "kind": "note", "label": "20 rupee note", "color": "#c8e06a" },
+    { "value": 50, "kind": "note", "label": "50 rupee note", "color": "#7fd8e8" },
+    { "value": 100, "kind": "note", "label": "100 rupee note", "color": "#c3b5f0" },
+    { "value": 200, "kind": "note", "label": "200 rupee note", "color": "#ffb86b" },
+    { "value": 500, "kind": "note", "label": "500 rupee note", "color": "#bfc5cf" }
+  ]
+}

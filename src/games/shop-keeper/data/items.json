@@ -1,0 +1,256 @@
+{
+  "items": [
+    {
+      "name": "Candy",
+      "icon": "🍬",
+      "min": 1,
+      "max": 10
+    },
+    {
+      "name": "Lollipop",
+      "icon": "🍭",
+      "min": 1,
+      "max": 15
+    },
+    {
+      "name": "Peanuts",
+      "icon": "🥜",
+      "min": 1,
+      "max": 20
+    },
+    {
+      "name": "Pencil",
+      "icon": "✏️",
+      "min": 2,
+      "max": 15
+    },
+    {
+      "name": "Carrot",
+      "icon": "🥕",
+      "min": 3,
+      "max": 30
+    },
+    {
+      "name": "Banana",
+      "icon": "🍌",
+      "min": 3,
+      "max": 25
+    },
+    {
+      "name": "Balloon",
+      "icon": "🎈",
+      "min": 5,
+      "max": 20
+    },
+    {
+      "name": "Apple",
+      "icon": "🍎",
+      "min": 5,
+      "max": 30
+    },
+    {
+      "name": "Biscuits",
+      "icon": "🍪",
+      "min": 5,
+      "max": 30
+    },
+    {
+      "name": "Stickers",
+      "icon": "🌟",
+      "min": 5,
+      "max": 25
+    },
+    {
+      "name": "Ice cream",
+      "icon": "🍦",
+      "min": 10,
+      "max": 40
+    },
+    {
+      "name": "Notebook",
+      "icon": "📓",
+      "min": 10,
+      "max": 60
+    },
+    {
+      "name": "Orange juice",
+      "icon": "🧃",
+      "min": 10,
+      "max": 40
+    },
+    {
+      "name": "Chocolate",
+      "icon": "🍫",
+      "min": 10,
+      "max": 100
+    },
+    {
+      "name": "Mango",
+      "icon": "🥭",
+      "min": 15,
+      "max": 100
+    },
+    {
+      "name": "Cold drink",
+      "icon": "🥤",
+      "min": 15,
+      "max": 80
+    },
+    {
+      "name": "Bread",
+      "icon": "🍞",
+      "min": 20,
+      "max": 60
+    },
+    {
+      "name": "Milk",
+      "icon": "🥛",
+      "min": 20,
+      "max": 60
+    },
+    {
+      "name": "Sandwich",
+      "icon": "🥪",
+      "min": 20,
+      "max": 90
+    },
+    {
+      "name": "Socks",
+      "icon": "🧦",
+      "min": 20,
+      "max": 120
+    },
+    {
+      "name": "Kite",
+      "icon": "🪁",
+      "min": 20,
+      "max": 150
+    },
+    {
+      "name": "Eggs",
+      "icon": "🥚",
+      "min": 30,
+      "max": 80
+    },
+    {
+      "name": "Colour pencils",
+      "icon": "🖍️",
+      "min": 30,
+      "max": 150
+    },
+    {
+      "name": "Toy car",
+      "icon": "🚗",
+      "min": 30,
+      "max": 250
+    },
+    {
+      "name": "Pizza slice",
+      "icon": "🍕",
+      "min": 40,
+      "max": 150
+    },
+    {
+      "name": "Storybook",
+      "icon": "📚",
+      "min": 40,
+      "max": 200
+    },
+    {
+      "name": "Watermelon",
+      "icon": "🍉",
+      "min": 40,
+      "max": 120
+    },
+    {
+      "name": "Paint set",
+      "icon": "🎨",
+      "min": 40,
+      "max": 250
+    },
+    {
+      "name": "Football",
+      "icon": "⚽",
+      "min": 50,
+      "max": 300
+    },
+    {
+      "name": "Torch",
+      "icon": "🔦",
+      "min": 50,
+      "max": 250
+    },
+    {
+      "name": "Woolly hat",
+      "icon": "🧢",
+      "min": 60,
+      "max": 300
+    },
+    {
+      "name": "Puzzle",
+      "icon": "🧩",
+      "min": 80,
+      "max": 350
+    },
+    {
+      "name": "Cricket bat",
+      "icon": "🏏",
+      "min": 100,
+      "max": 450
+    },
+    {
+      "name": "Teddy bear",
+      "icon": "🧸",
+      "min": 100,
+      "max": 450
+    },
+    {
+      "name": "Umbrella",
+      "icon": "☂️",
+      "min": 100,
+      "max": 400
+    },
+    {
+      "name": "Sunglasses",
+      "icon": "🕶️",
+      "min": 100,
+      "max": 450
+    },
+    {
+      "name": "Alarm clock",
+      "icon": "⏰",
+      "min": 100,
+      "max": 450
+    },
+    {
+      "name": "Toy guitar",
+      "icon": "🎸",
+      "min": 100,
+      "max": 450
+    },
+    {
+      "name": "Cycle helmet",
+      "icon": "⛑️",
+      "min": 150,
+      "max": 450
+    },
+    {
+      "name": "Backpack",
+      "icon": "🎒",
+      "min": 150,
+      "max": 450
+    },
+    {
+      "name": "Globe",
+      "icon": "🌍",
+      "min": 150,
+      "max": 450
+    },
+    {
+      "name": "Toy piano",
+      "icon": "🎹",
+      "min": 200,
+      "max": 450
+    }
+  ]
+}
