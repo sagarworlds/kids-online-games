@@ -48,7 +48,7 @@ export const GAMES = Object.freeze([
 
   game('lights-out', 'Lights Out', 'logic', '💡', 'Logic puzzles', true),
 
-  game('flag-capital-quest', 'Flag & Capital Quest', 'science', '🌍', 'Geography'),
+  game('flag-capital-quest', 'Flag & Capital Quest', 'science', '🌍', 'Geography', true),
 
   game('planet-hop', 'Planet Hop', 'science', '🚀', 'Space'),
 

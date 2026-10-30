@@ -62,7 +62,12 @@ export function createApp({ slug, title, root, canvas = false, homeHref = '../..
   });
 
   // Errors outside the frame loop (click handlers, promises) get the same friendly screen.
-  window.addEventListener('error', (event) => game.fail(event.error ?? event.message));
+  window.addEventListener('error', (event) => {
+    // Browsers raise this when a ResizeObserver callback's layout change had to wait for the next frame. Nothing was
+    // lost and it carries no error object, so showing the "Oops" screen for it would break a working game.
+    if (!event.error && /^ResizeObserver loop/.test(event.message ?? '')) return;
+    game.fail(event.error ?? event.message);
+  });
   window.addEventListener('unhandledrejection', (event) => game.fail(event.reason));
 
   registerServiceWorker();
