@@ -54,7 +54,7 @@ export function explainWeight(body) {
   switch (pullOf(body.gravity)) {
     case 'less': return `${body.name} pulls on you less than Earth does, so you feel lighter. Your body is exactly the same!`;
     case 'more': return `${body.name} pulls on you more than Earth does, so you feel heavier. Your body is exactly the same!`;
-    default: return `${body.name} pulls on you just as hard as Earth does, so you feel the same. Your body is exactly the same!`;
+    default: return 'Here your weight is your normal weight, the one you know from home. Your body is exactly the same everywhere!';
   }
 }
 

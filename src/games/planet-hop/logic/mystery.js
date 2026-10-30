@@ -43,3 +43,13 @@ export function buildMystery({ bodies, kg, count, optionCount, rng }) {
     return { answerId: answer.id, optionIds: shuffle(rng, chosen.map((c) => c.id)), felt: feltWeight(kg, answer.gravity) };
   });
 }
+
+/**
+ * The other places that pull exactly as hard as this one (Mars for Mercury and the other way round), so the answer
+ * screen can say "Mars pulls just the same" and the child knows why it was never offered together with Mercury.
+ * @template {{ id: string, gravity: number }} T
+ * @param {readonly T[]} bodies
+ * @param {T} body
+ * @returns {T[]}
+ */
+export const sameGravity = (bodies, body) => bodies.filter((b) => b.id !== body.id && b.gravity === body.gravity);

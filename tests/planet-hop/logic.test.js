@@ -6,9 +6,10 @@ import { GameError } from '../../src/engine/utils/errors.js';
 import { validatePlanets, byId, weighStops, ordinal } from '../../src/games/planet-hop/logic/planets.js';
 import { parseWeight, feltWeight, pullOf, explainWeight, formatKg, MIN_KG, MAX_KG, WEIGHT_MESSAGE } from '../../src/games/planet-hop/logic/weight.js';
 import { createLineup, isCorrectSlot, place, allPlaced, hintFor, lineupStars, lineupScore } from '../../src/games/planet-hop/logic/lineup.js';
-import { createSizer, MIN_DIAMETER, MAX_DIAMETER } from '../../src/games/planet-hop/logic/scale.js';
-import { buildMystery, distinguishable, MIN_SEPARATION } from '../../src/games/planet-hop/logic/mystery.js';
+import { createSizer, dialMax, needleAngle, MIN_DIAMETER, MAX_DIAMETER } from '../../src/games/planet-hop/logic/scale.js';
+import { buildMystery, distinguishable, sameGravity, MIN_SEPARATION } from '../../src/games/planet-hop/logic/mystery.js';
 import { validateQuiz, buildQuiz } from '../../src/games/planet-hop/logic/quiz.js';
+import { validatePresets } from '../../src/games/planet-hop/logic/presets.js';
 import { rankFor, questionStars, questionScore, RANKS } from '../../src/games/planet-hop/logic/scoring.js';
 import { LEVELS, LEVEL_IDS, MODES, MODE_IDS, levelKey, QUIZ_QUESTIONS, MYSTERY_QUESTIONS } from '../../src/games/planet-hop/logic/levels.js';
 
@@ -124,7 +125,7 @@ test('the explanation says whether the pull is less, more or the same, and that 
   assert.equal(pullOf(earth.gravity), 'same');
   assert.match(explainWeight(venus), /^Venus pulls on you less than Earth does, so you feel lighter\. Your body is exactly the same!$/);
   assert.match(explainWeight(jupiter), /pulls on you more.*heavier.*exactly the same/);
-  assert.match(explainWeight(earth), /just as hard as Earth does.*exactly the same/);
+  assert.match(explainWeight(earth), /normal weight.*exactly the same/);
   assert.equal(formatKg(20), '20.0 kg');
   assert.equal(formatKg(15.2), '15.2 kg');
 });
@@ -203,13 +204,13 @@ test('line-up stars: 0 or 1 wrong drops = 3, 2 or 3 = 2, more = 1', () => {
 
 // ---- sizes -------------------------------------------------------------------------------------
 
-test('compressed sizes keep the order of the planets, with Mercury at 24 px and Jupiter at 88 px', () => {
+test('compressed sizes keep the order of the planets, with Mercury at 24 px and Jupiter at 72 px', () => {
   const size = createSizer(planets);
   assert.equal(size(byId(planets).get('mercury')), MIN_DIAMETER);
   assert.equal(size(byId(planets).get('jupiter')), MAX_DIAMETER);
   const byRadius = [...planets].sort((a, b) => a.radiusKm - b.radiusKm);
   for (let i = 1; i < byRadius.length; i++) assert.ok(size(byRadius[i]) > size(byRadius[i - 1]), byRadius[i].id);
-  for (const p of planets) assert.ok(size(p) >= 24 && size(p) <= 88);
+  for (const p of planets) assert.ok(size(p) >= MIN_DIAMETER && size(p) <= MAX_DIAMETER);
 });
 
 test('real sizes have the true proportions, so Mercury is tiny', () => {
@@ -400,4 +401,53 @@ test('levels: Easy shows names and numbers, Medium only names, Hard only picture
   assert.equal(levelKey('lineup', 'easy'), 'lineup-easy');
   const keys = new Set(MODE_IDS.flatMap((m) => LEVEL_IDS.map((l) => levelKey(m, l))));
   assert.equal(keys.size, 9);
+});
+
+// ---- presets, dial, same gravity ---------------------------------------------------------------
+
+test('the presets file is valid and every preset is a weight the weigh-in accepts', () => {
+  const presets = validatePresets(read('presets.json'));
+  assert.ok(presets.length >= 3);
+  assert.ok(presets.some((p) => p.kg === 20 && /dog/.test(p.label)), 'the spec\'s "a 20 kg dog"');
+  for (const p of presets) assert.doesNotThrow(() => parseWeight(p.kg), p.id);
+});
+
+test('validatePresets names the file and field of a bad preset', () => {
+  const cases = [
+    ['none', (d) => { d.presets = []; }, /presets\.json: presets/],
+    ['too light', (d) => { d.presets[0].kg = 4; }, /presets\[0\]\.kg.*between 10 and 150/],
+    ['too heavy', (d) => { d.presets[0].kg = 500; }, /presets\[0\]\.kg/],
+    ['a repeated id', (d) => { d.presets[1].id = d.presets[0].id; }, /appears twice/],
+    ['no label', (d) => { d.presets[0].label = ''; }, /presets\[0\]\.label/],
+    ['no icon', (d) => { d.presets[0].icon = ''; }, /presets\[0\]\.icon/],
+  ];
+  for (const [what, mutate, expected] of cases) {
+    const raw = clone(read('presets.json'));
+    mutate(raw);
+    assert.throws(() => validatePresets(raw), (e) => e instanceof GameError && e.code === 'INVALID_DATA' && expected.test(e.message), what);
+  }
+});
+
+test('the scale dial tops out at the next 10 above the heaviest weight, and the needle sweeps from far left to far right', () => {
+  assert.deepEqual([0.5, 10, 10.1, 75.9, 380].map(dialMax), [10, 10, 20, 80, 380]);
+  assert.equal(needleAngle(0, 100), -90);
+  assert.equal(needleAngle(50, 100), 0);
+  assert.equal(needleAngle(100, 100), 90);
+  assert.equal(needleAngle(150, 100), 90, 'held at the end');
+  assert.equal(needleAngle(-5, 100), -90);
+});
+
+test('the needle for the heaviest felt weight never leaves the dial', () => {
+  for (let kg = MIN_KG; kg <= MAX_KG; kg += 7) {
+    const felts = bodies.map((b) => feltWeight(kg, b.gravity));
+    const max = dialMax(Math.max(...felts));
+    for (const f of felts) assert.ok(needleAngle(f, max) >= -90 && needleAngle(f, max) <= 90);
+  }
+});
+
+test('sameGravity finds the twin: Mars for Mercury and Mercury for Mars, nobody for Jupiter', () => {
+  const get = (id) => byId(bodies).get(id);
+  assert.deepEqual(sameGravity(bodies, get('mercury')).map((b) => b.id), ['mars']);
+  assert.deepEqual(sameGravity(bodies, get('mars')).map((b) => b.id), ['mercury']);
+  assert.deepEqual(sameGravity(bodies, get('jupiter')), []);
 });
