@@ -1,0 +1,298 @@
+{
+  "version": 1,
+  "worlds": [
+    {
+      "id": 1,
+      "name": "Garden",
+      "blurb": "Plan a route with forward and turn blocks. Left and right are the robot's own left and right.",
+      "size": [5, 5],
+      "allowed": ["forward", "left", "right"]
+    },
+    {
+      "id": 2,
+      "name": "Factory",
+      "blurb": "Repeat blocks do the same thing again and again.",
+      "size": [6, 6],
+      "allowed": ["forward", "left", "right", "repeat"]
+    },
+    {
+      "id": 3,
+      "name": "Space",
+      "blurb": "Collect gems and build your own Function F.",
+      "size": [7, 7],
+      "allowed": ["forward", "left", "right", "repeat", "pick", "callF"]
+    }
+  ],
+  "levels": [
+    {
+      "id": 1,
+      "world": 1,
+      "title": "Straight ahead",
+      "tip": "Tap Forward four times, then press Run.",
+      "map": [".....", ".....", ".....", ".....", ">...G"],
+      "par": 4,
+      "maxBlocks": 7
+    },
+    {
+      "id": 2,
+      "world": 1,
+      "title": "Round the corner",
+      "tip": "Turn Left is the robot's left, not yours. Facing right, its left points up.",
+      "map": [".....", ".....", "...G.", ".....", ">...."],
+      "par": 6,
+      "maxBlocks": 9
+    },
+    {
+      "id": 3,
+      "world": 1,
+      "title": "Turn the other way",
+      "tip": "Turn Right is the robot's right. Facing down, its right points to the left.",
+      "map": ["....v", ".....", ".....", ".G...", "....."],
+      "par": 7,
+      "maxBlocks": 10
+    },
+    {
+      "id": 4,
+      "world": 1,
+      "title": "Around the rock",
+      "tip": "The robot cannot go through rocks. Plan a way around.",
+      "map": [".....", ".....", ">.#G.", ".....", "....."],
+      "par": 8,
+      "maxBlocks": 11
+    },
+    {
+      "id": 5,
+      "world": 1,
+      "title": "Garden zigzag",
+      "tip": "Use Step to follow the robot one block at a time.",
+      "map": [".....", ".#.v.", ".#.#.", "###..", "#..G#"],
+      "par": 9,
+      "maxBlocks": 12
+    },
+    {
+      "id": 6,
+      "world": 1,
+      "title": "Turn around",
+      "tip": "Two turns in a row turn the robot right around.",
+      "map": ["..^..", "...##", ".....", "##.#.", "...#G"],
+      "par": 10,
+      "maxBlocks": 13
+    },
+    {
+      "id": 7,
+      "world": 1,
+      "title": "Mind the rocks",
+      "tip": "Look at which way the robot faces before you turn.",
+      "map": ["..#..", "..#G.", ".....", "..##.", "..v#."],
+      "par": 10,
+      "maxBlocks": 13
+    },
+    {
+      "id": 8,
+      "world": 1,
+      "title": "Flower steps",
+      "tip": "Zigzag steps: forward, turn, forward, turn.",
+      "map": [".#..G", "#..#.", "^.#.#", "#.#.#", "....."],
+      "par": 11,
+      "maxBlocks": 14
+    },
+    {
+      "id": 9,
+      "world": 1,
+      "title": "Find the gap",
+      "tip": "Look for the gap in the rocks.",
+      "map": ["...##", "G#...", "#...#", "..#>.", ".##.."],
+      "par": 12,
+      "maxBlocks": 15
+    },
+    {
+      "id": 10,
+      "world": 1,
+      "title": "Garden maze",
+      "tip": "Take your time. Try a few blocks, then Run and watch.",
+      "map": ["..#.G", "....#", "...#.", ".#...", ".#..^"],
+      "par": 13,
+      "maxBlocks": 16
+    },
+    {
+      "id": 11,
+      "world": 2,
+      "title": "Long road",
+      "tip": "Repeat does the same blocks again and again. Put Forward inside Repeat.",
+      "map": ["......", "....#.", ".#....", ">....G", "..##..", "......"],
+      "par": 2,
+      "maxBlocks": 4
+    },
+    {
+      "id": 12,
+      "world": 2,
+      "title": "Two long roads",
+      "tip": "You can use more than one Repeat block.",
+      "map": ["......", "#...G.", "..#...", ".#.#..", "......", ">....."],
+      "par": 5,
+      "maxBlocks": 7
+    },
+    {
+      "id": 13,
+      "world": 2,
+      "title": "Staircase",
+      "tip": "A staircase is the same four blocks again and again: forward, left, forward, right.",
+      "map": ["......", "....G.", "#.....", "#.....", ".....#", ">....#"],
+      "par": 5,
+      "maxBlocks": 7
+    },
+    {
+      "id": 14,
+      "world": 2,
+      "title": "Big staircase",
+      "tip": "Rocks line the stairs. One Repeat is all you need.",
+      "map": ["....#G", "...#..", "..#..#", ".#..#.", "#..#..", ">.#..."],
+      "par": 5,
+      "maxBlocks": 6
+    },
+    {
+      "id": 15,
+      "world": 2,
+      "title": "Square dance",
+      "tip": "A Repeat can go inside another Repeat.",
+      "map": ["......", "#...#.", ".G....", ".##...", ".>....", ".....#"],
+      "par": 4,
+      "maxBlocks": 6
+    },
+    {
+      "id": 16,
+      "world": 2,
+      "title": "Zigzag road",
+      "tip": "Find the pattern that repeats, then put it inside Repeat.",
+      "map": ["......", "....G.", ".#.#.#", "......", ".#.#..", ">..#.."],
+      "par": 7,
+      "maxBlocks": 9
+    },
+    {
+      "id": 17,
+      "world": 2,
+      "title": "Warm up first",
+      "tip": "Some blocks come before the Repeat.",
+      "map": ["......", "......", ".....G", "#..#..", ".##...", ">...#."],
+      "par": 7,
+      "maxBlocks": 9
+    },
+    {
+      "id": 18,
+      "world": 2,
+      "title": "Down the steps",
+      "tip": "Count how many times the pattern happens.",
+      "map": ["v....#", ".#....", "......", "##.##.", "....G.", "......"],
+      "par": 7,
+      "maxBlocks": 9
+    },
+    {
+      "id": 19,
+      "world": 2,
+      "title": "Factory finale",
+      "tip": "Mix plain blocks and Repeat blocks.",
+      "map": ["......", "......", ".#..#.", ".##G#.", ".#....", "^#...."],
+      "par": 8,
+      "maxBlocks": 10
+    },
+    {
+      "id": 20,
+      "world": 2,
+      "title": "Double staircase",
+      "tip": "Two staircases need two Repeat blocks. Turn between them.",
+      "map": ["......", ".G.#..", ".#....", "..#...", ".#....", "#>.#.."],
+      "par": 11,
+      "maxBlocks": 13
+    },
+    {
+      "id": 21,
+      "world": 3,
+      "title": "First gem",
+      "tip": "Stand on the gem and use Pick gem, then carry on to the battery.",
+      "map": [".......", ".......", ".......", ".......", "..#.#..", ".#...#.", ">..*..G"],
+      "par": 5,
+      "maxBlocks": 7
+    },
+    {
+      "id": 22,
+      "world": 3,
+      "title": "Gem trail",
+      "tip": "Repeat can pick up a whole trail of gems.",
+      "map": [".......", "...#...", ".#...#.", ">***G..", "..#....", ".....#.", "......."],
+      "par": 4,
+      "maxBlocks": 6
+    },
+    {
+      "id": 23,
+      "world": 3,
+      "title": "Meet Function F",
+      "tip": "Build the function F once, then call it whenever you need it.",
+      "map": [".......", ".......", ".#.....", "##.*G..", "..*.#..", ">*...#.", "......."],
+      "par": 8,
+      "maxBlocks": 10
+    },
+    {
+      "id": 24,
+      "world": 3,
+      "title": "Function with a loop",
+      "tip": "A function can have a Repeat inside it.",
+      "map": [".......", ".......", ".......", ".......", ".#*.*G#", ".#.#.#.", ">.*...."],
+      "par": 9,
+      "maxBlocks": 11
+    },
+    {
+      "id": 25,
+      "world": 3,
+      "title": "Spiral gems",
+      "tip": "You can call F from inside a Repeat.",
+      "map": [".......", ".......", "#...#..", ".*.*...", ".G#....", ".>.*.#.", "......."],
+      "par": 7,
+      "maxBlocks": 9
+    },
+    {
+      "id": 26,
+      "world": 3,
+      "title": "Gem staircase",
+      "tip": "Put one step in F, then call it three times.",
+      "map": [".......", ".......", ".......", "...*G#.", "..**#..", "#**#...", ">*#...."],
+      "par": 9,
+      "maxBlocks": 11
+    },
+    {
+      "id": 27,
+      "world": 3,
+      "title": "Mow the lawn",
+      "tip": "Use F for each row, and turn between the rows.",
+      "map": [">..*...", "*...#..", "G.#....", "#....#.", ".......", "......#", "......."],
+      "par": 11,
+      "maxBlocks": 12
+    },
+    {
+      "id": 28,
+      "world": 3,
+      "title": "Gem ladder",
+      "tip": "Combine Repeat, F and Pick gem.",
+      "map": [".......", ".......", ".......", ".#...#G", "...#..*", ".#..*..", ">.*#.#."],
+      "par": 8,
+      "maxBlocks": 10
+    },
+    {
+      "id": 29,
+      "world": 3,
+      "title": "Around the crystal",
+      "tip": "Four calls of F make a loop around the crystal.",
+      "map": [".......", ".#...#.", ".......", "......#", "...*.*.", "..#G#..", "...^.*."],
+      "par": 7,
+      "maxBlocks": 9
+    },
+    {
+      "id": 30,
+      "world": 3,
+      "title": "Space station",
+      "tip": "Plan first: which part repeats? Put that in F.",
+      "map": [".......", "...#..#", "....*G.", ".#.#*..", "#.***#.", "..*....", ">**...."],
+      "par": 10,
+      "maxBlocks": 13
+    }
+  ]
+}
