@@ -1,0 +1,28 @@
+{
+  "plants": [
+    {
+      "id": "sunflower", "name": "Sunflower", "icon": "🌻", "unlock": "easy",
+      "ideal": { "water": [5, 7], "sun": [7, 10], "food": [4, 6] },
+      "stages": ["Seed", "Sprout", "Seedling", "Young plant", "Tall plant", "Bud", "Flower", "Flower and seeds"],
+      "fact": "Young sunflowers turn their faces to follow the sun across the sky."
+    },
+    {
+      "id": "tomato", "name": "Tomato", "icon": "🍅", "unlock": "medium",
+      "ideal": { "water": [5, 7], "sun": [6, 9], "food": [6, 8] },
+      "stages": ["Seed", "Sprout", "Seedling", "Young plant", "Leafy plant", "Flowers", "Green tomatoes", "Ripe tomatoes"],
+      "fact": "A tomato is really a fruit, and a tomato plant needs lots of food to make it."
+    },
+    {
+      "id": "cactus", "name": "Cactus", "icon": "🌵", "unlock": "medium",
+      "ideal": { "water": [1, 2], "sun": [7, 10], "food": [1, 3] },
+      "stages": ["Seed", "Sprout", "Tiny cactus", "Small cactus", "Cactus with an arm", "Cactus with two arms", "Flower", "Flower and fruit"],
+      "fact": "A cactus stores water in its thick stem, and its spines are really tiny leaves."
+    },
+    {
+      "id": "rice", "name": "Rice", "icon": "🌾", "unlock": "hard",
+      "ideal": { "water": [8, 10], "sun": [5, 8], "food": [4, 6] },
+      "stages": ["Seed", "Sprout", "Seedling", "More stalks", "Tall plant", "Flowering", "Grains forming", "Golden grains"],
+      "fact": "Rice grows in flooded fields called paddies, and more than half of all people eat it."
+    }
+  ]
+}
