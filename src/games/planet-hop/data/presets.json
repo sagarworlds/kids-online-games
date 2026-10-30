@@ -1,0 +1,8 @@
+{
+  "presets": [
+    { "id": "dog", "label": "a 20 kg dog", "icon": "🐕", "kg": 20 },
+    { "id": "bike", "label": "a 15 kg bike", "icon": "🚲", "kg": 15 },
+    { "id": "child", "label": "a 30 kg child", "icon": "🧒", "kg": 30 },
+    { "id": "grown-up", "label": "a 70 kg grown-up", "icon": "🧑", "kg": 70 }
+  ]
+}

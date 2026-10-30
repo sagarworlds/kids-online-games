@@ -1,0 +1,493 @@
+{
+  "questions": [
+    {
+      "id": "closest",
+      "level": "easy",
+      "kind": "planet",
+      "q": "Which planet is closest to the Sun?",
+      "answerId": "mercury",
+      "optionIds": [
+        "mercury",
+        "venus",
+        "earth",
+        "mars"
+      ],
+      "explain": "Mercury is the first planet from the Sun.",
+      "basedOn": {
+        "field": "distanceAU",
+        "extreme": "min"
+      }
+    },
+    {
+      "id": "biggest",
+      "level": "easy",
+      "kind": "planet",
+      "q": "Which planet is the biggest?",
+      "answerId": "jupiter",
+      "optionIds": [
+        "jupiter",
+        "saturn",
+        "earth",
+        "mars"
+      ],
+      "explain": "Jupiter is so big that all the other planets would fit inside it.",
+      "basedOn": {
+        "field": "radiusKm",
+        "extreme": "max"
+      }
+    },
+    {
+      "id": "smallest",
+      "level": "easy",
+      "kind": "planet",
+      "q": "Which planet is the smallest?",
+      "answerId": "mercury",
+      "optionIds": [
+        "mercury",
+        "mars",
+        "venus",
+        "earth"
+      ],
+      "explain": "Mercury is only a bit bigger than our Moon.",
+      "basedOn": {
+        "field": "radiusKm",
+        "extreme": "min"
+      }
+    },
+    {
+      "id": "farthest",
+      "level": "easy",
+      "kind": "planet",
+      "q": "Which planet is farthest from the Sun?",
+      "answerId": "neptune",
+      "optionIds": [
+        "neptune",
+        "uranus",
+        "saturn",
+        "jupiter"
+      ],
+      "explain": "Neptune is about 30 times farther from the Sun than Earth.",
+      "basedOn": {
+        "field": "distanceAU",
+        "extreme": "max"
+      }
+    },
+    {
+      "id": "home",
+      "level": "easy",
+      "kind": "planet",
+      "q": "Which planet do we live on?",
+      "answerId": "earth",
+      "optionIds": [
+        "earth",
+        "mars",
+        "venus",
+        "jupiter"
+      ],
+      "explain": "Earth is our home, the third planet from the Sun.",
+      "basedOn": {
+        "field": "order",
+        "equals": 3
+      }
+    },
+    {
+      "id": "red",
+      "level": "easy",
+      "kind": "planet",
+      "q": "Which planet is called the red planet?",
+      "answerId": "mars",
+      "optionIds": [
+        "mars",
+        "venus",
+        "saturn",
+        "mercury"
+      ],
+      "explain": "Mars looks red because its dust and rocks contain rust."
+    },
+    {
+      "id": "rings",
+      "level": "easy",
+      "kind": "planet",
+      "q": "Which planet has the biggest, brightest rings?",
+      "answerId": "saturn",
+      "optionIds": [
+        "saturn",
+        "jupiter",
+        "mars",
+        "earth"
+      ],
+      "explain": "Saturn's rings are made of billions of pieces of ice and rock."
+    },
+    {
+      "id": "hottest",
+      "level": "easy",
+      "kind": "planet",
+      "q": "Which planet is the hottest?",
+      "answerId": "venus",
+      "optionIds": [
+        "venus",
+        "mercury",
+        "mars",
+        "earth"
+      ],
+      "explain": "Venus is wrapped in thick clouds that trap heat, so it is hotter than Mercury."
+    },
+    {
+      "id": "second",
+      "level": "easy",
+      "kind": "planet",
+      "q": "Which planet is the second from the Sun?",
+      "answerId": "venus",
+      "optionIds": [
+        "venus",
+        "mercury",
+        "earth",
+        "mars"
+      ],
+      "explain": "Venus comes after Mercury.",
+      "basedOn": {
+        "field": "order",
+        "equals": 2
+      }
+    },
+    {
+      "id": "fourth",
+      "level": "easy",
+      "kind": "planet",
+      "q": "Which planet is the fourth from the Sun?",
+      "answerId": "mars",
+      "optionIds": [
+        "mars",
+        "earth",
+        "jupiter",
+        "venus"
+      ],
+      "explain": "Mars comes right after Earth.",
+      "basedOn": {
+        "field": "order",
+        "equals": 4
+      }
+    },
+    {
+      "id": "stripes",
+      "level": "easy",
+      "kind": "planet",
+      "q": "Which planet is a giant covered in stripes?",
+      "answerId": "jupiter",
+      "optionIds": [
+        "jupiter",
+        "mars",
+        "earth",
+        "mercury"
+      ],
+      "explain": "Jupiter's stripes are clouds of gas pulled into bands by its fast spin."
+    },
+    {
+      "id": "redspot",
+      "level": "medium",
+      "kind": "planet",
+      "q": "Which planet has a giant storm called the Great Red Spot?",
+      "answerId": "jupiter",
+      "optionIds": [
+        "jupiter",
+        "saturn",
+        "neptune",
+        "mars"
+      ],
+      "explain": "The Great Red Spot has been swirling for hundreds of years."
+    },
+    {
+      "id": "wind",
+      "level": "medium",
+      "kind": "planet",
+      "q": "Which planet is deep blue and has the fastest winds?",
+      "answerId": "neptune",
+      "optionIds": [
+        "neptune",
+        "uranus",
+        "earth",
+        "saturn"
+      ],
+      "explain": "Neptune's winds are faster than a jet plane."
+    },
+    {
+      "id": "volcano",
+      "level": "medium",
+      "kind": "planet",
+      "q": "Which planet has the tallest volcano, Olympus Mons?",
+      "answerId": "mars",
+      "optionIds": [
+        "mars",
+        "venus",
+        "earth",
+        "mercury"
+      ],
+      "explain": "Olympus Mons is about two and a half times as tall as Mount Everest."
+    },
+    {
+      "id": "between",
+      "level": "medium",
+      "kind": "planet",
+      "q": "Which planet is between Mars and Saturn?",
+      "answerId": "jupiter",
+      "optionIds": [
+        "jupiter",
+        "earth",
+        "uranus",
+        "venus"
+      ],
+      "explain": "The order goes Mars, Jupiter, Saturn.",
+      "basedOn": {
+        "field": "order",
+        "equals": 5
+      }
+    },
+    {
+      "id": "heaviest",
+      "level": "medium",
+      "kind": "planet",
+      "q": "On which planet would you feel the heaviest?",
+      "answerId": "jupiter",
+      "optionIds": [
+        "jupiter",
+        "saturn",
+        "neptune",
+        "earth"
+      ],
+      "explain": "Jupiter pulls hardest on you: about 2.5 times as much as Earth.",
+      "basedOn": {
+        "field": "gravity",
+        "extreme": "max"
+      }
+    },
+    {
+      "id": "side",
+      "level": "medium",
+      "kind": "planet",
+      "q": "Which planet spins on its side, like a rolling ball?",
+      "answerId": "uranus",
+      "optionIds": [
+        "uranus",
+        "neptune",
+        "saturn",
+        "jupiter"
+      ],
+      "explain": "Something big may have knocked Uranus over long ago."
+    },
+    {
+      "id": "float",
+      "level": "medium",
+      "kind": "planet",
+      "q": "Which planet is so light for its size that it would float in a giant bathtub?",
+      "answerId": "saturn",
+      "optionIds": [
+        "saturn",
+        "jupiter",
+        "earth",
+        "neptune"
+      ],
+      "explain": "Saturn is mostly gas, so it is lighter than water for its size."
+    },
+    {
+      "id": "twin",
+      "level": "medium",
+      "kind": "planet",
+      "q": "Which planet is nearly the same size as Earth and is called Earth's twin?",
+      "answerId": "venus",
+      "optionIds": [
+        "venus",
+        "mars",
+        "mercury",
+        "neptune"
+      ],
+      "explain": "Venus is almost as wide as Earth, but it is a very hot place."
+    },
+    {
+      "id": "seventh",
+      "level": "medium",
+      "kind": "planet",
+      "q": "Which planet is the seventh from the Sun?",
+      "answerId": "uranus",
+      "optionIds": [
+        "uranus",
+        "saturn",
+        "neptune",
+        "jupiter"
+      ],
+      "explain": "Uranus comes after Saturn and before Neptune.",
+      "basedOn": {
+        "field": "order",
+        "equals": 7
+      }
+    },
+    {
+      "id": "sixth",
+      "level": "medium",
+      "kind": "planet",
+      "q": "Which planet is the sixth from the Sun?",
+      "answerId": "saturn",
+      "optionIds": [
+        "saturn",
+        "jupiter",
+        "uranus",
+        "mars"
+      ],
+      "explain": "Saturn comes after Jupiter.",
+      "basedOn": {
+        "field": "order",
+        "equals": 6
+      }
+    },
+    {
+      "id": "pluto",
+      "level": "hard",
+      "kind": "text",
+      "q": "Pluto is no longer called a planet. What is it called now?",
+      "answerId": "A dwarf planet",
+      "optionIds": [
+        "A dwarf planet",
+        "A moon",
+        "A comet",
+        "A star"
+      ],
+      "explain": "Pluto is round like a planet but smaller than our Moon, so in 2006 scientists called it a dwarf planet."
+    },
+    {
+      "id": "count",
+      "level": "hard",
+      "kind": "text",
+      "q": "How many planets are there in our solar system?",
+      "answerId": "8",
+      "optionIds": [
+        "7",
+        "8",
+        "9",
+        "10"
+      ],
+      "explain": "There are eight planets, from Mercury to Neptune.",
+      "basedOn": {
+        "planetCount": true
+      }
+    },
+    {
+      "id": "year",
+      "level": "hard",
+      "kind": "planet",
+      "q": "Which planet takes the longest to go once around the Sun?",
+      "answerId": "neptune",
+      "optionIds": [
+        "neptune",
+        "uranus",
+        "saturn",
+        "jupiter"
+      ],
+      "explain": "Neptune takes about 165 Earth years for one trip.",
+      "basedOn": {
+        "field": "distanceAU",
+        "extreme": "max"
+      }
+    },
+    {
+      "id": "spin",
+      "level": "hard",
+      "kind": "planet",
+      "q": "Which planet spins so fast that its day is shorter than 10 hours?",
+      "answerId": "jupiter",
+      "optionIds": [
+        "jupiter",
+        "earth",
+        "mars",
+        "mercury"
+      ],
+      "explain": "A day on Jupiter lasts only about 10 hours, even though it is huge."
+    },
+    {
+      "id": "god",
+      "level": "hard",
+      "kind": "planet",
+      "q": "Which planet is the only one not named after a god?",
+      "answerId": "earth",
+      "optionIds": [
+        "earth",
+        "mars",
+        "venus",
+        "jupiter"
+      ],
+      "explain": "The other seven planets are named after Roman or Greek gods."
+    },
+    {
+      "id": "bright",
+      "level": "hard",
+      "kind": "planet",
+      "q": "Which planet looks the brightest in our night sky?",
+      "answerId": "venus",
+      "optionIds": [
+        "venus",
+        "mars",
+        "jupiter",
+        "saturn"
+      ],
+      "explain": "Venus reflects lots of sunlight from its clouds and comes close to Earth."
+    },
+    {
+      "id": "rocky",
+      "level": "hard",
+      "kind": "planet",
+      "q": "Which is the biggest of the four rocky planets (Mercury, Venus, Earth, Mars)?",
+      "answerId": "earth",
+      "optionIds": [
+        "earth",
+        "venus",
+        "mars",
+        "mercury"
+      ],
+      "explain": "Earth is a little bigger than Venus."
+    },
+    {
+      "id": "gravity25",
+      "level": "hard",
+      "kind": "planet",
+      "q": "On which planet would you feel about 2.5 times heavier than on Earth?",
+      "answerId": "jupiter",
+      "optionIds": [
+        "jupiter",
+        "saturn",
+        "neptune",
+        "mars"
+      ],
+      "explain": "Jupiter's gravity is 2.53 times Earth's.",
+      "basedOn": {
+        "field": "gravity",
+        "equals": 2.53
+      }
+    },
+    {
+      "id": "lighter",
+      "level": "hard",
+      "kind": "text",
+      "q": "Mars pulls you with 0.38 times Earth's gravity. How heavy would you feel on Mars?",
+      "answerId": "A bit more than one-third",
+      "optionIds": [
+        "A bit more than one-third",
+        "The same as on Earth",
+        "Twice as heavy",
+        "A bit less than one-tenth"
+      ],
+      "explain": "0.38 is a bit more than one-third, so you would feel much lighter. Mercury pulls just the same!"
+    },
+    {
+      "id": "notgiant",
+      "level": "hard",
+      "kind": "planet",
+      "q": "Which of these planets is NOT a giant made of gas or ice?",
+      "answerId": "mars",
+      "optionIds": [
+        "mars",
+        "jupiter",
+        "saturn",
+        "neptune"
+      ],
+      "explain": "Mars is a small rocky planet; Jupiter and Saturn are gas giants, Neptune an ice giant."
+    }
+  ]
+}

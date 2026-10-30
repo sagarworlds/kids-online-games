@@ -1,0 +1,24 @@
+{
+  "planets": [
+    { "id": "mercury", "name": "Mercury", "order": 1, "gravity": 0.38, "color": "#a8a39b", "radiusKm": 2440, "distanceAU": 0.39,
+      "look": "the small grey one", "fact": "Mercury is the smallest planet and the closest to the Sun. It races around the Sun in just 88 Earth days." },
+    { "id": "venus", "name": "Venus", "order": 2, "gravity": 0.91, "color": "#e8b568", "radiusKm": 6052, "distanceAU": 0.72,
+      "look": "the cloudy yellow one", "fact": "Venus is the hottest planet, even hotter than Mercury, and it spins backwards compared with most planets." },
+    { "id": "earth", "name": "Earth", "order": 3, "gravity": 1.0, "color": "#3f8ed8", "radiusKm": 6371, "distanceAU": 1.0,
+      "look": "our blue home", "fact": "Earth is the only planet we know that has life. Most of its surface is covered by water." },
+    { "id": "mars", "name": "Mars", "order": 4, "gravity": 0.38, "color": "#d1522f", "radiusKm": 3390, "distanceAU": 1.52,
+      "look": "the red one", "fact": "Mars is the red planet. It has Olympus Mons, the tallest volcano in the solar system." },
+    { "id": "jupiter", "name": "Jupiter", "order": 5, "gravity": 2.53, "color": "#d9a066", "radiusKm": 69911, "distanceAU": 5.2,
+      "look": "the giant with stripes", "fact": "Jupiter is the biggest planet. Its Great Red Spot is a storm that is bigger than Earth." },
+    { "id": "saturn", "name": "Saturn", "order": 6, "gravity": 1.07, "color": "#e6cf8b", "radiusKm": 58232, "distanceAU": 9.58,
+      "look": "the one with the big rings", "fact": "Saturn has the biggest, brightest rings, made of ice and rock. It is so light for its size that it would float in a giant bathtub." },
+    { "id": "uranus", "name": "Uranus", "order": 7, "gravity": 0.9, "color": "#8fd8dd", "radiusKm": 25362, "distanceAU": 19.2,
+      "look": "the pale blue-green one", "fact": "Uranus spins on its side, like a ball rolling around the Sun. It is a very cold, icy planet." },
+    { "id": "neptune", "name": "Neptune", "order": 8, "gravity": 1.14, "color": "#3f5fd1", "radiusKm": 24622, "distanceAU": 30.05,
+      "look": "the deep blue one", "fact": "Neptune is the farthest planet from the Sun and has the fastest winds, much faster than a jet plane." }
+  ],
+  "bonus": [
+    { "id": "moon", "name": "Moon", "orbits": "earth", "gravity": 0.17, "color": "#c9c9c9", "radiusKm": 1737,
+      "look": "our grey neighbour", "fact": "The Moon travels around Earth. Astronauts bounce high on it because its gravity is so weak." }
+  ]
+}
