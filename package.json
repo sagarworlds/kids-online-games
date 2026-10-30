@@ -1,0 +1,16 @@
+{
+  "name": "kids-online-games",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Sixteen browser learning games for children aged 8-10. Plain HTML, CSS and JavaScript; deployed as a static site.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node scripts/serve.mjs",
+    "start:dist": "node scripts/serve.mjs dist",
+    "build": "node scripts/build.mjs",
+    "test": "node --test"
+  }
+}
