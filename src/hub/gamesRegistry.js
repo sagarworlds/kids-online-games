@@ -40,7 +40,7 @@ export const GAMES = Object.freeze([
 
   game('hindi-english-match', 'Hindi–English Match', 'language', '🃏', 'Vocabulary', true),
 
-  game('sentence-train', 'Sentence Train', 'language', '🚂', 'Sentences'),
+  game('sentence-train', 'Sentence Train', 'language', '🚂', 'Sentences', true),
 
   game('robot-path', 'Robot Path', 'logic', '🤖', 'Coding', true),
 
