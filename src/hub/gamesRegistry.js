@@ -52,7 +52,7 @@ export const GAMES = Object.freeze([
 
   game('planet-hop', 'Planet Hop', 'science', '🚀', 'Space', true),
 
-  game('food-chain-builder', 'Food Chain Builder', 'science', '🐟', 'Food chains'),
+  game('food-chain-builder', 'Food Chain Builder', 'science', '🐟', 'Food chains', true),
 
   game('plant-grower', 'Plant Grower', 'science', '🌱', 'Plants'),
 
