@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 
 import { GameError } from '../../src/engine/utils/errors.js';
 import { createRng } from '../../src/engine/utils/random.js';
-import { LEVELS, LEVEL_IDS, SCENES_PER_ROUND, HINTS_PER_ROUND, COOLDOWN_MS, SCENE_WIDTH, SCENE_HEIGHT } from '../../src/games/spot-the-difference/logic/levels.js';
+import { LEVELS, LEVEL_IDS, SCENES_PER_ROUND, HINTS_PER_ROUND, COOLDOWN_MS, SCENE_WIDTH, SCENE_HEIGHT, roundKey } from '../../src/games/spot-the-difference/logic/levels.js';
 import { hexToRgb, rgbToHex, hexToHsl, hslToHex, hueDistance, rgbDistance, shade, randomColor, differentColor } from '../../src/games/spot-the-difference/logic/color.js';
 import { objectBox, boxesOverlap, unionBox, inflateBox, boxInBounds, boxContains, boxCentre } from '../../src/games/spot-the-difference/logic/geometry.js';
 import { validateTemplates, validateTheme, shapeExtents, MIN_THEME_OBJECTS, MAX_THEME_OBJECTS } from '../../src/games/spot-the-difference/logic/templates.js';
@@ -20,7 +20,7 @@ import { hitArea, findDifferenceAt, MIN_TAP_PX, HIT_PAD } from '../../src/games/
 import {
   createPlay, createRound, puzzleSeed, tap, foundCount, isComplete, useHint, sceneStars, timeBonus, sceneScore, roundStars, isRoundOver,
 } from '../../src/games/spot-the-difference/logic/round.js';
-import { article, withArticle } from '../../src/games/spot-the-difference/logic/labels.js';
+import { article, withArticle, countTypes, formatClock, DIFFERENCE_TYPES } from '../../src/games/spot-the-difference/logic/labels.js';
 
 // ---- the real data ----------------------------------------------------------------------------
 
@@ -678,4 +678,30 @@ test('a round is five pictures with their own seeds', () => {
   assert.deepEqual(seeds, Array.from({ length: SCENES_PER_ROUND }, (_, i) => puzzleSeed(123, i)), 'repeatable');
   assert.notDeepEqual(seeds, Array.from({ length: SCENES_PER_ROUND }, (_, i) => puzzleSeed(124, i)));
   seeds.forEach((s) => assert.ok(Number.isInteger(s) && s >= 0 && s < 2 ** 32));
+});
+
+// ---- the results screen -----------------------------------------------------------------------
+
+test('countTypes: only the kinds that were found, with their counts, in a fixed order', () => {
+  const rows = countTypes(['add', 'recolor', 'recolor', 'remove', 'recolor']);
+  assert.deepEqual(rows.map((r) => [r.type, r.count]), [['recolor', 3], ['remove', 1], ['add', 1]]);
+  assert.ok(rows.every((r) => r.icon && r.name));
+  assert.deepEqual(countTypes([]), []);
+});
+
+test('every kind of difference the game can make has a name and a picture for the results screen', () => {
+  for (const mutation of Object.values(MUTATIONS)) assert.ok(DIFFERENCE_TYPES[mutation.type], mutation.type);
+});
+
+test('formatClock: minutes and seconds', () => {
+  assert.equal(formatClock(0), '0:00');
+  assert.equal(formatClock(59.9), '0:59');
+  assert.equal(formatClock(65), '1:05');
+  assert.equal(formatClock(120), '2:00');
+  assert.equal(formatClock(-3), '0:00');
+});
+
+test('roundKey: a theme and a level make one save slot, and a mix has its own', () => {
+  assert.equal(roundKey('park', 'easy'), 'park-easy');
+  assert.notEqual(roundKey('mix', 'hard'), roundKey('park', 'hard'));
 });

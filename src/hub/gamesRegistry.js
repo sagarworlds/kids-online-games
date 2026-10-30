@@ -58,5 +58,5 @@ export const GAMES = Object.freeze([
 
   game('simon-says', 'Simon Says', 'memory', '🎵', 'Memory', true),
 
-  game('spot-the-difference', 'Spot the Difference', 'memory', '🔍', 'Observation'),
+  game('spot-the-difference', 'Spot the Difference', 'memory', '🔍', 'Observation', true),
 ]);

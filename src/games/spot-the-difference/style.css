@@ -1,0 +1,121 @@
+/* Spot the Difference. Builds on src/engine/ui/ui.css. */
+
+.scene { background: var(--bg); }
+
+.menu, .result, .spot__main { width: min(100%, 1180px); margin: 0 auto; padding: 8px 16px 32px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+.menu__title, .result h1 { margin: 4px 0 0; font-size: 2.2rem; }
+.menu__intro { max-width: 36rem; margin: 0; font-size: 1.1rem; }
+.menu__heading { margin: 4px 0 0; font-size: 1.2rem; color: var(--ink-soft); }
+.menu__stars { display: inline-flex; font-size: 1.5rem; }
+
+/* ---------- Theme cards ---------- */
+
+.themes { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; width: 100%; }
+.theme {
+  display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 14px 12px; font: inherit; color: var(--ink); background: #fff;
+  border: 4px solid var(--ink); border-radius: 20px; box-shadow: var(--shadow); cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+}
+.theme:active { transform: translateY(2px); box-shadow: none; }
+.theme:focus-visible { outline: 4px solid var(--primary); outline-offset: 3px; }
+.theme__icon { font-size: 2.8rem; line-height: 1.1; }
+.theme__name { font-size: 1.2rem; font-weight: 800; }
+
+/* ---------- Playing ---------- */
+
+.spot__main { padding-top: 6px; padding-bottom: 20px; gap: 8px; }
+.spot__bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 16px; width: 100%; font-weight: 800; }
+.spot__place { font-size: 1.1rem; }
+.spot__found { font-size: 1.1rem; }
+.spot__misses { color: var(--ink-soft); }
+.spot__progress { width: min(100%, 420px); }
+
+/* Two pictures side by side when there is room, one above the other when there is not. Each is 8 : 5, and in the stacked
+   layout it is no taller than half of what is left of the screen, so both are always in view without scrolling. */
+.spot__pictures { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; width: 100%; transition: filter 0.1s ease; }
+@media (max-width: 719px), (orientation: portrait) {
+  .spot__pictures { grid-template-columns: 1fr; justify-items: center; gap: 8px; }
+  .picture { width: min(100%, calc((100dvh - 300px) / 2 * 1.6)); }
+}
+.picture {
+  position: relative; display: block; overflow: hidden; background: #fff; cursor: crosshair;
+  border: 4px solid var(--ink); border-radius: 16px; box-shadow: var(--shadow);
+  touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+}
+.picture:focus-visible { outline: 4px solid var(--primary); outline-offset: 3px; }
+.picture__svg { display: block; width: 100%; height: auto; aspect-ratio: 8 / 5; }
+.picture.is-done { animation: bounce 0.6s ease; }
+@keyframes bounce { 30% { transform: translateY(-8px) scale(1.01); } 60% { transform: translateY(2px); } }
+
+/* After a miss both pictures dim for a moment, so it is clear that tapping is paused. */
+.spot__pictures.is-cooling { filter: grayscale(0.6) brightness(0.92); }
+
+/* ---------- Marks on the pictures ---------- */
+
+.mark__halo { fill: none; stroke: #fff; stroke-width: 14; }
+.mark__ring { fill: none; stroke: var(--good); stroke-width: 8; }
+.mark--found .mark__halo, .mark--found .mark__ring { stroke-dasharray: 1; animation: draw 0.45s ease-out; }
+@keyframes draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+.mark--miss { animation: fade 0.7s ease-in forwards; }
+.mark--miss .mark__halo { stroke-width: 12; }
+.mark--miss .mark__cross { fill: none; stroke: var(--bad); stroke-width: 7; stroke-linecap: round; }
+@keyframes fade { 0% { opacity: 1; } 60% { opacity: 1; } 100% { opacity: 0; } }
+.mark--hint { fill: rgba(255, 214, 0, 0.3); stroke: #8a4b00; stroke-width: 5; stroke-dasharray: 12 9; transform-box: fill-box; transform-origin: center; animation: pulse 1s ease-in-out infinite; }
+@keyframes pulse { 50% { transform: scale(1.1); fill: rgba(255, 214, 0, 0.5); } }
+
+.pointer { filter: drop-shadow(0 0 2px #fff); pointer-events: none; }
+.pointer__halo { fill: none; stroke: #fff; stroke-width: 8; }
+.pointer__ring { fill: rgba(255, 255, 255, 0.15); stroke: var(--ink); stroke-width: 4; }
+.pointer__cross { fill: none; stroke: var(--ink); stroke-width: 4; stroke-linecap: round; }
+
+/* ---------- The message under the pictures ---------- */
+
+.spot__note { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 2.6em; margin: 0; font-size: 1.1rem; font-weight: 800; }
+.spot__note--good { color: var(--good); }
+.spot__note--bad { color: var(--bad); }
+.spot__note-icon { font-size: 1.2em; }
+.spot__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.spot__actions .btn[hidden] { display: none; }
+
+/* ---------- Results ---------- */
+
+.result__mode { margin: 0; font-weight: 700; color: var(--ink-soft); }
+.result__stars { display: flex; gap: 8px; font-size: 4rem; line-height: 1; }
+.result__praise { margin: 0; font-size: 1.3rem; font-weight: 700; }
+.result__summary { margin: 0; font-weight: 700; }
+.result__tip { max-width: 34rem; margin: 0; color: var(--ink-soft); font-weight: 700; }
+.result__actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+.found, .pics { width: min(100%, 560px); padding: 10px 14px; text-align: left; background: #fff; border: 4px solid var(--ink); border-radius: 20px; }
+.found h2, .pics h2 { margin: 0 0 6px; font-size: 1.15rem; }
+.found__list, .pics__list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; }
+.kind { display: flex; align-items: center; gap: 10px; font-weight: 700; }
+.kind__icon { font-size: 1.4rem; }
+.kind__name { flex: 1; }
+.kind__count { font-variant-numeric: tabular-nums; }
+.pic { display: grid; grid-template-columns: 1fr auto auto auto; align-items: center; gap: 4px 12px; font-weight: 700; }
+.pic__name { min-width: 0; }
+.pic__time { font-variant-numeric: tabular-nums; }
+.pic__misses { color: var(--ink-soft); }
+.pic__stars { display: inline-flex; font-size: 1.3rem; }
+@media (max-width: 479px) {
+  .pic { grid-template-columns: 1fr auto auto; }
+  .pic__misses { display: none; }
+}
+
+/* On a phone the title leaves the top bar, so the bar stays on one row and the pictures keep the room. */
+@media (max-width: 479px) {
+  .spot .hud__title { display: none; }
+  .spot .hud__stat { margin-left: auto; }
+  /* The clock icon says what the time is, so the word "Time" can go too: a 360 px wide phone has no room for both. */
+  .spot .hud__label { display: none; }
+  .spot .hud__value::before { content: '⏱ '; }
+  .spot__main { padding-left: 12px; padding-right: 12px; gap: 6px; }
+  .spot__bar { gap: 2px 12px; font-size: 1rem; }
+  .spot__place-name { display: none; }
+  .spot__note { min-height: 1.6em; font-size: 1rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .picture.is-done, .mark--found .mark__halo, .mark--found .mark__ring, .mark--hint { animation: none; }
+  .mark--miss { animation: none; }
+  .spot__pictures { transition: none; }
+}

@@ -26,3 +26,6 @@ export const MISS_PENALTY_SECONDS = 3;
 /** The size of every picture in scene units; both pictures share it, so taps mean the same place in each. */
 export const SCENE_WIDTH = 800;
 export const SCENE_HEIGHT = 500;
+
+/** The key under which a theme's best stars at a level are saved. @param {string} themeId @param {string} levelId */
+export const roundKey = (themeId, levelId) => `${themeId}-${levelId}`;
