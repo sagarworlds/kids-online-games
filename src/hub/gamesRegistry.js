@@ -30,7 +30,7 @@ const game = (slug, title, subject, icon, learningTag, available = false) =>
 export const GAMES = Object.freeze([
   game('number-ninja', 'Number Ninja', 'math', '🌟', 'Mental maths', true),
 
-  game('pizza-fractions', 'Pizza Fractions', 'math', '🍕', 'Fractions'),
+  game('pizza-fractions', 'Pizza Fractions', 'math', '🍕', 'Fractions', true),
 
   game('shop-keeper', 'Shop Keeper', 'math', '🛒', 'Money'),
 
