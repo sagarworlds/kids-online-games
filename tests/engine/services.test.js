@@ -152,15 +152,13 @@ test('registerSound adds new sounds without editing the service', () => {
 
 function fakeSynth(voices = []) {
   const spoken = [];
-  return {
-    spoken, cancelled: 0,
-    synth: {
-      getVoices: () => voices,
-      speak: (u) => spoken.push(u),
-      cancel() { this.cancelled += 1; },
-    },
-    Utterance: class { constructor(text) { this.text = text; } },
+  const synth = {
+    cancelled: 0, // incremented by cancel(), where `this` is this object
+    getVoices: () => voices,
+    speak: (u) => spoken.push(u),
+    cancel() { this.cancelled += 1; },
   };
+  return { spoken, synth, Utterance: class { constructor(text) { this.text = text; } } };
 }
 
 test('speech respects the read-aloud setting unless forced', () => {
@@ -202,4 +200,17 @@ test('a throwing synth is caught and logged', () => {
   });
   assert.equal(s.speak('x'), false);
   assert.equal(logger.calls.error.length, 1);
+});
+
+test('speakSequence queues each phrase in its own language, in order, and respects the setting', () => {
+  const f = fakeSynth();
+  const quiet = new SpeechService({ settings: { readAloud: false }, synth: f.synth, Utterance: f.Utterance });
+  const items = [{ text: 'सेब', lang: 'hi-IN' }, { text: 'Apple', lang: 'en-IN' }];
+  assert.equal(quiet.speakSequence(items), false, 'read-aloud is off');
+  assert.equal(f.spoken.length, 0);
+  assert.equal(quiet.speakSequence(items, { force: true }), true);
+  assert.deepEqual(f.spoken.map((u) => [u.text, u.lang]), [['सेब', 'hi-IN'], ['Apple', 'en-IN']]);
+  assert.equal(f.synth.cancelled, 1, 'earlier speech is cut off once, not between phrases');
+  assert.equal(quiet.speakSequence([], { force: true }), false);
+  assert.equal(new SpeechService({ settings: { readAloud: true }, synth: null, Utterance: null }).speakSequence(items), false);
 });
