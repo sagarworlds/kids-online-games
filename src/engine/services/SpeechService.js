@@ -80,6 +80,31 @@ export class SpeechService {
     }
   }
 
+  /**
+   * Reads several phrases one after another, each in its own language (for example a Hindi word and then its English
+   * meaning). Like {@link SpeechService#speak} it respects the read-aloud setting unless forced.
+   * @param {readonly { text: string, lang: string }[]} items
+   * @param {{ force?: boolean }} [options]
+   * @returns {boolean} True if speech was started.
+   */
+  speakSequence(items, { force = false } = {}) {
+    if (!this.supported || items.length === 0) return false;
+    if (!force && !this.#settings.readAloud) return false;
+    try {
+      this.#synth.cancel();
+      for (const { text, lang } of items) {
+        const utterance = new this.#Utterance(text);
+        utterance.lang = lang;
+        utterance.rate = 0.9;
+        this.#synth.speak(utterance); // the browser queues these and plays them in order
+      }
+      return true;
+    } catch (error) {
+      this.#logger.error('[speech] speech synthesis failed; continuing silently', error);
+      return false;
+    }
+  }
+
   /** Stops anything currently being spoken. */
   cancel() {
     try {

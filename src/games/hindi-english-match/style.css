@@ -1,0 +1,89 @@
+/* Hindi–English Match. Builds on src/engine/ui/ui.css. */
+
+/* Noto Sans Devanagari is bundled (assets/fonts, SIL OFL) so Hindi renders offline and without any request to
+   another site. `unicode-range` means it is only used for Devanagari; the rest of the text keeps the system font. */
+@font-face {
+  font-family: 'Noto Sans Devanagari';
+  font-weight: 400;
+  font-display: swap;
+  src: url('assets/fonts/NotoSansDevanagari-400.woff2') format('woff2');
+  unicode-range: U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+25CC, U+A830-A839, U+A8E0-A8FF;
+}
+@font-face {
+  font-family: 'Noto Sans Devanagari';
+  font-weight: 700;
+  font-display: swap;
+  src: url('assets/fonts/NotoSansDevanagari-700.woff2') format('woff2');
+  unicode-range: U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+25CC, U+A830-A839, U+A8E0-A8FF;
+}
+.hi, [lang='hi'] { font-family: 'Noto Sans Devanagari', 'Mangal', 'Nirmala UI', system-ui, sans-serif; }
+
+.scene { background: var(--bg); }
+
+.menu, .result { width: min(100%, 760px); margin: 0 auto; padding: 8px 16px 32px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+.menu__title, .result h1 { margin: 4px 0 0; font-size: 2.2rem; }
+.menu__intro { max-width: 32rem; margin: 0; font-size: 1.1rem; }
+.menu__intro .hi { font-size: 1.3rem; font-weight: 700; }
+.menu__peek { justify-content: center; }
+.menu__best { width: 100%; }
+.menu__best h2 { font-size: 1.1rem; margin-bottom: 8px; color: var(--ink-soft); }
+.menu__best ul { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin: 0; padding: 0; list-style: none; }
+.menu__best li { display: flex; flex-direction: column; align-items: center; gap: 2px; font-weight: 700; }
+.menu__stars { display: inline-flex; font-size: 1.5rem; }
+.segmented__item--small { flex: 0 1 auto; }
+.segmented__item--small label { min-width: 0; min-height: 52px; padding: 4px 14px; }
+
+/* ---------- Board ---------- */
+
+.board { width: min(100%, 900px); margin: 0 auto; padding: 8px 12px 32px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.board__status { min-height: 1.7em; margin: 0; font-weight: 800; text-align: center; }
+/* Cap the grid by the screen height too, so every row stays on screen instead of the last one being cut off. */
+.cards { display: grid; grid-template-columns: repeat(var(--cols), 1fr); gap: 10px; width: min(100%, max(320px, calc((100vh - 170px) * 1.1))); }
+.cell { position: relative; }
+
+.card3d {
+  display: block; width: 100%; aspect-ratio: 1 / 1.05; min-height: 88px; padding: 0;
+  background: none; border: 0; cursor: pointer; perspective: 800px;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+.card3d__inner { position: relative; display: block; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.35s ease; }
+.card3d.is-up .card3d__inner { transform: rotateY(180deg); }
+.card3d__face {
+  position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  padding: 4px; text-align: center; border: 4px solid var(--ink); border-radius: 18px;
+  backface-visibility: hidden; -webkit-backface-visibility: hidden; box-shadow: var(--shadow);
+}
+.card3d__back { color: #fff; font-size: 2.4rem; font-weight: 800; background: repeating-linear-gradient(45deg, var(--primary), var(--primary) 10px, #7a5cff 10px, #7a5cff 20px); }
+.card3d__front { transform: rotateY(180deg); background: #fff; color: var(--ink); }
+.is-hindi .card3d__front { background: #ffe2bd; }
+.is-english .card3d__front { background: #d4e8ff; }
+.card3d__tag { position: absolute; left: 8px; top: 4px; font-size: 0.8rem; font-weight: 800; color: var(--ink-soft); }
+.card3d__text { font-size: clamp(1.15rem, 3.4vw, 1.9rem); font-weight: 800; line-height: 1.2; overflow-wrap: anywhere; }
+.card3d__text.hi { font-size: clamp(1.4rem, 4vw, 2.3rem); }
+.card3d__image { font-size: clamp(1.2rem, 3.4vw, 1.9rem); line-height: 1; }
+.card3d__ok { display: none; position: absolute; right: 8px; top: 2px; font-size: 1.3rem; font-weight: 800; color: var(--good); }
+.card3d.is-matched .card3d__front { background: var(--good-bg); border-color: var(--good); box-shadow: 0 0 18px 3px rgba(27, 127, 59, 0.55); }
+.card3d.is-matched .card3d__ok { display: block; }
+.card3d.is-matched { cursor: default; }
+
+.card3d__speak {
+  position: absolute; right: 2px; bottom: 2px; z-index: 2; display: grid; place-items: center; min-width: 48px; min-height: 48px; padding: 0;
+  font-size: 1.3rem; cursor: pointer; background: rgba(255, 255, 255, 0.9); border: 3px solid var(--ink); border-radius: 50%;
+}
+
+/* ---------- Results ---------- */
+
+.result__stars { display: flex; gap: 8px; font-size: 4rem; line-height: 1; }
+.result__praise { margin: 0; font-size: 1.3rem; font-weight: 700; }
+.result__stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; width: 100%; margin: 0; }
+.result__stat { padding: 10px; background: var(--surface); border: 3px solid var(--ink); border-radius: var(--radius); }
+.result__stat dt { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-soft); }
+.result__stat dd { margin: 0; font-size: 1.6rem; font-weight: 800; }
+.result__actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+.review { width: 100%; text-align: left; }
+.review ul { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
+.review__item { display: flex; align-items: center; gap: 6px; padding: 4px 10px; background: #fff; border: 3px solid var(--ink); border-radius: 12px; }
+.review__image { min-width: 1.8rem; font-size: 1.5rem; text-align: center; }
+.review__word { font-weight: 700; }
+.review__word.hi { font-size: 1.3rem; }
+.menu__stars svg, .result__stars svg, .hud__value svg { width: 1em; height: 1em; }
