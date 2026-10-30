@@ -22,6 +22,13 @@ npm start          # http://localhost:3000  (zero-dependency static server)
 npm test           # unit tests for engine, hub and every game's logic/
 ```
 
+## Offline
+
+After the first visit the whole site works without a network. `npm run build` generates `dist/sw.js`, a service
+worker that precaches every shipped file under a version derived from a hash of the site, so each deploy gets a fresh
+cache and old ones are deleted. Opened from `npm start` the worker stays inert (version `dev`), so local development
+never sees stale files. To try it: `npm run build`, `npm run start:dist`, open the site, then switch the network off.
+
 ## Deploy to Render (static site)
 
 `render.yaml` is a Render Blueprint, so no manual configuration is needed:

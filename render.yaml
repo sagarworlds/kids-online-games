@@ -25,3 +25,7 @@ services:
       - path: /*
         name: Permissions-Policy
         value: "camera=(), microphone=(), geolocation=(), payment=(), interest-cohort=()"
+      # The worker script itself must always be revalidated, or a deploy could take a day to reach players.
+      - path: /sw.js
+        name: Cache-Control
+        value: no-cache
