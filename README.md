@@ -71,7 +71,8 @@ scripts/                   build.mjs (copy to dist/), serve.mjs (local server)
 | --- | --- | --- |
 | – | Engine, hub, player profile, parent area | Done |
 | 1 | Number Ninja | Done (see [`src/games/number-ninja/README.md`](src/games/number-ninja/README.md)) |
-| 2–16 | Remaining games | Not started (shown as "Coming soon" on the hub) |
+| 8 | Robot Path | Done (see [`src/games/robot-path/README.md`](src/games/robot-path/README.md)) |
+| 2–7, 9–16 | Remaining games | Not started (shown as "Coming soon" on the hub) |
 
 ## Notes for reviewers
 
