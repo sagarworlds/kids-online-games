@@ -22,22 +22,41 @@ export const SUBJECTS = Object.freeze([
 const game = (slug, title, subject, icon, learningTag, available = false) =>
   Object.freeze({ slug, title, subject, icon, learningTag, available, path: `src/games/${slug}/index.html` });
 
-/** @type {readonly GameEntry[]} */
+/**
+ * One entry per game, with a blank line between entries on purpose: when two branches each flip a different
+ * game to `available`, git can merge them without a conflict because the changed lines are not adjacent.
+ * @type {readonly GameEntry[]}
+ */
 export const GAMES = Object.freeze([
   game('number-ninja', 'Number Ninja', 'math', '🌟', 'Mental maths', true),
+
   game('pizza-fractions', 'Pizza Fractions', 'math', '🍕', 'Fractions'),
+
   game('shop-keeper', 'Shop Keeper', 'math', '🛒', 'Money'),
+
   game('times-table-racing', 'Times-Table Racing', 'math', '🏎️', 'Times tables'),
+
   game('word-builder-bubbles', 'Word Builder Bubbles', 'language', '🔤', 'Spelling'),
+
   game('hindi-english-match', 'Hindi–English Match', 'language', '🃏', 'Vocabulary'),
+
   game('sentence-train', 'Sentence Train', 'language', '🚂', 'Sentences'),
+
   game('robot-path', 'Robot Path', 'logic', '🤖', 'Coding', true),
+
   game('pattern-detective', 'Pattern Detective', 'logic', '🕵️', 'Patterns'),
+
   game('lights-out', 'Lights Out', 'logic', '💡', 'Logic puzzles'),
+
   game('flag-capital-quest', 'Flag & Capital Quest', 'science', '🌍', 'Geography'),
+
   game('planet-hop', 'Planet Hop', 'science', '🚀', 'Space'),
+
   game('food-chain-builder', 'Food Chain Builder', 'science', '🐟', 'Food chains'),
+
   game('plant-grower', 'Plant Grower', 'science', '🌱', 'Plants'),
+
   game('simon-says', 'Simon Says', 'memory', '🎵', 'Memory'),
+
   game('spot-the-difference', 'Spot the Difference', 'memory', '🔍', 'Observation'),
 ]);
