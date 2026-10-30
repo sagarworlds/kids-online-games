@@ -67,12 +67,9 @@ scripts/                   build.mjs (copy to dist/), serve.mjs (local server)
 
 ## Status
 
-| # | Game | Status |
-| --- | --- | --- |
-| – | Engine, hub, player profile, parent area | Done |
-| 1 | Number Ninja | Done (see [`src/games/number-ninja/README.md`](src/games/number-ninja/README.md)) |
-| 8 | Robot Path | Done (see [`src/games/robot-path/README.md`](src/games/robot-path/README.md)) |
-| 2–7, 9–16 | Remaining games | Not started (shown as "Coming soon" on the hub) |
+Which games are playable is defined by the `available` flag of each entry in
+[`src/hub/gamesRegistry.js`](src/hub/gamesRegistry.js); the rest show as "Coming soon" on the home page.
+Every game folder has its own README (how to play, learning goal, rules, file map).
 
 ## Notes for reviewers
 
