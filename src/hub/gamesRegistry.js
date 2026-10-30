@@ -32,7 +32,7 @@ export const GAMES = Object.freeze([
 
   game('pizza-fractions', 'Pizza Fractions', 'math', '🍕', 'Fractions', true),
 
-  game('shop-keeper', 'Shop Keeper', 'math', '🛒', 'Money'),
+  game('shop-keeper', 'Shop Keeper', 'math', '🛒', 'Money', true),
 
   game('times-table-racing', 'Times-Table Racing', 'math', '🏎️', 'Times tables'),
 
