@@ -13,6 +13,7 @@ import { showToast } from '../engine/ui/Toast.js';
 import { openParentArea } from '../engine/ui/SettingsPanel.js';
 import { createRng, randomSeed } from '../engine/utils/random.js';
 import { logError } from '../engine/utils/errors.js';
+import { registerServiceWorker } from './registerServiceWorker.js';
 
 /**
  * Composition root helper for game pages. A game's `main.js` calls this once
@@ -63,6 +64,8 @@ export function createApp({ slug, title, root, canvas = false, homeHref = '../..
   // Errors outside the frame loop (click handlers, promises) get the same friendly screen.
   window.addEventListener('error', (event) => game.fail(event.error ?? event.message));
   window.addEventListener('unhandledrejection', (event) => game.fail(event.reason));
+
+  registerServiceWorker();
 
   if (storage.notice) showToast(storage.notice);
   storage.onNotice((message) => showToast(message));

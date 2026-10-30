@@ -5,6 +5,7 @@ import { createRng, randomSeed } from '../engine/utils/random.js';
 import { loadJson } from '../engine/utils/data.js';
 import { invalidData, logError } from '../engine/utils/errors.js';
 import { renderErrorScreen } from '../engine/ui/ErrorScreen.js';
+import { registerServiceWorker } from '../app/registerServiceWorker.js';
 import { showToast } from '../engine/ui/Toast.js';
 import { GAMES } from './gamesRegistry.js';
 import { HubPage } from './HubPage.js';
@@ -32,6 +33,8 @@ async function boot() {
 
     const profile = new ProfileService({ storage, rng, names, blocklist });
     new HubPage({ root, games: GAMES, profile, rewards, storage, settings, rng }).mount();
+
+    registerServiceWorker();
 
     if (storage.notice) showToast(storage.notice);
     storage.onNotice((message) => showToast(message));
