@@ -49,6 +49,16 @@ tests/                     Node tests (engine, hub, each game's logic/)
 scripts/                   build.mjs (copy to dist/), serve.mjs (local server)
 ```
 
+## Git workflow
+
+- `main` is the stable branch and the one Render deploys.
+- Every new piece of work starts from an up-to-date `main` on its own branch:
+  `SP/feature/<game-slug>` for a game (for example `SP/feature/number-ninja`),
+  `SP/bugfix/<short-name>` for a fix.
+- Open a pull request into `main` for each branch. The PR template carries the Definition of Done
+  from `docs/SPEC.md`. Merge only when its checklist and `npm test` pass.
+- Small commits with clear messages. No co-author trailers.
+
 ## Adding a game
 
 1. Create `src/games/<slug>/` following the structure and rules in `docs/SPEC.md`.
