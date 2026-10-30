@@ -1,0 +1,55 @@
+/* Simon Says. Builds on src/engine/ui/ui.css. */
+
+.scene { background: var(--bg); }
+
+.menu, .result { width: min(100%, 720px); margin: 0 auto; padding: 8px 16px 32px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+.menu__title, .result h1 { margin: 4px 0 0; font-size: 2.2rem; }
+.menu__intro { max-width: 32rem; margin: 0; font-size: 1.1rem; }
+.menu__best { width: 100%; }
+.menu__best h2 { font-size: 1.1rem; margin-bottom: 8px; color: var(--ink-soft); }
+.menu__best ul { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin: 0; padding: 0; list-style: none; }
+.menu__best li { display: flex; flex-direction: column; align-items: center; gap: 2px; font-weight: 700; }
+.menu__best small { color: var(--ink-soft); font-weight: 600; }
+.menu__stars { display: inline-flex; font-size: 1.5rem; }
+
+/* ---------- Play ---------- */
+
+.simon { width: min(100%, 620px); margin: 0 auto; padding: 8px 16px 32px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.simon__display { text-align: center; min-height: 5.2rem; }
+.simon__length { margin: 0; font-size: 2.2rem; font-weight: 800; line-height: 1.1; }
+.simon__status { margin: 4px 0 0; font-size: 1.2rem; font-weight: 700; color: var(--ink-soft); }
+.simon__timer { width: min(100%, 360px); }
+.simon__controls { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.simon__note { margin: 0; font-size: 0.9rem; color: var(--ink-soft); text-align: center; }
+
+.pads { display: grid; gap: 14px; width: min(100%, 480px, 56vh); }
+.pads--4 { grid-template-columns: repeat(2, 1fr); }
+.pads--6 { grid-template-columns: repeat(3, 1fr); width: min(100%, 600px, 70vh); }
+.pad {
+  position: relative; display: grid; place-items: center; aspect-ratio: 1; min-height: 96px; padding: 0;
+  color: var(--ink); background: var(--pad-soft); border: 4px solid var(--ink); border-radius: 24px; cursor: pointer;
+  box-shadow: var(--shadow); transition: transform 0.06s ease, box-shadow 0.06s ease;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+.pad__shape { width: 52%; }
+.pad__shape svg { width: 100%; height: 100%; display: block; fill: #ffffff; stroke: var(--ink); stroke-width: 4; stroke-linejoin: round; }
+.pad__key { position: absolute; left: 12px; top: 8px; font-size: 1.4rem; font-weight: 800; }
+.pad.is-lit { background: var(--pad); transform: scale(1.05); box-shadow: 0 0 0 6px #fff, 0 0 34px 10px var(--pad); z-index: 1; }
+.pads.is-waiting .pad:not(.is-lit) { cursor: default; opacity: 0.85; }
+.pad:active { transform: scale(0.97); }
+
+/* Music Maker slots */
+.music__slots { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; width: min(100%, 520px); margin: 0; padding: 0; list-style: none; }
+.music__slots .slot { display: grid; place-items: center; aspect-ratio: 1; min-width: 28px; font-weight: 800; border: 3px dashed #b9b09a; border-radius: 10px; }
+.music__slots .slot.is-filled { background: var(--pad); border: 3px solid var(--ink); }
+
+/* ---------- Results ---------- */
+
+.result__stars { display: flex; gap: 8px; font-size: 4rem; line-height: 1; }
+.result__praise { margin: 0; font-size: 1.3rem; font-weight: 700; }
+.result__stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; width: 100%; margin: 0; }
+.result__stat { padding: 10px; background: var(--surface); border: 3px solid var(--ink); border-radius: var(--radius); }
+.result__stat dt { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-soft); }
+.result__stat dd { margin: 0; font-size: 1.6rem; font-weight: 800; white-space: nowrap; }
+.result__actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+.menu__stars svg, .result__stars svg, .hud__value svg { width: 1em; height: 1em; }
