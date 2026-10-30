@@ -1,0 +1,68 @@
+/* Lights Out. Builds on src/engine/ui/ui.css. */
+
+.scene { background: var(--bg); }
+
+.menu, .result { width: min(100%, 720px); margin: 0 auto; padding: 8px 16px 32px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+.menu__title, .result h1 { margin: 4px 0 0; font-size: 2.2rem; }
+.menu__intro { max-width: 32rem; margin: 0; font-size: 1.1rem; }
+.menu__note { margin: 0; color: var(--ink-soft); font-weight: 700; }
+.menu__best { width: 100%; }
+.menu__best h2 { font-size: 1.1rem; margin-bottom: 8px; color: var(--ink-soft); }
+.menu__best ul { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin: 0; padding: 0; list-style: none; }
+.menu__best li { display: flex; flex-direction: column; align-items: center; gap: 2px; font-weight: 700; }
+.menu__stars { display: inline-flex; font-size: 1.5rem; }
+
+/* ---------- Puzzle ---------- */
+
+.lo { width: min(100%, 640px); margin: 0 auto; padding: 8px 16px 32px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.lo-board { position: relative; width: min(100%, 520px, 62vh); padding: 12px; background: #1b1f4b; border: 4px solid var(--ink); border-radius: 20px; }
+.jars { display: grid; grid-template-columns: repeat(var(--size), 1fr); gap: 8px; }
+.jar {
+  display: block; aspect-ratio: 1; min-width: 48px; min-height: 48px; padding: 2px;
+  background: #2b3070; border: 3px solid #5961c9; border-radius: 14px; cursor: pointer;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+.jar svg { width: 100%; height: 100%; display: block; }
+.jar.is-lit { background: #4a3f12; border-color: #ffd23f; box-shadow: 0 0 18px 2px rgba(255, 210, 63, 0.55); }
+.jar:active:not(:disabled) { transform: scale(0.96); }
+.jar:disabled { cursor: default; }
+.jar.is-hint { outline: 5px dashed #ffffff; outline-offset: 2px; animation: pulse 0.9s ease infinite; }
+.jar:focus-visible { outline: 4px solid #ffffff; outline-offset: 3px; box-shadow: 0 0 0 7px var(--ink); }
+
+.jar__lid { fill: #9aa0d8; }
+.jar__glass { fill: rgba(154, 160, 216, 0.18); stroke: #9aa0d8; stroke-width: 3; }
+.is-lit .jar__glass { fill: rgba(255, 210, 63, 0.22); stroke: #ffd23f; }
+.firefly__body { fill: #ffe066; stroke: #1f2544; stroke-width: 2; }
+.firefly__wing { fill: #ffffff; opacity: 0.85; stroke: #1f2544; stroke-width: 1.5; }
+.firefly__glow { fill: #fff3a8; }
+
+@keyframes drift { to { transform: translate(var(--dx, 0px), -90px); opacity: 0; } }
+.lo-board.is-solved .firefly { animation: drift 1.1s ease-out forwards; }
+.lo-board.is-solved .jar:nth-child(3n) .firefly { --dx: -14px; }
+.lo-board.is-solved .jar:nth-child(3n + 1) .firefly { --dx: 12px; }
+
+.lo-solved {
+  position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px; text-align: center; background: rgba(255, 248, 231, 0.94); border-radius: 16px;
+}
+.lo-solved h2 { margin: 0; font-size: 1.5rem; }
+.lo-solved p { margin: 0; font-weight: 700; }
+.lo-solved__stars { display: flex; font-size: 3rem; line-height: 1; }
+
+.lo-status { min-height: 1.6em; margin: 0; font-weight: 800; text-align: center; }
+.lo-controls { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.lo-note { margin: 0; font-size: 0.9rem; color: var(--ink-soft); text-align: center; }
+
+/* ---------- Results ---------- */
+
+.result__stars { display: flex; gap: 8px; font-size: 4rem; line-height: 1; }
+.result__praise { margin: 0; font-size: 1.3rem; font-weight: 700; }
+.result__actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+.results { width: min(100%, 460px); border-collapse: separate; border-spacing: 0 6px; }
+.results th, .results td { padding: 6px 10px; text-align: left; background: #fff; font-weight: 700; }
+.results th { border: 3px solid var(--ink); border-right: 0; border-radius: 10px 0 0 10px; }
+.results td { border-top: 3px solid var(--ink); border-bottom: 3px solid var(--ink); }
+.results td:last-child { border-right: 3px solid var(--ink); border-radius: 0 10px 10px 0; }
+.results__stars { font-size: 1.2rem; white-space: nowrap; }
+.results__stars svg, .menu__stars svg, .lo-solved__stars svg, .result__stars svg { width: 1em; height: 1em; }
+.hud__value svg { width: 1.3em; height: 1.3em; }
