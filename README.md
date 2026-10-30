@@ -70,7 +70,7 @@ scripts/                   build.mjs (copy to dist/), serve.mjs (local server)
 | # | Game | Status |
 | --- | --- | --- |
 | – | Engine, hub, player profile, parent area | Done |
-| 1 | Number Ninja | In progress |
+| 1 | Number Ninja | Done (see [`src/games/number-ninja/README.md`](src/games/number-ninja/README.md)) |
 | 2–16 | Remaining games | Not started (shown as "Coming soon" on the hub) |
 
 ## Notes for reviewers

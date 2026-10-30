@@ -24,7 +24,7 @@ const game = (slug, title, subject, icon, learningTag, available = false) =>
 
 /** @type {readonly GameEntry[]} */
 export const GAMES = Object.freeze([
-  game('number-ninja', 'Number Ninja', 'math', '🌟', 'Mental maths'),
+  game('number-ninja', 'Number Ninja', 'math', '🌟', 'Mental maths', true),
   game('pizza-fractions', 'Pizza Fractions', 'math', '🍕', 'Fractions'),
   game('shop-keeper', 'Shop Keeper', 'math', '🛒', 'Money'),
   game('times-table-racing', 'Times-Table Racing', 'math', '🏎️', 'Times tables'),

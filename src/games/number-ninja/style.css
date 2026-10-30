@@ -1,0 +1,110 @@
+/* Number Ninja. Builds on src/engine/ui/ui.css. */
+
+/* ---------- Menu and results share a centred card layout ---------- */
+
+.menu, .result {
+  width: min(100%, 720px);
+  margin: 0 auto;
+  padding: 8px 16px 24px;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  text-align: center;
+}
+.menu__title, .result h1 { margin: 4px 0 0; font-size: 2.2rem; }
+.menu__intro { max-width: 32rem; margin: 0; font-size: 1.1rem; }
+.menu__ops-wrap .chips { justify-content: center; }
+.menu__ops-wrap .field__label { margin-bottom: 8px; font-weight: 700; }
+.menu__best { width: 100%; }
+.menu__best h2 { font-size: 1.1rem; margin-bottom: 8px; color: var(--ink-soft); }
+.menu__best ul { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin: 0; padding: 0; list-style: none; }
+.menu__best li { display: flex; flex-direction: column; align-items: center; gap: 2px; font-weight: 700; }
+.menu__stars { display: inline-flex; font-size: 1.5rem; }
+
+.scene:not(.play) { background: var(--bg); }
+
+/* ---------- Results ---------- */
+
+.result__stars { display: flex; gap: 8px; font-size: 4rem; line-height: 1; }
+.result__praise { font-size: 1.3rem; font-weight: 700; margin: 0; }
+.result__stats {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px;
+  width: 100%; margin: 0;
+}
+.result__stat { padding: 10px; background: var(--surface); border: 3px solid var(--ink); border-radius: var(--radius); }
+.result__stat dt { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-soft); }
+.result__stat dd { margin: 0; font-size: 1.6rem; font-weight: 800; white-space: nowrap; }
+.result__actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+
+.replay { width: 100%; padding: 16px; background: var(--surface); border: 3px dashed var(--ink); border-radius: var(--radius); }
+.replay h2 { font-size: 1.2rem; }
+.replay__row { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+.replay__problem { font-size: 2rem; font-weight: 800; }
+.replay__input { width: 6rem; font-size: 1.6rem; text-align: center; }
+
+/* ---------- Play ---------- */
+
+.play { overflow: hidden; background: transparent; }
+.play__field { position: relative; flex: 1 1 auto; min-height: 0; pointer-events: none; }
+.play__field > * { pointer-events: auto; }
+
+.play__banner {
+  position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
+  padding: 8px 20px; max-width: 90%;
+  font-size: 1.6rem; font-weight: 800; text-align: center;
+  color: var(--ink); background: var(--star); border: 4px solid var(--ink); border-radius: 999px;
+}
+
+.play__pause {
+  position: absolute; inset: 0; z-index: 5;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+  text-align: center; color: #fff; background: rgba(20, 26, 74, 0.88);
+}
+.play__pause h2 { font-size: 2.4rem; margin: 0; }
+.play__pause p { margin: 0; font-size: 1.1rem; }
+
+.play__panel {
+  flex: 0 0 auto; padding: 10px 12px 14px;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  background: var(--bg); border-top: 4px solid var(--ink);
+}
+.play__hint {
+  width: min(100%, 560px); margin: 0; padding: 8px 14px;
+  font-weight: 700; text-align: center;
+  background: #fff3c4; border: 3px solid var(--ink); border-radius: var(--radius);
+}
+
+.answer { display: flex; align-items: center; justify-content: center; gap: 12px; min-height: 64px; width: min(100%, 560px); }
+.answer__text {
+  min-width: 7rem; min-height: 60px; padding: 2px 16px;
+  font-size: 2.2rem; font-weight: 800; text-align: center; font-variant-numeric: tabular-nums;
+  background: #fff; border: 4px solid var(--ink); border-radius: var(--radius);
+}
+.answer__text:empty::before { content: '?'; color: var(--ink-soft); opacity: 0.55; }
+.answer__feedback { min-width: 0; font-size: 1.2rem; font-weight: 800; color: var(--ink); }
+
+/* ---------- On-screen number pad ---------- */
+
+.pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: min(100%, 320px); }
+.pad__key {
+  min-height: 56px; padding: 0;
+  font: inherit; font-size: 1.6rem; font-weight: 800; cursor: pointer;
+  color: var(--ink); background: #fff; border: 3px solid var(--ink); border-radius: 14px; box-shadow: var(--shadow);
+  touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+}
+.pad__key:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px 0 rgba(31, 37, 68, 0.18); }
+.pad__key:disabled { opacity: 0.5; cursor: not-allowed; }
+.pad__key--aux { background: #efe9d8; }
+.pad__key--enter { color: #fff; background: var(--good); }
+
+/* Wide screens: two rows of six keys, so the pad stays short and the sky stays tall. */
+@media (min-width: 640px) {
+  .pad { grid-template-columns: repeat(6, 1fr); width: min(100%, 560px); }
+}
+
+/* Short screens (phones in landscape): shrink keys a little, but never below 48 px. */
+@media (max-height: 520px) {
+  .pad__key { min-height: 48px; font-size: 1.3rem; }
+  .answer, .answer__text { min-height: 48px; }
+  .answer__text { font-size: 1.6rem; }
+}
+
+.hud__value svg { width: 1.3em; height: 1.3em; }
