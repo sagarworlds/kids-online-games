@@ -12,6 +12,7 @@
  *   speech: import('./services/SpeechService.js').SpeechService,
  *   profile: { getProfile(): { name: string, avatar: string } },
  *   rng: () => number,
+ *   openSettings: () => Promise<void>,
  *   game: { slug: string, title: string, homeHref: string }
  * }} Services
  */

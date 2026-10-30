@@ -206,6 +206,7 @@ test('keys are forwarded, flagged when they come from a button, and skipped in t
   press('7', closestTo(() => false));
   press('Enter', closestTo((sel) => sel.startsWith('button')));
   press('9', closestTo((sel) => sel.startsWith('input')));      // typing in a field
+  press('Escape', closestTo((sel) => sel === 'dialog'));        // inside a modal dialog
   press('r', closestTo(() => false), { ctrlKey: true });         // browser shortcut
   assert.deepEqual(keys, [['7', false], ['Enter', true]]);
 });

@@ -138,8 +138,9 @@ export class InputService {
   }
 
   #onKey(event) {
-    // Typing into a real text field (e.g. the grown-up check) is not game input.
-    if (event.target?.closest?.(TEXT_FIELD)) return;
+    // Typing into a real text field (e.g. the grown-up check) is not game input,
+    // and neither is anything typed inside a modal (Esc must close the dialog, not pause the game).
+    if (event.target?.closest?.(TEXT_FIELD) || event.target?.closest?.('dialog')) return;
     // Leave browser/OS shortcuts (Ctrl+R, Cmd+L...) alone.
     if (event.ctrlKey || event.metaKey || event.altKey) return;
     this.emit('key', {

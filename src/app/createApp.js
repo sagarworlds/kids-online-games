@@ -73,7 +73,7 @@ export function createApp({ slug, title, root, canvas = false, homeHref = '../..
 
   /** @type {import('../engine/Scene.js').Services} */
   const services = {
-    scenes, input, audio, storage, settings, rewards, speech, profile, rng,
+    scenes, input, audio, storage, settings, rewards, speech, profile, rng, openSettings,
     game: { slug, title, homeHref },
   };
   return { game, services, openSettings };
