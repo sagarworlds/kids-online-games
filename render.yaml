@@ -1,0 +1,27 @@
+# Render Blueprint: deploys the site as a free static site.
+# Dashboard route: New + > Blueprint > pick this repo, or New + > Static Site
+# with build command `node scripts/build.mjs` and publish directory `dist`.
+services:
+  - type: web
+    name: kids-learning-games
+    runtime: static
+    # The build only copies the shippable files (index.html, src/) into dist/ so
+    # tests, docs and tooling never get published. There is no bundler.
+    buildCommand: node scripts/build.mjs
+    staticPublishPath: dist
+    autoDeployTrigger: commit
+    headers:
+      # Everything is served from our own origin: no CDNs, fonts, analytics or
+      # trackers (see "Privacy" in docs/SPEC.md), so the CSP can be strict.
+      - path: /*
+        name: Content-Security-Policy
+        value: "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: no-referrer
+      - path: /*
+        name: Permissions-Policy
+        value: "camera=(), microphone=(), geolocation=(), payment=(), interest-cohort=()"
