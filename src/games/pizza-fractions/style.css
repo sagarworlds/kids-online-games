@@ -1,0 +1,109 @@
+/* Pizza Fractions. Builds on src/engine/ui/ui.css. */
+
+.scene { background: var(--bg); }
+
+.menu, .result { width: min(100%, 720px); margin: 0 auto; padding: 8px 16px 32px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+.menu__title, .result h1 { margin: 4px 0 0; font-size: 2.2rem; }
+.menu__intro { max-width: 32rem; margin: 0; font-size: 1.1rem; }
+.menu__note { margin: 0; color: var(--ink-soft); font-weight: 700; }
+.menu__best { width: 100%; }
+.menu__best h2 { font-size: 1.1rem; margin-bottom: 8px; color: var(--ink-soft); }
+.menu__best ul { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin: 0; padding: 0; list-style: none; }
+.menu__best li { display: flex; flex-direction: column; align-items: center; gap: 2px; font-weight: 700; }
+.menu__stars { display: inline-flex; font-size: 1.5rem; }
+
+/* ---------- Kitchen ---------- */
+
+.kitchen { width: min(100%, 980px); margin: 0 auto; padding: 8px 16px 32px; display: grid; gap: 16px; grid-template-columns: 1fr; align-items: start; }
+@media (min-width: 760px) { .kitchen { grid-template-columns: minmax(250px, 340px) 1fr; } }
+.kitchen__customer, .kitchen__work { display: flex; flex-direction: column; gap: 12px; align-items: center; min-width: 0; }
+.kitchen__customer { width: 100%; }
+
+.customer { display: flex; align-items: center; gap: 12px; width: 100%; }
+.customer__face { font-size: 3rem; line-height: 1; }
+.customer__talk { text-align: left; }
+.customer__name { margin: 0; font-weight: 800; }
+.customer__speech { margin: 0; color: var(--ink-soft); font-weight: 700; }
+
+/* The ticket reads like a paper order slip: dashed edge, big stacked fractions. */
+.ticket { width: 100%; padding: 12px 16px; background: #fff; border: 3px dashed var(--ink); border-radius: var(--radius); text-align: center; }
+.ticket__title { margin: 0 0 4px; font-size: 1.2rem; }
+.ticket__lines { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.ticket__line { display: flex; align-items: center; justify-content: center; gap: 14px; }
+.ticket__topping { display: inline-flex; align-items: center; gap: 6px; font-size: 1.25rem; font-weight: 800; }
+.ticket__icon { font-size: 1.4rem; }
+.ticket__cut { margin: 6px 0 0; color: var(--ink-soft); font-weight: 700; }
+
+.frac { display: inline-flex; flex-direction: column; align-items: center; min-width: 2.2rem; font-size: 2.2rem; font-weight: 800; line-height: 1.05; }
+.frac__bar { align-self: stretch; height: 4px; margin: 2px 0; background: var(--ink); border-radius: 2px; }
+
+.thought { width: 100%; padding: 10px 14px; background: #fff; border: 3px solid var(--ink); border-radius: 28px; text-align: center; position: relative; }
+.thought::before { content: ''; position: absolute; top: -14px; left: 40px; width: 22px; height: 22px; background: #fff; border: 3px solid var(--ink); border-radius: 50%; }
+.thought__title { margin: 0 0 4px; font-weight: 800; }
+.thought__text { margin: 4px 0 0; font-weight: 700; }
+.pie { width: 110px; height: 110px; }
+
+/* ---------- Pizza ---------- */
+
+.pizza { width: min(100%, 380px, 52vh); aspect-ratio: 1; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+.pizza__svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.pizza__crust { fill: #e0a458; stroke: #8a4b12; stroke-width: 4; }
+.pizza__cheese { fill: #f8e3b0; stroke: #b9722a; stroke-width: 3; stroke-linejoin: round; }
+.pizza__slice { cursor: pointer; outline: none; }
+.pizza__slice:hover .pizza__cheese { fill: #fff0cc; }
+.pizza__slice:focus-visible .pizza__cheese { fill: #fff0cc; stroke: var(--ink); stroke-width: 6; }
+.pizza__svg.is-locked .pizza__slice { cursor: default; }
+.pizza__toppings { pointer-events: none; }
+
+/* Slices to look at again get a dashed red edge as well as a pulse, so it is not just movement or colour. */
+.pizza__slice.is-off .pizza__cheese { stroke: var(--bad); stroke-width: 6; stroke-dasharray: 8 5; animation: slice-pulse 1s ease-in-out infinite; }
+@keyframes slice-pulse { 50% { fill: #ffd9d4; } }
+
+/* ---------- Toppings and actions ---------- */
+
+.tray { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.topping {
+  display: inline-flex; align-items: center; gap: 8px; min-height: var(--tap); padding: 6px 14px; font: inherit; font-weight: 800;
+  color: var(--ink); background: #fff; border: 3px solid var(--line); border-radius: 999px; cursor: pointer; touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.topping__icon { font-size: 1.3rem; }
+.topping[aria-pressed='true'] { border-color: var(--ink); background: #ffe9a8; box-shadow: var(--shadow); }
+.topping[aria-pressed='true']::after { content: '✔'; margin-left: 2px; }
+.topping:disabled { opacity: 0.55; cursor: default; }
+.topping:focus-visible { outline: 4px solid var(--primary); outline-offset: 2px; }
+
+.kitchen__actions { display: flex; gap: 10px; justify-content: center; }
+.kitchen__status { min-height: 1.6em; margin: 0; font-weight: 800; text-align: center; max-width: 30rem; }
+.kitchen__after { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
+
+/* ---------- Bonus question ---------- */
+
+.bonus { width: 100%; padding: 12px; background: #fff; border: 3px solid var(--ink); border-radius: var(--radius); text-align: center; }
+.bonus__title { margin: 0 0 8px; font-size: 1.3rem; }
+.bonus__choices { display: flex; gap: 16px; justify-content: center; }
+.bonus__choice {
+  min-width: 96px; min-height: 96px; padding: 8px 14px; font: inherit; color: var(--ink); background: #fff8e7; border: 3px solid var(--ink);
+  border-radius: var(--radius); cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+}
+.bonus__choice:focus-visible { outline: 4px solid var(--primary); outline-offset: 3px; }
+.bonus__choice:disabled { cursor: default; }
+.bonus__choice.is-answer { background: var(--good-bg); border-color: var(--good); }
+.bonus__choice.is-answer::after { content: '✔'; display: block; color: var(--good); font-weight: 800; }
+.bonus__choice.is-wrong { background: var(--bad-bg); border-color: var(--bad); }
+.bonus__choice.is-wrong::after { content: '✖'; display: block; color: var(--bad); font-weight: 800; }
+.bonus__verdict { margin: 12px 0 6px; font-weight: 800; }
+.bar { height: 36px; margin: 6px 0; background: #eee6d0; border: 2px solid var(--ink); border-radius: 10px; overflow: hidden; }
+.bar__fill { height: 100%; min-width: 3.2em; padding-left: 10px; display: flex; align-items: center; font-weight: 800; background: #ffcf5a; border-right: 2px solid var(--ink); text-align: left; }
+
+/* ---------- Results ---------- */
+
+.result__stars { display: flex; gap: 8px; font-size: 4rem; line-height: 1; }
+.result__praise { margin: 0; font-size: 1.3rem; font-weight: 700; }
+.result__coins { margin: 0; font-size: 1.4rem; font-weight: 800; }
+.results { width: 100%; border-collapse: collapse; font-size: 0.9rem; text-align: left; }
+.results th, .results td { padding: 6px 8px; border-bottom: 2px solid var(--line); }
+.results tr.is-ok .results__mark { color: var(--good); font-weight: 800; }
+.results tr.is-bad .results__mark { color: var(--bad); font-weight: 800; }
+.results__mark svg { vertical-align: -0.1em; }
+.result__actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }

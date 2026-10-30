@@ -34,3 +34,19 @@ export function el(tag, props = {}, ...children) {
 export function clear(node) {
   while (node.firstChild) node.removeChild(node.firstChild);
 }
+
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+/**
+ * Builds an SVG element (SVG needs its own XML namespace, so `el` cannot make it).
+ * @param {string} tag
+ * @param {Record<string, string|number>} [attrs]
+ * @param {...(Node|null|undefined|false)} children
+ * @returns {SVGElement}
+ */
+export function svgEl(tag, attrs = {}, ...children) {
+  const node = document.createElementNS(SVG_NS, tag);
+  for (const [name, value] of Object.entries(attrs)) node.setAttribute(name, String(value));
+  for (const child of children) if (child) node.append(child);
+  return node;
+}
