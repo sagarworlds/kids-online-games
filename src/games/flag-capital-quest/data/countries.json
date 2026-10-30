@@ -1,0 +1,2337 @@
+{
+ "countries": [
+  {
+   "code": "DZ",
+   "name": "Algeria",
+   "capital": [
+    "Algiers"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/dz.svg",
+   "fact": "Algeria is the largest country in Africa, and most of it is the Sahara Desert.",
+   "level": "hard",
+   "svgPathId": "DZ"
+  },
+  {
+   "code": "AO",
+   "name": "Angola",
+   "capital": [
+    "Luanda"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/ao.svg",
+   "fact": "Angola's coast runs for about 1,600 kilometres along the Atlantic Ocean.",
+   "level": "medium",
+   "svgPathId": "AO"
+  },
+  {
+   "code": "BJ",
+   "name": "Benin",
+   "capital": [
+    "Porto-Novo"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/bj.svg",
+   "fact": "The old kingdom of Dahomey, in what is now Benin, was famous for its fierce warrior guards.",
+   "level": "hard",
+   "svgPathId": "BJ"
+  },
+  {
+   "code": "BW",
+   "name": "Botswana",
+   "capital": [
+    "Gaborone"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/bw.svg",
+   "fact": "The Okavango Delta in Botswana floods every year and fills with wildlife.",
+   "level": "hard",
+   "svgPathId": "BW"
+  },
+  {
+   "code": "BF",
+   "name": "Burkina Faso",
+   "capital": [
+    "Ouagadougou"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/bf.svg",
+   "fact": "The name Burkina Faso means \"land of honest people\".",
+   "level": "hard",
+   "svgPathId": "BF"
+  },
+  {
+   "code": "BI",
+   "name": "Burundi",
+   "capital": [
+    "Gitega",
+    "Bujumbura"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/bi.svg",
+   "fact": "Burundi is on the shore of Lake Tanganyika, one of the deepest lakes in the world.",
+   "level": "hard",
+   "svgPathId": "BI"
+  },
+  {
+   "code": "CV",
+   "name": "Cabo Verde",
+   "capital": [
+    "Praia"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/cv.svg",
+   "fact": "Cabo Verde is a group of ten volcanic islands in the Atlantic Ocean.",
+   "level": "hard",
+   "svgPathId": "CV"
+  },
+  {
+   "code": "CM",
+   "name": "Cameroon",
+   "capital": [
+    "Yaoundé"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/cm.svg",
+   "fact": "Cameroon is nicknamed \"Africa in miniature\" because it has deserts, rainforests and mountains.",
+   "level": "medium",
+   "svgPathId": "CM"
+  },
+  {
+   "code": "CF",
+   "name": "Central African Republic",
+   "capital": [
+    "Bangui"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/cf.svg",
+   "fact": "The Central African Republic is in the middle of Africa and has no coast.",
+   "level": "hard",
+   "svgPathId": "CF"
+  },
+  {
+   "code": "TD",
+   "name": "Chad",
+   "capital": [
+    "N'Djamena"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/td.svg",
+   "fact": "Lake Chad, in the country of Chad, has shrunk a lot over the last fifty years.",
+   "level": "hard",
+   "svgPathId": "TD"
+  },
+  {
+   "code": "KM",
+   "name": "Comoros",
+   "capital": [
+    "Moroni"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/km.svg",
+   "fact": "Comoros is made of volcanic islands in the Indian Ocean, and it grows a lot of the world's ylang-ylang for perfume.",
+   "level": "hard",
+   "svgPathId": "KM"
+  },
+  {
+   "code": "CG",
+   "name": "Republic of the Congo",
+   "capital": [
+    "Brazzaville"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/cg.svg",
+   "fact": "Brazzaville and Kinshasa, the capitals of the two Congos, are the closest capital cities facing each other on a river.",
+   "level": "hard",
+   "svgPathId": "CG"
+  },
+  {
+   "code": "CD",
+   "name": "DR Congo",
+   "capital": [
+    "Kinshasa"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/cd.svg",
+   "fact": "The Congo River in DR Congo is the deepest river in the world.",
+   "level": "medium",
+   "svgPathId": "CD"
+  },
+  {
+   "code": "CI",
+   "name": "Côte d'Ivoire",
+   "capital": [
+    "Yamoussoukro",
+    "Abidjan"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/ci.svg",
+   "fact": "Côte d'Ivoire grows more cocoa than any other country, so it helps make a lot of the world's chocolate.",
+   "level": "medium",
+   "svgPathId": "CI"
+  },
+  {
+   "code": "DJ",
+   "name": "Djibouti",
+   "capital": [
+    "Djibouti"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/dj.svg",
+   "fact": "Lake Assal in Djibouti is one of the saltiest lakes on Earth.",
+   "level": "hard",
+   "svgPathId": "DJ"
+  },
+  {
+   "code": "EG",
+   "name": "Egypt",
+   "capital": [
+    "Cairo"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/eg.svg",
+   "fact": "The great pyramids of Giza in Egypt are about 4,500 years old.",
+   "level": "easy",
+   "svgPathId": "EG"
+  },
+  {
+   "code": "GQ",
+   "name": "Equatorial Guinea",
+   "capital": [
+    "Malabo"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/gq.svg",
+   "fact": "Equatorial Guinea is the only country in Africa where Spanish is an official language.",
+   "level": "hard",
+   "svgPathId": "GQ"
+  },
+  {
+   "code": "ER",
+   "name": "Eritrea",
+   "capital": [
+    "Asmara"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/er.svg",
+   "fact": "Eritrea has a long coastline on the Red Sea.",
+   "level": "hard",
+   "svgPathId": "ER"
+  },
+  {
+   "code": "SZ",
+   "name": "Eswatini",
+   "capital": [
+    "Mbabane",
+    "Lobamba"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/sz.svg",
+   "fact": "Eswatini is one of the smallest countries in Africa and is ruled by a king.",
+   "level": "hard",
+   "svgPathId": "SZ"
+  },
+  {
+   "code": "ET",
+   "name": "Ethiopia",
+   "capital": [
+    "Addis Ababa"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/et.svg",
+   "fact": "Ethiopia is where coffee was first discovered, according to an old legend about a goat herder.",
+   "level": "medium",
+   "svgPathId": "ET"
+  },
+  {
+   "code": "GA",
+   "name": "Gabon",
+   "capital": [
+    "Libreville"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/ga.svg",
+   "fact": "Most of Gabon is covered by rainforest, and it is home to many forest elephants.",
+   "level": "hard",
+   "svgPathId": "GA"
+  },
+  {
+   "code": "GM",
+   "name": "Gambia",
+   "capital": [
+    "Banjul"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/gm.svg",
+   "fact": "The Gambia is a long, thin country that follows the Gambia River.",
+   "level": "hard",
+   "svgPathId": "GM"
+  },
+  {
+   "code": "GH",
+   "name": "Ghana",
+   "capital": [
+    "Accra"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/gh.svg",
+   "fact": "Ghana was the first country in sub-Saharan Africa to become independent, in 1957.",
+   "level": "medium",
+   "svgPathId": "GH"
+  },
+  {
+   "code": "GN",
+   "name": "Guinea",
+   "capital": [
+    "Conakry"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/gn.svg",
+   "fact": "Three great rivers, the Niger, the Gambia and the Senegal, start in Guinea.",
+   "level": "hard",
+   "svgPathId": "GN"
+  },
+  {
+   "code": "GW",
+   "name": "Guinea-Bissau",
+   "capital": [
+    "Bissau"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/gw.svg",
+   "fact": "The Bijagós islands off Guinea-Bissau are home to turtles and hippos that swim in the sea.",
+   "level": "hard",
+   "svgPathId": "GW"
+  },
+  {
+   "code": "KE",
+   "name": "Kenya",
+   "capital": [
+    "Nairobi"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/ke.svg",
+   "fact": "Every year, huge herds of wildebeest cross the Mara River between Kenya and Tanzania.",
+   "level": "easy",
+   "svgPathId": "KE"
+  },
+  {
+   "code": "LS",
+   "name": "Lesotho",
+   "capital": [
+    "Maseru"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/ls.svg",
+   "fact": "Lesotho is completely surrounded by South Africa and sits high in the mountains.",
+   "level": "hard",
+   "svgPathId": "LS"
+  },
+  {
+   "code": "LR",
+   "name": "Liberia",
+   "capital": [
+    "Monrovia"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/lr.svg",
+   "fact": "Liberia's capital, Monrovia, is named after the American president James Monroe.",
+   "level": "hard",
+   "svgPathId": "LR"
+  },
+  {
+   "code": "LY",
+   "name": "Libya",
+   "capital": [
+    "Tripoli"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/ly.svg",
+   "fact": "Most of Libya is desert, and it has a long coast on the Mediterranean Sea.",
+   "level": "medium",
+   "svgPathId": "LY"
+  },
+  {
+   "code": "MG",
+   "name": "Madagascar",
+   "capital": [
+    "Antananarivo"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/mg.svg",
+   "fact": "Lemurs live wild only on Madagascar, the fourth biggest island in the world.",
+   "level": "medium",
+   "svgPathId": "MG"
+  },
+  {
+   "code": "MW",
+   "name": "Malawi",
+   "capital": [
+    "Lilongwe"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/mw.svg",
+   "fact": "Lake Malawi has more kinds of fish than any other lake in the world.",
+   "level": "hard",
+   "svgPathId": "MW"
+  },
+  {
+   "code": "ML",
+   "name": "Mali",
+   "capital": [
+    "Bamako"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/ml.svg",
+   "fact": "Timbuktu, in Mali, was once a famous trading city with a great library.",
+   "level": "hard",
+   "svgPathId": "ML"
+  },
+  {
+   "code": "MR",
+   "name": "Mauritania",
+   "capital": [
+    "Nouakchott"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/mr.svg",
+   "fact": "Mauritania has trains over two kilometres long that carry iron ore across the Sahara.",
+   "level": "hard",
+   "svgPathId": "MR"
+  },
+  {
+   "code": "MU",
+   "name": "Mauritius",
+   "capital": [
+    "Port Louis"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/mu.svg",
+   "fact": "The dodo, a bird that could not fly, once lived only on Mauritius.",
+   "level": "hard",
+   "svgPathId": "MU"
+  },
+  {
+   "code": "MA",
+   "name": "Morocco",
+   "capital": [
+    "Rabat"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/ma.svg",
+   "fact": "Marrakesh in Morocco is called the Red City because of its sandy-red walls.",
+   "level": "easy",
+   "svgPathId": "MA"
+  },
+  {
+   "code": "MZ",
+   "name": "Mozambique",
+   "capital": [
+    "Maputo"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/mz.svg",
+   "fact": "Mozambique has about 2,500 kilometres of coast on the Indian Ocean.",
+   "level": "hard",
+   "svgPathId": "MZ"
+  },
+  {
+   "code": "NA",
+   "name": "Namibia",
+   "capital": [
+    "Windhoek"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/na.svg",
+   "fact": "The Namib Desert in Namibia is one of the oldest deserts in the world.",
+   "level": "hard",
+   "svgPathId": "NA"
+  },
+  {
+   "code": "NE",
+   "name": "Niger",
+   "capital": [
+    "Niamey"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/ne.svg",
+   "fact": "The Niger River bends through Niger, and the Sahara covers most of the north.",
+   "level": "hard",
+   "svgPathId": "NE"
+  },
+  {
+   "code": "NG",
+   "name": "Nigeria",
+   "capital": [
+    "Abuja"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/ng.svg",
+   "fact": "Nigeria has more people than any other country in Africa.",
+   "level": "easy",
+   "svgPathId": "NG"
+  },
+  {
+   "code": "RW",
+   "name": "Rwanda",
+   "capital": [
+    "Kigali"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/rw.svg",
+   "fact": "Rwanda is called the land of a thousand hills, and mountain gorillas live there.",
+   "level": "hard",
+   "svgPathId": "RW"
+  },
+  {
+   "code": "ST",
+   "name": "São Tomé and Príncipe",
+   "capital": [
+    "São Tomé"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/st.svg",
+   "fact": "São Tomé and Príncipe are two small islands, and they grow lots of cocoa.",
+   "level": "hard",
+   "svgPathId": "ST"
+  },
+  {
+   "code": "SN",
+   "name": "Senegal",
+   "capital": [
+    "Dakar"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/sn.svg",
+   "fact": "Lake Retba in Senegal is pink because of tiny algae that live in the salty water.",
+   "level": "medium",
+   "svgPathId": "SN"
+  },
+  {
+   "code": "SC",
+   "name": "Seychelles",
+   "capital": [
+    "Victoria"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/sc.svg",
+   "fact": "The Seychelles are 115 islands and are home to the giant Aldabra tortoise.",
+   "level": "hard",
+   "svgPathId": "SC"
+  },
+  {
+   "code": "SL",
+   "name": "Sierra Leone",
+   "capital": [
+    "Freetown"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/sl.svg",
+   "fact": "Freetown, the capital of Sierra Leone, was founded as a home for people freed from slavery.",
+   "level": "hard",
+   "svgPathId": "SL"
+  },
+  {
+   "code": "SO",
+   "name": "Somalia",
+   "capital": [
+    "Mogadishu"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/so.svg",
+   "fact": "Somalia has the longest coastline of any country on mainland Africa.",
+   "level": "hard",
+   "svgPathId": "SO"
+  },
+  {
+   "code": "ZA",
+   "name": "South Africa",
+   "capital": [
+    "Pretoria",
+    "Cape Town",
+    "Bloemfontein"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/za.svg",
+   "fact": "South Africa has three capital cities, one for each part of its government.",
+   "level": "easy",
+   "svgPathId": "ZA"
+  },
+  {
+   "code": "SS",
+   "name": "South Sudan",
+   "capital": [
+    "Juba"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/ss.svg",
+   "fact": "South Sudan became the world's newest country in 2011.",
+   "level": "hard",
+   "svgPathId": "SS"
+  },
+  {
+   "code": "SD",
+   "name": "Sudan",
+   "capital": [
+    "Khartoum"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/sd.svg",
+   "fact": "The Blue Nile and the White Nile meet in Khartoum, the capital of Sudan, to form the River Nile.",
+   "level": "medium",
+   "svgPathId": "SD"
+  },
+  {
+   "code": "TZ",
+   "name": "Tanzania",
+   "capital": [
+    "Dodoma"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/tz.svg",
+   "fact": "Mount Kilimanjaro, the highest mountain in Africa, is in Tanzania.",
+   "level": "medium",
+   "svgPathId": "TZ"
+  },
+  {
+   "code": "TG",
+   "name": "Togo",
+   "capital": [
+    "Lomé"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/tg.svg",
+   "fact": "Togo is a narrow country, only about 50 to 150 kilometres wide in most places.",
+   "level": "hard",
+   "svgPathId": "TG"
+  },
+  {
+   "code": "TN",
+   "name": "Tunisia",
+   "capital": [
+    "Tunis"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/tn.svg",
+   "fact": "Some scenes of the Star Wars films were filmed in the Tunisian desert.",
+   "level": "medium",
+   "svgPathId": "TN"
+  },
+  {
+   "code": "UG",
+   "name": "Uganda",
+   "capital": [
+    "Kampala"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/ug.svg",
+   "fact": "Lake Victoria, the biggest lake in Africa, touches Uganda, Kenya and Tanzania.",
+   "level": "medium",
+   "svgPathId": "UG"
+  },
+  {
+   "code": "ZM",
+   "name": "Zambia",
+   "capital": [
+    "Lusaka"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/zm.svg",
+   "fact": "Victoria Falls, one of the biggest waterfalls in the world, is on the border of Zambia and Zimbabwe.",
+   "level": "medium",
+   "svgPathId": "ZM"
+  },
+  {
+   "code": "ZW",
+   "name": "Zimbabwe",
+   "capital": [
+    "Harare"
+   ],
+   "continent": "Africa",
+   "flag": "assets/flags/zw.svg",
+   "fact": "The ruins of Great Zimbabwe are an ancient stone city that gave the country its name.",
+   "level": "medium",
+   "svgPathId": "ZW"
+  },
+  {
+   "code": "AF",
+   "name": "Afghanistan",
+   "capital": [
+    "Kabul"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/af.svg",
+   "fact": "Afghanistan is a land of high mountains, including the Hindu Kush range.",
+   "level": "medium",
+   "svgPathId": "AF"
+  },
+  {
+   "code": "AM",
+   "name": "Armenia",
+   "capital": [
+    "Yerevan"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/am.svg",
+   "fact": "Armenia was one of the first countries to make Christianity its official religion, in the year 301.",
+   "level": "hard",
+   "svgPathId": "AM"
+  },
+  {
+   "code": "AZ",
+   "name": "Azerbaijan",
+   "capital": [
+    "Baku"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/az.svg",
+   "fact": "Baku, in Azerbaijan, is on the Caspian Sea, the biggest lake in the world.",
+   "level": "hard",
+   "svgPathId": "AZ"
+  },
+  {
+   "code": "BH",
+   "name": "Bahrain",
+   "capital": [
+    "Manama"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/bh.svg",
+   "fact": "Bahrain is an island country in the Persian Gulf, famous long ago for its pearls.",
+   "level": "hard",
+   "svgPathId": "BH"
+  },
+  {
+   "code": "BD",
+   "name": "Bangladesh",
+   "capital": [
+    "Dhaka"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/bd.svg",
+   "fact": "Bangladesh is home to the Sundarbans, the largest mangrove forest in the world.",
+   "level": "medium",
+   "svgPathId": "BD"
+  },
+  {
+   "code": "BT",
+   "name": "Bhutan",
+   "capital": [
+    "Thimphu"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/bt.svg",
+   "fact": "Bhutan measures its success by \"Gross National Happiness\".",
+   "level": "hard",
+   "svgPathId": "BT"
+  },
+  {
+   "code": "BN",
+   "name": "Brunei",
+   "capital": [
+    "Bandar Seri Begawan"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/bn.svg",
+   "fact": "Brunei is a small country on the island of Borneo, with the rest of the island split between two other countries.",
+   "level": "hard",
+   "svgPathId": "BN"
+  },
+  {
+   "code": "KH",
+   "name": "Cambodia",
+   "capital": [
+    "Phnom Penh"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/kh.svg",
+   "fact": "Angkor Wat in Cambodia is the largest religious building in the world.",
+   "level": "medium",
+   "svgPathId": "KH"
+  },
+  {
+   "code": "CN",
+   "name": "China",
+   "capital": [
+    "Beijing"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/cn.svg",
+   "fact": "The Great Wall of China is thousands of kilometres long.",
+   "level": "easy",
+   "svgPathId": "CN"
+  },
+  {
+   "code": "GE",
+   "name": "Georgia",
+   "capital": [
+    "Tbilisi"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/ge.svg",
+   "fact": "People in Georgia have been making wine for about 8,000 years.",
+   "level": "hard",
+   "svgPathId": "GE"
+  },
+  {
+   "code": "IN",
+   "name": "India",
+   "capital": [
+    "New Delhi"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/in.svg",
+   "fact": "India has more than a billion people, and the Taj Mahal is one of its most famous buildings.",
+   "level": "easy",
+   "svgPathId": "IN"
+  },
+  {
+   "code": "ID",
+   "name": "Indonesia",
+   "capital": [
+    "Jakarta"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/id.svg",
+   "fact": "Indonesia is made up of more than 17,000 islands.",
+   "level": "easy",
+   "svgPathId": "ID"
+  },
+  {
+   "code": "IR",
+   "name": "Iran",
+   "capital": [
+    "Tehran"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/ir.svg",
+   "fact": "Iran was once called Persia, and it is home to one of the oldest civilisations in the world.",
+   "level": "medium",
+   "svgPathId": "IR"
+  },
+  {
+   "code": "IQ",
+   "name": "Iraq",
+   "capital": [
+    "Baghdad"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/iq.svg",
+   "fact": "Long ago, the first cities and the first writing appeared in the land that is now Iraq.",
+   "level": "medium",
+   "svgPathId": "IQ"
+  },
+  {
+   "code": "IL",
+   "name": "Israel",
+   "capital": [],
+   "continent": "Asia",
+   "flag": "assets/flags/il.svg",
+   "fact": "Israel's Dead Sea is so salty that people float easily on top of it.",
+   "level": "medium",
+   "svgPathId": "IL"
+  },
+  {
+   "code": "JP",
+   "name": "Japan",
+   "capital": [
+    "Tokyo"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/jp.svg",
+   "fact": "Japan is made up of four main islands and thousands of smaller ones, and it has Mount Fuji.",
+   "level": "easy",
+   "svgPathId": "JP"
+  },
+  {
+   "code": "JO",
+   "name": "Jordan",
+   "capital": [
+    "Amman"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/jo.svg",
+   "fact": "The ancient rose-red city of Petra was carved into the cliffs in Jordan.",
+   "level": "medium",
+   "svgPathId": "JO"
+  },
+  {
+   "code": "KZ",
+   "name": "Kazakhstan",
+   "capital": [
+    "Astana"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/kz.svg",
+   "fact": "Kazakhstan is the biggest country in the world with no coast.",
+   "level": "medium",
+   "svgPathId": "KZ"
+  },
+  {
+   "code": "KW",
+   "name": "Kuwait",
+   "capital": [
+    "Kuwait City"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/kw.svg",
+   "fact": "Kuwait is a small country at the top of the Persian Gulf.",
+   "level": "hard",
+   "svgPathId": "KW"
+  },
+  {
+   "code": "KG",
+   "name": "Kyrgyzstan",
+   "capital": [
+    "Bishkek"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/kg.svg",
+   "fact": "More than 90 percent of Kyrgyzstan is covered by mountains.",
+   "level": "hard",
+   "svgPathId": "KG"
+  },
+  {
+   "code": "LA",
+   "name": "Laos",
+   "capital": [
+    "Vientiane"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/la.svg",
+   "fact": "Laos is the only country in Southeast Asia with no coast.",
+   "level": "medium",
+   "svgPathId": "LA"
+  },
+  {
+   "code": "LB",
+   "name": "Lebanon",
+   "capital": [
+    "Beirut"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/lb.svg",
+   "fact": "A cedar tree is on the flag of Lebanon, and its cedar forests are thousands of years old.",
+   "level": "medium",
+   "svgPathId": "LB"
+  },
+  {
+   "code": "MY",
+   "name": "Malaysia",
+   "capital": [
+    "Kuala Lumpur"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/my.svg",
+   "fact": "The Petronas Towers in Kuala Lumpur were the tallest buildings in the world from 1998 to 2004.",
+   "level": "medium",
+   "svgPathId": "MY"
+  },
+  {
+   "code": "MV",
+   "name": "Maldives",
+   "capital": [
+    "Malé"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/mv.svg",
+   "fact": "The Maldives are made of coral islands, and they are the lowest country in the world.",
+   "level": "hard",
+   "svgPathId": "MV"
+  },
+  {
+   "code": "MN",
+   "name": "Mongolia",
+   "capital": [
+    "Ulaanbaatar"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/mn.svg",
+   "fact": "Mongolia is called the land of the blue sky, and many families still live in round tents called gers.",
+   "level": "medium",
+   "svgPathId": "MN"
+  },
+  {
+   "code": "MM",
+   "name": "Myanmar",
+   "capital": [
+    "Naypyidaw"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/mm.svg",
+   "fact": "Myanmar is also called Burma, and thousands of old temples stand at Bagan.",
+   "level": "medium",
+   "svgPathId": "MM"
+  },
+  {
+   "code": "NP",
+   "name": "Nepal",
+   "capital": [
+    "Kathmandu"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/np.svg",
+   "fact": "Mount Everest, the highest mountain in the world, is on the border of Nepal and China.",
+   "level": "medium",
+   "svgPathId": "NP"
+  },
+  {
+   "code": "KP",
+   "name": "North Korea",
+   "capital": [
+    "Pyongyang"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/kp.svg",
+   "fact": "North Korea shares the Korean peninsula with South Korea.",
+   "level": "medium",
+   "svgPathId": "KP"
+  },
+  {
+   "code": "OM",
+   "name": "Oman",
+   "capital": [
+    "Muscat"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/om.svg",
+   "fact": "Oman has been famous for frankincense, a sweet-smelling tree resin, for thousands of years.",
+   "level": "hard",
+   "svgPathId": "OM"
+  },
+  {
+   "code": "PK",
+   "name": "Pakistan",
+   "capital": [
+    "Islamabad"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/pk.svg",
+   "fact": "K2, the second highest mountain in the world, is in Pakistan.",
+   "level": "easy",
+   "svgPathId": "PK"
+  },
+  {
+   "code": "PH",
+   "name": "Philippines",
+   "capital": [
+    "Manila"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/ph.svg",
+   "fact": "The Philippines is made of more than 7,000 islands.",
+   "level": "easy",
+   "svgPathId": "PH"
+  },
+  {
+   "code": "QA",
+   "name": "Qatar",
+   "capital": [
+    "Doha"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/qa.svg",
+   "fact": "Qatar is a small peninsula that sticks out into the Persian Gulf.",
+   "level": "hard",
+   "svgPathId": "QA"
+  },
+  {
+   "code": "SA",
+   "name": "Saudi Arabia",
+   "capital": [
+    "Riyadh"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/sa.svg",
+   "fact": "Most of Saudi Arabia is desert, and it holds the holy city of Mecca.",
+   "level": "easy",
+   "svgPathId": "SA"
+  },
+  {
+   "code": "SG",
+   "name": "Singapore",
+   "capital": [
+    "Singapore"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/sg.svg",
+   "fact": "Singapore is both a city and a country, on one small island.",
+   "level": "medium",
+   "svgPathId": "SG"
+  },
+  {
+   "code": "KR",
+   "name": "South Korea",
+   "capital": [
+    "Seoul"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/kr.svg",
+   "fact": "The K-pop music and the game of taekwondo both come from South Korea.",
+   "level": "easy",
+   "svgPathId": "KR"
+  },
+  {
+   "code": "LK",
+   "name": "Sri Lanka",
+   "capital": [
+    "Sri Jayawardenepura Kotte",
+    "Colombo"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/lk.svg",
+   "fact": "Sri Lanka is shaped like a teardrop and is famous for its tea.",
+   "level": "medium",
+   "svgPathId": "LK"
+  },
+  {
+   "code": "SY",
+   "name": "Syria",
+   "capital": [
+    "Damascus"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/sy.svg",
+   "fact": "Damascus, in Syria, is one of the oldest cities in the world that people still live in.",
+   "level": "medium",
+   "svgPathId": "SY"
+  },
+  {
+   "code": "TJ",
+   "name": "Tajikistan",
+   "capital": [
+    "Dushanbe"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/tj.svg",
+   "fact": "Most of Tajikistan is mountains, and it has some of the world's longest glaciers.",
+   "level": "hard",
+   "svgPathId": "TJ"
+  },
+  {
+   "code": "TH",
+   "name": "Thailand",
+   "capital": [
+    "Bangkok"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/th.svg",
+   "fact": "Elephants are the national animal of Thailand.",
+   "level": "easy",
+   "svgPathId": "TH"
+  },
+  {
+   "code": "TL",
+   "name": "Timor-Leste",
+   "capital": [
+    "Dili"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/tl.svg",
+   "fact": "Timor-Leste, also called East Timor, became independent in 2002.",
+   "level": "hard",
+   "svgPathId": "TL"
+  },
+  {
+   "code": "TR",
+   "name": "Turkey",
+   "capital": [
+    "Ankara"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/tr.svg",
+   "fact": "Turkey is a bridge between two continents, because the city of Istanbul sits in both Europe and Asia.",
+   "level": "easy",
+   "svgPathId": "TR"
+  },
+  {
+   "code": "TM",
+   "name": "Turkmenistan",
+   "capital": [
+    "Ashgabat"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/tm.svg",
+   "fact": "The Darvaza gas crater in Turkmenistan has been burning like a giant fire pit for decades.",
+   "level": "hard",
+   "svgPathId": "TM"
+  },
+  {
+   "code": "AE",
+   "name": "United Arab Emirates",
+   "capital": [
+    "Abu Dhabi"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/ae.svg",
+   "fact": "Dubai, in the United Arab Emirates, has the tallest building in the world, the Burj Khalifa.",
+   "level": "medium",
+   "svgPathId": "AE"
+  },
+  {
+   "code": "UZ",
+   "name": "Uzbekistan",
+   "capital": [
+    "Tashkent"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/uz.svg",
+   "fact": "Samarkand, in Uzbekistan, was a famous stop on the ancient Silk Road.",
+   "level": "hard",
+   "svgPathId": "UZ"
+  },
+  {
+   "code": "VN",
+   "name": "Vietnam",
+   "capital": [
+    "Hanoi"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/vn.svg",
+   "fact": "Ha Long Bay in Vietnam has thousands of limestone islands rising from the sea.",
+   "level": "easy",
+   "svgPathId": "VN"
+  },
+  {
+   "code": "YE",
+   "name": "Yemen",
+   "capital": [
+    "Sana'a"
+   ],
+   "continent": "Asia",
+   "flag": "assets/flags/ye.svg",
+   "fact": "Sana'a, in Yemen, is known for its tall old houses decorated with white patterns.",
+   "level": "hard",
+   "svgPathId": "YE"
+  },
+  {
+   "code": "AL",
+   "name": "Albania",
+   "capital": [
+    "Tirana"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/al.svg",
+   "fact": "Albania has thousands of small concrete bunkers dotted around the countryside.",
+   "level": "hard",
+   "svgPathId": "AL"
+  },
+  {
+   "code": "AD",
+   "name": "Andorra",
+   "capital": [
+    "Andorra la Vella"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/ad.svg",
+   "fact": "Andorra is a tiny country high in the Pyrenees mountains between France and Spain.",
+   "level": "hard",
+   "svgPathId": "AD"
+  },
+  {
+   "code": "AT",
+   "name": "Austria",
+   "capital": [
+    "Vienna"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/at.svg",
+   "fact": "Many famous composers, including Mozart, lived and worked in Austria.",
+   "level": "medium",
+   "svgPathId": "AT"
+  },
+  {
+   "code": "BY",
+   "name": "Belarus",
+   "capital": [
+    "Minsk"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/by.svg",
+   "fact": "Belarus is home to the Białowieża Forest, where the European bison still lives wild.",
+   "level": "hard",
+   "svgPathId": "BY"
+  },
+  {
+   "code": "BE",
+   "name": "Belgium",
+   "capital": [
+    "Brussels"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/be.svg",
+   "fact": "Belgium is famous for its chocolate, waffles and fries.",
+   "level": "medium",
+   "svgPathId": "BE"
+  },
+  {
+   "code": "BA",
+   "name": "Bosnia and Herzegovina",
+   "capital": [
+    "Sarajevo"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/ba.svg",
+   "fact": "The Old Bridge in Mostar, Bosnia and Herzegovina, is famous for the divers who leap off it.",
+   "level": "hard",
+   "svgPathId": "BA"
+  },
+  {
+   "code": "BG",
+   "name": "Bulgaria",
+   "capital": [
+    "Sofia"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/bg.svg",
+   "fact": "Bulgaria is the world's biggest producer of rose oil, used to make perfume.",
+   "level": "hard",
+   "svgPathId": "BG"
+  },
+  {
+   "code": "HR",
+   "name": "Croatia",
+   "capital": [
+    "Zagreb"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/hr.svg",
+   "fact": "Croatia has more than a thousand islands in the Adriatic Sea.",
+   "level": "medium",
+   "svgPathId": "HR"
+  },
+  {
+   "code": "CY",
+   "name": "Cyprus",
+   "capital": [
+    "Nicosia"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/cy.svg",
+   "fact": "Cyprus is an island in the Mediterranean Sea, and in old stories it is the birthplace of the goddess Aphrodite.",
+   "level": "hard",
+   "svgPathId": "CY"
+  },
+  {
+   "code": "CZ",
+   "name": "Czechia",
+   "capital": [
+    "Prague"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/cz.svg",
+   "fact": "Czechia is also called the Czech Republic, and its capital Prague has a famous old astronomical clock.",
+   "level": "medium",
+   "svgPathId": "CZ"
+  },
+  {
+   "code": "DK",
+   "name": "Denmark",
+   "capital": [
+    "Copenhagen"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/dk.svg",
+   "fact": "LEGO bricks were invented in Denmark.",
+   "level": "medium",
+   "svgPathId": "DK"
+  },
+  {
+   "code": "EE",
+   "name": "Estonia",
+   "capital": [
+    "Tallinn"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/ee.svg",
+   "fact": "Estonia is a leader in technology, and Skype was created by Estonian programmers.",
+   "level": "hard",
+   "svgPathId": "EE"
+  },
+  {
+   "code": "FI",
+   "name": "Finland",
+   "capital": [
+    "Helsinki"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/fi.svg",
+   "fact": "Finland has about 180,000 islands and thousands of lakes.",
+   "level": "medium",
+   "svgPathId": "FI"
+  },
+  {
+   "code": "FR",
+   "name": "France",
+   "capital": [
+    "Paris"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/fr.svg",
+   "fact": "The Eiffel Tower in Paris is about 330 metres tall.",
+   "level": "easy",
+   "svgPathId": "FR"
+  },
+  {
+   "code": "DE",
+   "name": "Germany",
+   "capital": [
+    "Berlin"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/de.svg",
+   "fact": "Germany has more than 1,500 kinds of sausage, and its autobahn has parts with no speed limit.",
+   "level": "easy",
+   "svgPathId": "DE"
+  },
+  {
+   "code": "GR",
+   "name": "Greece",
+   "capital": [
+    "Athens"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/gr.svg",
+   "fact": "The first Olympic Games were held in ancient Greece.",
+   "level": "easy",
+   "svgPathId": "GR"
+  },
+  {
+   "code": "HU",
+   "name": "Hungary",
+   "capital": [
+    "Budapest"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/hu.svg",
+   "fact": "The Rubik's Cube was invented in Hungary in 1974.",
+   "level": "medium",
+   "svgPathId": "HU"
+  },
+  {
+   "code": "IS",
+   "name": "Iceland",
+   "capital": [
+    "Reykjavik"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/is.svg",
+   "fact": "Iceland is called the land of fire and ice, because it has volcanoes and glaciers.",
+   "level": "medium",
+   "svgPathId": "IS"
+  },
+  {
+   "code": "IE",
+   "name": "Ireland",
+   "capital": [
+    "Dublin"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/ie.svg",
+   "fact": "Ireland is called the Emerald Isle because it is so green.",
+   "level": "easy",
+   "svgPathId": "IE"
+  },
+  {
+   "code": "IT",
+   "name": "Italy",
+   "capital": [
+    "Rome"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/it.svg",
+   "fact": "Italy is shaped like a boot, and pizza comes from the city of Naples.",
+   "level": "easy",
+   "svgPathId": "IT"
+  },
+  {
+   "code": "LV",
+   "name": "Latvia",
+   "capital": [
+    "Riga"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/lv.svg",
+   "fact": "Latvia has more than half of its land covered in forest.",
+   "level": "hard",
+   "svgPathId": "LV"
+  },
+  {
+   "code": "LI",
+   "name": "Liechtenstein",
+   "capital": [
+    "Vaduz"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/li.svg",
+   "fact": "Liechtenstein is one of the smallest countries in the world, only about 25 kilometres long.",
+   "level": "hard",
+   "svgPathId": "LI"
+  },
+  {
+   "code": "LT",
+   "name": "Lithuania",
+   "capital": [
+    "Vilnius"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/lt.svg",
+   "fact": "Lithuania is famous for amber, a golden stone made from ancient tree sap.",
+   "level": "hard",
+   "svgPathId": "LT"
+  },
+  {
+   "code": "LU",
+   "name": "Luxembourg",
+   "capital": [
+    "Luxembourg"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/lu.svg",
+   "fact": "Luxembourg is one of the smallest countries in Europe, and its capital has the same name.",
+   "level": "hard",
+   "svgPathId": "LU"
+  },
+  {
+   "code": "MT",
+   "name": "Malta",
+   "capital": [
+    "Valletta"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/mt.svg",
+   "fact": "Malta is a small island country with some of the oldest stone temples in the world.",
+   "level": "hard",
+   "svgPathId": "MT"
+  },
+  {
+   "code": "MD",
+   "name": "Moldova",
+   "capital": [
+    "Chișinău"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/md.svg",
+   "fact": "Moldova has an enormous underground wine cellar with hundreds of kilometres of tunnels.",
+   "level": "hard",
+   "svgPathId": "MD"
+  },
+  {
+   "code": "MC",
+   "name": "Monaco",
+   "capital": [
+    "Monaco"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/mc.svg",
+   "fact": "Monaco is the second smallest country in the world, after the Vatican City.",
+   "level": "hard",
+   "svgPathId": "MC"
+  },
+  {
+   "code": "ME",
+   "name": "Montenegro",
+   "capital": [
+    "Podgorica"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/me.svg",
+   "fact": "Montenegro means \"black mountain\", named after its dark forested mountains.",
+   "level": "hard",
+   "svgPathId": "ME"
+  },
+  {
+   "code": "NL",
+   "name": "Netherlands",
+   "capital": [
+    "Amsterdam"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/nl.svg",
+   "fact": "About a quarter of the Netherlands is below sea level, and it has more bicycles than people.",
+   "level": "easy",
+   "svgPathId": "NL"
+  },
+  {
+   "code": "MK",
+   "name": "North Macedonia",
+   "capital": [
+    "Skopje"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/mk.svg",
+   "fact": "Lake Ohrid, shared by North Macedonia and Albania, is one of the oldest lakes in the world.",
+   "level": "hard",
+   "svgPathId": "MK"
+  },
+  {
+   "code": "NO",
+   "name": "Norway",
+   "capital": [
+    "Oslo"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/no.svg",
+   "fact": "Norway has deep sea inlets called fjords, and in summer the sun hardly sets in the far north.",
+   "level": "easy",
+   "svgPathId": "NO"
+  },
+  {
+   "code": "PL",
+   "name": "Poland",
+   "capital": [
+    "Warsaw"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/pl.svg",
+   "fact": "Poland has the Wieliczka Salt Mine, where there are statues and chapels made of salt.",
+   "level": "medium",
+   "svgPathId": "PL"
+  },
+  {
+   "code": "PT",
+   "name": "Portugal",
+   "capital": [
+    "Lisbon"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/pt.svg",
+   "fact": "Portugal is the country where most of the world's cork comes from.",
+   "level": "easy",
+   "svgPathId": "PT"
+  },
+  {
+   "code": "RO",
+   "name": "Romania",
+   "capital": [
+    "Bucharest"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/ro.svg",
+   "fact": "Bran Castle in Romania is often linked to the story of Dracula.",
+   "level": "medium",
+   "svgPathId": "RO"
+  },
+  {
+   "code": "RU",
+   "name": "Russia",
+   "capital": [
+    "Moscow"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/ru.svg",
+   "fact": "Russia is the biggest country in the world and spans eleven time zones.",
+   "level": "easy",
+   "svgPathId": "RU"
+  },
+  {
+   "code": "SM",
+   "name": "San Marino",
+   "capital": [
+    "San Marino"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/sm.svg",
+   "fact": "San Marino is one of the oldest countries in the world, said to be founded in the year 301.",
+   "level": "hard",
+   "svgPathId": "SM"
+  },
+  {
+   "code": "RS",
+   "name": "Serbia",
+   "capital": [
+    "Belgrade"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/rs.svg",
+   "fact": "Belgrade, in Serbia, is where two great rivers, the Danube and the Sava, meet.",
+   "level": "hard",
+   "svgPathId": "RS"
+  },
+  {
+   "code": "SK",
+   "name": "Slovakia",
+   "capital": [
+    "Bratislava"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/sk.svg",
+   "fact": "Slovakia has more castles and chateaux per person than almost any other country.",
+   "level": "hard",
+   "svgPathId": "SK"
+  },
+  {
+   "code": "SI",
+   "name": "Slovenia",
+   "capital": [
+    "Ljubljana"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/si.svg",
+   "fact": "Slovenia has more than 10,000 caves, and the beautiful Lake Bled.",
+   "level": "hard",
+   "svgPathId": "SI"
+  },
+  {
+   "code": "ES",
+   "name": "Spain",
+   "capital": [
+    "Madrid"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/es.svg",
+   "fact": "In Spain, people eat dinner late, and they celebrate with a tomato-throwing festival called La Tomatina.",
+   "level": "easy",
+   "svgPathId": "ES"
+  },
+  {
+   "code": "SE",
+   "name": "Sweden",
+   "capital": [
+    "Stockholm"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/se.svg",
+   "fact": "Sweden has more than 95,000 lakes, and the Nobel Prizes are given out in its capital.",
+   "level": "easy",
+   "svgPathId": "SE"
+  },
+  {
+   "code": "CH",
+   "name": "Switzerland",
+   "capital": [
+    "Bern"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/ch.svg",
+   "fact": "Switzerland is famous for its chocolate, cheese and watches, and the Alps.",
+   "level": "easy",
+   "svgPathId": "CH"
+  },
+  {
+   "code": "UA",
+   "name": "Ukraine",
+   "capital": [
+    "Kyiv"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/ua.svg",
+   "fact": "Ukraine is the largest country that lies entirely in Europe.",
+   "level": "medium",
+   "svgPathId": "UA"
+  },
+  {
+   "code": "GB",
+   "name": "United Kingdom",
+   "capital": [
+    "London"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/gb.svg",
+   "fact": "The United Kingdom is made up of England, Scotland, Wales and Northern Ireland.",
+   "level": "easy",
+   "svgPathId": "GB"
+  },
+  {
+   "code": "VA",
+   "name": "Vatican City",
+   "capital": [
+    "Vatican City"
+   ],
+   "continent": "Europe",
+   "flag": "assets/flags/va.svg",
+   "fact": "The Vatican City is the smallest country in the world and sits inside the city of Rome.",
+   "level": "hard",
+   "svgPathId": "VA"
+  },
+  {
+   "code": "AG",
+   "name": "Antigua and Barbuda",
+   "capital": [
+    "St. John's"
+   ],
+   "continent": "North America",
+   "flag": "assets/flags/ag.svg",
+   "fact": "Antigua is said to have a beach for every day of the year.",
+   "level": "hard",
+   "svgPathId": "AG"
+  },
+  {
+   "code": "BS",
+   "name": "Bahamas",
+   "capital": [
+    "Nassau"
+   ],
+   "continent": "North America",
+   "flag": "assets/flags/bs.svg",
+   "fact": "The Bahamas are about 700 islands, with clear turquoise water.",
+   "level": "hard",
+   "svgPathId": "BS"
+  },
+  {
+   "code": "BB",
+   "name": "Barbados",
+   "capital": [
+    "Bridgetown"
+   ],
+   "continent": "North America",
+   "flag": "assets/flags/bb.svg",
+   "fact": "Barbados is the birthplace of the singer Rihanna, and its islanders love cricket.",
+   "level": "hard",
+   "svgPathId": "BB"
+  },
+  {
+   "code": "BZ",
+   "name": "Belize",
+   "capital": [
+    "Belmopan"
+   ],
+   "continent": "North America",
+   "flag": "assets/flags/bz.svg",
+   "fact": "The Belize Barrier Reef is the second biggest coral reef in the world.",
+   "level": "hard",
+   "svgPathId": "BZ"
+  },
+  {
+   "code": "CA",
+   "name": "Canada",
+   "capital": [
+    "Ottawa"
+   ],
+   "continent": "North America",
+   "flag": "assets/flags/ca.svg",
+   "fact": "Canada has more lakes than the rest of the world put together.",
+   "level": "easy",
+   "svgPathId": "CA"
+  },
+  {
+   "code": "CR",
+   "name": "Costa Rica",
+   "capital": [
+    "San José"
+   ],
+   "continent": "North America",
+   "flag": "assets/flags/cr.svg",
+   "fact": "Costa Rica has no army, and it is full of rainforest and wildlife.",
+   "level": "medium",
+   "svgPathId": "CR"
+  },
+  {
+   "code": "CU",
+   "name": "Cuba",
+   "capital": [
+    "Havana"
+   ],
+   "continent": "North America",
+   "flag": "assets/flags/cu.svg",
+   "fact": "Cuba is the biggest island in the Caribbean Sea.",
+   "level": "easy",
+   "svgPathId": "CU"
+  },
+  {
+   "code": "DM",
+   "name": "Dominica",
+   "capital": [
+    "Roseau"
+   ],
+   "continent": "North America",
+   "flag": "assets/flags/dm.svg",
+   "fact": "Dominica is called the nature island of the Caribbean, with a boiling lake.",
+   "level": "hard",
+   "svgPathId": "DM"
+  },
+  {
+   "code": "DO",
+   "name": "Dominican Republic",
+   "capital": [
+    "Santo Domingo"
+   ],
+   "continent": "North America",
+   "flag": "assets/flags/do.svg",
+   "fact": "The Dominican Republic shares an island, Hispaniola, with Haiti.",
+   "level": "medium",
+   "svgPathId": "DO"
+  },
+  {
+   "code": "SV",
+   "name": "El Salvador",
+   "capital": [
+    "San Salvador"
+   ],
+   "continent": "North America",
+   "flag": "assets/flags/sv.svg",
+   "fact": "El Salvador is the smallest country in Central America.",
+   "level": "hard",
+   "svgPathId": "SV"
+  },
+  {
+   "code": "GD",
+   "name": "Grenada",
+   "capital": [
+    "St. George's"
+   ],
+   "continent": "North America",
+   "flag": "assets/flags/gd.svg",
+   "fact": "Grenada is called the Spice Island because it grows so much nutmeg.",
+   "level": "hard",
+   "svgPathId": "GD"
+  },
+  {
+   "code": "GT",
+   "name": "Guatemala",
+   "capital": [
+    "Guatemala City"
+   ],
+   "continent": "North America",
+   "flag": "assets/flags/gt.svg",
+   "fact": "Guatemala was the home of the ancient Maya, who built great stone cities like Tikal.",
+   "level": "medium",
+   "svgPathId": "GT"
+  },
+  {
+   "code": "HT",
+   "name": "Haiti",
+   "capital": [
+    "Port-au-Prince"
+   ],
+   "continent": "North America",
+   "flag": "assets/flags/ht.svg",
+   "fact": "Haiti was the first country in the world to be founded by people who had freed themselves from slavery.",
+   "level": "medium",
+   "svgPathId": "HT"
+  },
+  {
+   "code": "HN",
+   "name": "Honduras",
+   "capital": [
+    "Tegucigalpa"
+   ],
+   "continent": "North America",
+   "flag": "assets/flags/hn.svg",
+   "fact": "The ancient Mayan city of Copán, with its stone stairway of writing, is in Honduras.",
+   "level": "hard",
+   "svgPathId": "HN"
+  },
+  {
+   "code": "JM",
+   "name": "Jamaica",
+   "capital": [
+    "Kingston"
+   ],
+   "continent": "North America",
+   "flag": "assets/flags/jm.svg",
+   "fact": "Jamaica is the home of reggae music, and the runner Usain Bolt.",
+   "level": "easy",
+   "svgPathId": "JM"
+  },
+  {
+   "code": "MX",
+   "name": "Mexico",
+   "capital": [
+    "Mexico City"
+   ],
+   "continent": "North America",
+   "flag": "assets/flags/mx.svg",
+   "fact": "Chocolate and corn tortillas both come from Mexico, and so does the ancient pyramid of Chichén Itzá.",
+   "level": "easy",
+   "svgPathId": "MX"
+  },
+  {
+   "code": "NI",
+   "name": "Nicaragua",
+   "capital": [
+    "Managua"
+   ],
+   "continent": "North America",
+   "flag": "assets/flags/ni.svg",
+   "fact": "Nicaragua is the biggest country in Central America and has many volcanoes.",
+   "level": "hard",
+   "svgPathId": "NI"
+  },
+  {
+   "code": "PA",
+   "name": "Panama",
+   "capital": [
+    "Panama City"
+   ],
+   "continent": "North America",
+   "flag": "assets/flags/pa.svg",
+   "fact": "The Panama Canal lets ships cross between the Atlantic and Pacific oceans.",
+   "level": "medium",
+   "svgPathId": "PA"
+  },
+  {
+   "code": "KN",
+   "name": "Saint Kitts and Nevis",
+   "capital": [
+    "Basseterre"
+   ],
+   "continent": "North America",
+   "flag": "assets/flags/kn.svg",
+   "fact": "Saint Kitts and Nevis is the smallest country in the Americas.",
+   "level": "hard",
+   "svgPathId": "KN"
+  },
+  {
+   "code": "LC",
+   "name": "Saint Lucia",
+   "capital": [
+    "Castries"
+   ],
+   "continent": "North America",
+   "flag": "assets/flags/lc.svg",
+   "fact": "Saint Lucia has two huge cone-shaped mountains called the Pitons.",
+   "level": "hard",
+   "svgPathId": "LC"
+  },
+  {
+   "code": "VC",
+   "name": "Saint Vincent and the Grenadines",
+   "capital": [
+    "Kingstown"
+   ],
+   "continent": "North America",
+   "flag": "assets/flags/vc.svg",
+   "fact": "The Grenadines are a chain of small, beautiful islands in the Caribbean.",
+   "level": "hard",
+   "svgPathId": "VC"
+  },
+  {
+   "code": "TT",
+   "name": "Trinidad and Tobago",
+   "capital": [
+    "Port of Spain"
+   ],
+   "continent": "North America",
+   "flag": "assets/flags/tt.svg",
+   "fact": "Trinidad and Tobago is where the steelpan, a musical instrument made from oil drums, was invented.",
+   "level": "hard",
+   "svgPathId": "TT"
+  },
+  {
+   "code": "US",
+   "name": "United States",
+   "capital": [
+    "Washington, D.C."
+   ],
+   "continent": "North America",
+   "flag": "assets/flags/us.svg",
+   "fact": "The United States has 50 states, and Alaska is the biggest.",
+   "level": "easy",
+   "svgPathId": "US"
+  },
+  {
+   "code": "AR",
+   "name": "Argentina",
+   "capital": [
+    "Buenos Aires"
+   ],
+   "continent": "South America",
+   "flag": "assets/flags/ar.svg",
+   "fact": "Argentina is the home of the tango dance and the Andes mountain Aconcagua, the highest in the Americas.",
+   "level": "easy",
+   "svgPathId": "AR"
+  },
+  {
+   "code": "BO",
+   "name": "Bolivia",
+   "capital": [
+    "Sucre",
+    "La Paz"
+   ],
+   "continent": "South America",
+   "flag": "assets/flags/bo.svg",
+   "fact": "Bolivia has the Uyuni Salt Flat, the biggest mirror-like salt desert in the world.",
+   "level": "medium",
+   "svgPathId": "BO"
+  },
+  {
+   "code": "BR",
+   "name": "Brazil",
+   "capital": [
+    "Brasília"
+   ],
+   "continent": "South America",
+   "flag": "assets/flags/br.svg",
+   "fact": "Brazil has most of the Amazon rainforest and has won the football World Cup five times.",
+   "level": "easy",
+   "svgPathId": "BR"
+  },
+  {
+   "code": "CL",
+   "name": "Chile",
+   "capital": [
+    "Santiago"
+   ],
+   "continent": "South America",
+   "flag": "assets/flags/cl.svg",
+   "fact": "Chile is a very long, thin country, over 4,000 kilometres from top to bottom.",
+   "level": "easy",
+   "svgPathId": "CL"
+  },
+  {
+   "code": "CO",
+   "name": "Colombia",
+   "capital": [
+    "Bogotá"
+   ],
+   "continent": "South America",
+   "flag": "assets/flags/co.svg",
+   "fact": "Colombia is famous for its coffee, emeralds and colourful butterflies.",
+   "level": "easy",
+   "svgPathId": "CO"
+  },
+  {
+   "code": "EC",
+   "name": "Ecuador",
+   "capital": [
+    "Quito"
+   ],
+   "continent": "South America",
+   "flag": "assets/flags/ec.svg",
+   "fact": "Ecuador is named after the equator, and the Galápagos Islands belong to it.",
+   "level": "medium",
+   "svgPathId": "EC"
+  },
+  {
+   "code": "GY",
+   "name": "Guyana",
+   "capital": [
+    "Georgetown"
+   ],
+   "continent": "South America",
+   "flag": "assets/flags/gy.svg",
+   "fact": "Kaieteur Falls in Guyana is one of the most powerful waterfalls in the world.",
+   "level": "hard",
+   "svgPathId": "GY"
+  },
+  {
+   "code": "PY",
+   "name": "Paraguay",
+   "capital": [
+    "Asunción"
+   ],
+   "continent": "South America",
+   "flag": "assets/flags/py.svg",
+   "fact": "Paraguay has no coast, and people there speak both Spanish and a native language, Guaraní.",
+   "level": "medium",
+   "svgPathId": "PY"
+  },
+  {
+   "code": "PE",
+   "name": "Peru",
+   "capital": [
+    "Lima"
+   ],
+   "continent": "South America",
+   "flag": "assets/flags/pe.svg",
+   "fact": "The ancient city of Machu Picchu is high in the mountains of Peru.",
+   "level": "easy",
+   "svgPathId": "PE"
+  },
+  {
+   "code": "SR",
+   "name": "Suriname",
+   "capital": [
+    "Paramaribo"
+   ],
+   "continent": "South America",
+   "flag": "assets/flags/sr.svg",
+   "fact": "Suriname is the smallest country in South America, and most of it is rainforest.",
+   "level": "hard",
+   "svgPathId": "SR"
+  },
+  {
+   "code": "UY",
+   "name": "Uruguay",
+   "capital": [
+    "Montevideo"
+   ],
+   "continent": "South America",
+   "flag": "assets/flags/uy.svg",
+   "fact": "Uruguay hosted and won the very first football World Cup, in 1930.",
+   "level": "medium",
+   "svgPathId": "UY"
+  },
+  {
+   "code": "VE",
+   "name": "Venezuela",
+   "capital": [
+    "Caracas"
+   ],
+   "continent": "South America",
+   "flag": "assets/flags/ve.svg",
+   "fact": "Angel Falls in Venezuela is the tallest waterfall in the world.",
+   "level": "medium",
+   "svgPathId": "VE"
+  },
+  {
+   "code": "AU",
+   "name": "Australia",
+   "capital": [
+    "Canberra"
+   ],
+   "continent": "Oceania",
+   "flag": "assets/flags/au.svg",
+   "fact": "Kangaroos and koalas live wild only in Australia.",
+   "level": "easy",
+   "svgPathId": "AU"
+  },
+  {
+   "code": "FJ",
+   "name": "Fiji",
+   "capital": [
+    "Suva"
+   ],
+   "continent": "Oceania",
+   "flag": "assets/flags/fj.svg",
+   "fact": "Fiji is made of more than 300 islands in the Pacific Ocean.",
+   "level": "easy",
+   "svgPathId": "FJ"
+  },
+  {
+   "code": "KI",
+   "name": "Kiribati",
+   "capital": [
+    "Tarawa"
+   ],
+   "continent": "Oceania",
+   "flag": "assets/flags/ki.svg",
+   "fact": "Kiribati is the only country in the world in all four hemispheres.",
+   "level": "hard",
+   "svgPathId": "KI"
+  },
+  {
+   "code": "MH",
+   "name": "Marshall Islands",
+   "capital": [
+    "Majuro"
+   ],
+   "continent": "Oceania",
+   "flag": "assets/flags/mh.svg",
+   "fact": "The Marshall Islands are a ring of coral islands, called atolls, in the Pacific Ocean.",
+   "level": "hard",
+   "svgPathId": "MH"
+  },
+  {
+   "code": "FM",
+   "name": "Micronesia",
+   "capital": [
+    "Palikir"
+   ],
+   "continent": "Oceania",
+   "flag": "assets/flags/fm.svg",
+   "fact": "Micronesia is made of more than 600 small islands, with giant stone coins on Yap.",
+   "level": "hard",
+   "svgPathId": "FM"
+  },
+  {
+   "code": "NR",
+   "name": "Nauru",
+   "capital": [
+    "Yaren"
+   ],
+   "continent": "Oceania",
+   "flag": "assets/flags/nr.svg",
+   "fact": "Nauru is the smallest island country in the world.",
+   "level": "hard",
+   "svgPathId": "NR"
+  },
+  {
+   "code": "NZ",
+   "name": "New Zealand",
+   "capital": [
+    "Wellington"
+   ],
+   "continent": "Oceania",
+   "flag": "assets/flags/nz.svg",
+   "fact": "New Zealand has more sheep than people, and the kiwi bird cannot fly.",
+   "level": "easy",
+   "svgPathId": "NZ"
+  },
+  {
+   "code": "PW",
+   "name": "Palau",
+   "capital": [
+    "Ngerulmud"
+   ],
+   "continent": "Oceania",
+   "flag": "assets/flags/pw.svg",
+   "fact": "Palau has a lake full of harmless jellyfish that people can swim with.",
+   "level": "hard",
+   "svgPathId": "PW"
+  },
+  {
+   "code": "PG",
+   "name": "Papua New Guinea",
+   "capital": [
+    "Port Moresby"
+   ],
+   "continent": "Oceania",
+   "flag": "assets/flags/pg.svg",
+   "fact": "Papua New Guinea has over 800 languages, more than any other country.",
+   "level": "easy",
+   "svgPathId": "PG"
+  },
+  {
+   "code": "WS",
+   "name": "Samoa",
+   "capital": [
+    "Apia"
+   ],
+   "continent": "Oceania",
+   "flag": "assets/flags/ws.svg",
+   "fact": "Samoa moved across the international date line in 2011 and skipped a whole day.",
+   "level": "easy",
+   "svgPathId": "WS"
+  },
+  {
+   "code": "SB",
+   "name": "Solomon Islands",
+   "capital": [
+    "Honiara"
+   ],
+   "continent": "Oceania",
+   "flag": "assets/flags/sb.svg",
+   "fact": "The Solomon Islands are a chain of nearly 1,000 islands in the Pacific Ocean.",
+   "level": "hard",
+   "svgPathId": "SB"
+  },
+  {
+   "code": "TO",
+   "name": "Tonga",
+   "capital": [
+    "Nuku'alofa"
+   ],
+   "continent": "Oceania",
+   "flag": "assets/flags/to.svg",
+   "fact": "Tonga is a kingdom made of about 170 islands in the Pacific Ocean.",
+   "level": "hard",
+   "svgPathId": "TO"
+  },
+  {
+   "code": "TV",
+   "name": "Tuvalu",
+   "capital": [
+    "Funafuti"
+   ],
+   "continent": "Oceania",
+   "flag": "assets/flags/tv.svg",
+   "fact": "Tuvalu is one of the smallest countries in the world, with only about 11,000 people.",
+   "level": "hard",
+   "svgPathId": "TV"
+  },
+  {
+   "code": "VU",
+   "name": "Vanuatu",
+   "capital": [
+    "Port Vila"
+   ],
+   "continent": "Oceania",
+   "flag": "assets/flags/vu.svg",
+   "fact": "Vanuatu has an active volcano, Mount Yasur, that people can watch erupt.",
+   "level": "hard",
+   "svgPathId": "VU"
+  }
+ ]
+}
