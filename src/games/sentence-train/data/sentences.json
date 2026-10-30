@@ -1,0 +1,1422 @@
+{
+ "sentences": [
+  {
+   "id": "e01",
+   "level": "easy",
+   "words": [
+    "The",
+    "cat",
+    "is",
+    "sleeping."
+   ],
+   "emoji": "🐱"
+  },
+  {
+   "id": "e02",
+   "level": "easy",
+   "words": [
+    "I",
+    "like",
+    "red",
+    "apples."
+   ],
+   "emoji": "🍎"
+  },
+  {
+   "id": "e03",
+   "level": "easy",
+   "words": [
+    "Dogs",
+    "love",
+    "to",
+    "run."
+   ],
+   "emoji": "🐶"
+  },
+  {
+   "id": "e04",
+   "level": "easy",
+   "words": [
+    "We",
+    "play",
+    "in",
+    "the",
+    "park."
+   ],
+   "emoji": "🌳"
+  },
+  {
+   "id": "e05",
+   "level": "easy",
+   "words": [
+    "Birds",
+    "can",
+    "fly",
+    "high."
+   ],
+   "emoji": "🐦"
+  },
+  {
+   "id": "e06",
+   "level": "easy",
+   "words": [
+    "My",
+    "mom",
+    "bakes",
+    "cakes."
+   ],
+   "emoji": "🎂"
+  },
+  {
+   "id": "e07",
+   "level": "easy",
+   "words": [
+    "The",
+    "sun",
+    "is",
+    "hot."
+   ],
+   "emoji": "☀️"
+  },
+  {
+   "id": "e08",
+   "level": "easy",
+   "words": [
+    "Fish",
+    "swim",
+    "in",
+    "water."
+   ],
+   "emoji": "🐟"
+  },
+  {
+   "id": "e09",
+   "level": "easy",
+   "words": [
+    "Ravi",
+    "rides",
+    "his",
+    "bike."
+   ],
+   "emoji": "🚲"
+  },
+  {
+   "id": "e10",
+   "level": "easy",
+   "words": [
+    "She",
+    "has",
+    "a",
+    "red",
+    "hat."
+   ],
+   "emoji": "🧢"
+  },
+  {
+   "id": "e11",
+   "level": "easy",
+   "words": [
+    "The",
+    "baby",
+    "is",
+    "laughing."
+   ],
+   "emoji": "👶"
+  },
+  {
+   "id": "e12",
+   "level": "easy",
+   "words": [
+    "I",
+    "can",
+    "see",
+    "the",
+    "moon."
+   ],
+   "emoji": "🌙"
+  },
+  {
+   "id": "e13",
+   "level": "easy",
+   "words": [
+    "Frogs",
+    "jump",
+    "very",
+    "high."
+   ],
+   "emoji": "🐸"
+  },
+  {
+   "id": "e14",
+   "level": "easy",
+   "words": [
+    "We",
+    "eat",
+    "lunch",
+    "at",
+    "noon."
+   ],
+   "emoji": "🍱"
+  },
+  {
+   "id": "e15",
+   "level": "easy",
+   "words": [
+    "Mia",
+    "and",
+    "Ben",
+    "ride",
+    "bikes."
+   ],
+   "alternatives": [
+    [
+     "Ben",
+     "and",
+     "Mia",
+     "ride",
+     "bikes."
+    ]
+   ],
+   "emoji": "🚲"
+  },
+  {
+   "id": "e16",
+   "level": "easy",
+   "words": [
+    "The",
+    "bus",
+    "is",
+    "yellow."
+   ],
+   "emoji": "🚌"
+  },
+  {
+   "id": "e17",
+   "level": "easy",
+   "words": [
+    "Our",
+    "teacher",
+    "is",
+    "kind."
+   ],
+   "emoji": "🏫"
+  },
+  {
+   "id": "e18",
+   "level": "easy",
+   "words": [
+    "I",
+    "drink",
+    "cold",
+    "milk."
+   ],
+   "emoji": "🥛"
+  },
+  {
+   "id": "e19",
+   "level": "easy",
+   "words": [
+    "Bees",
+    "make",
+    "sweet",
+    "honey."
+   ],
+   "emoji": "🐝"
+  },
+  {
+   "id": "e20",
+   "level": "easy",
+   "words": [
+    "The",
+    "ball",
+    "is",
+    "round."
+   ],
+   "emoji": "⚽"
+  },
+  {
+   "id": "e21",
+   "level": "easy",
+   "words": [
+    "Snow",
+    "is",
+    "very",
+    "cold."
+   ],
+   "emoji": "❄️"
+  },
+  {
+   "id": "e22",
+   "level": "easy",
+   "words": [
+    "Grandma",
+    "reads",
+    "a",
+    "story."
+   ],
+   "emoji": "📖"
+  },
+  {
+   "id": "e23",
+   "level": "easy",
+   "words": [
+    "We",
+    "love",
+    "our",
+    "school."
+   ],
+   "emoji": "🏫"
+  },
+  {
+   "id": "e24",
+   "level": "easy",
+   "words": [
+    "The",
+    "rabbit",
+    "eats",
+    "carrots."
+   ],
+   "emoji": "🐰"
+  },
+  {
+   "id": "e25",
+   "level": "easy",
+   "words": [
+    "Rain",
+    "falls",
+    "from",
+    "clouds."
+   ],
+   "emoji": "🌧️"
+  },
+  {
+   "id": "e26",
+   "level": "easy",
+   "words": [
+    "He",
+    "kicks",
+    "the",
+    "ball."
+   ],
+   "emoji": "⚽"
+  },
+  {
+   "id": "e27",
+   "level": "easy",
+   "words": [
+    "The",
+    "kite",
+    "is",
+    "flying."
+   ]
+  },
+  {
+   "id": "e28",
+   "level": "easy",
+   "words": [
+    "Priya",
+    "and",
+    "Dev",
+    "sing",
+    "songs."
+   ],
+   "alternatives": [
+    [
+     "Dev",
+     "and",
+     "Priya",
+     "sing",
+     "songs."
+    ]
+   ],
+   "emoji": "🎵"
+  },
+  {
+   "id": "e29",
+   "level": "easy",
+   "words": [
+    "Birds",
+    "sit",
+    "on",
+    "trees."
+   ],
+   "emoji": "🐦"
+  },
+  {
+   "id": "e30",
+   "level": "easy",
+   "words": [
+    "The",
+    "pizza",
+    "smells",
+    "good."
+   ],
+   "emoji": "🍕"
+  },
+  {
+   "id": "e31",
+   "level": "easy",
+   "words": [
+    "I",
+    "brush",
+    "my",
+    "teeth."
+   ]
+  },
+  {
+   "id": "e32",
+   "level": "easy",
+   "words": [
+    "Owls",
+    "hunt",
+    "at",
+    "night."
+   ],
+   "emoji": "🦉"
+  },
+  {
+   "id": "e33",
+   "level": "easy",
+   "words": [
+    "Flowers",
+    "grow",
+    "in",
+    "spring."
+   ],
+   "emoji": "🌸"
+  },
+  {
+   "id": "e34",
+   "level": "easy",
+   "words": [
+    "The",
+    "moon",
+    "is",
+    "bright."
+   ],
+   "emoji": "🌙"
+  },
+  {
+   "id": "m01",
+   "level": "medium",
+   "words": [
+    "Where",
+    "is",
+    "my",
+    "red",
+    "hat?"
+   ],
+   "emoji": "🧢"
+  },
+  {
+   "id": "m02",
+   "level": "medium",
+   "words": [
+    "The",
+    "big",
+    "dog",
+    "barks",
+    "loudly."
+   ],
+   "emoji": "🐕"
+  },
+  {
+   "id": "m03",
+   "level": "medium",
+   "words": [
+    "Do",
+    "you",
+    "like",
+    "ice",
+    "cream?"
+   ],
+   "emoji": "🍦"
+  },
+  {
+   "id": "m04",
+   "level": "medium",
+   "words": [
+    "My",
+    "little",
+    "sister",
+    "plays",
+    "outside."
+   ]
+  },
+  {
+   "id": "m05",
+   "level": "medium",
+   "words": [
+    "What",
+    "is",
+    "your",
+    "favourite",
+    "colour?"
+   ],
+   "emoji": "🎨"
+  },
+  {
+   "id": "m06",
+   "level": "medium",
+   "words": [
+    "The",
+    "tall",
+    "giraffe",
+    "eats",
+    "leaves."
+   ],
+   "emoji": "🦒"
+  },
+  {
+   "id": "m07",
+   "level": "medium",
+   "words": [
+    "Can",
+    "we",
+    "go",
+    "to",
+    "the",
+    "zoo?"
+   ],
+   "emoji": "🦁"
+  },
+  {
+   "id": "m08",
+   "level": "medium",
+   "words": [
+    "A",
+    "yellow",
+    "bird",
+    "sang",
+    "a",
+    "song."
+   ],
+   "emoji": "🐤"
+  },
+  {
+   "id": "m09",
+   "level": "medium",
+   "words": [
+    "Who",
+    "took",
+    "my",
+    "blue",
+    "pencil?"
+   ],
+   "emoji": "✏️"
+  },
+  {
+   "id": "m10",
+   "level": "medium",
+   "words": [
+    "The",
+    "brave",
+    "firefighter",
+    "climbed",
+    "the",
+    "ladder."
+   ],
+   "emoji": "🚒"
+  },
+  {
+   "id": "m11",
+   "level": "medium",
+   "words": [
+    "Why",
+    "is",
+    "the",
+    "sky",
+    "blue?"
+   ],
+   "emoji": "🌤️"
+  },
+  {
+   "id": "m12",
+   "level": "medium",
+   "words": [
+    "Sara",
+    "drinks",
+    "fresh",
+    "orange",
+    "juice."
+   ],
+   "emoji": "🍊"
+  },
+  {
+   "id": "m13",
+   "level": "medium",
+   "words": [
+    "How",
+    "many",
+    "apples",
+    "are",
+    "there?"
+   ],
+   "emoji": "🍎"
+  },
+  {
+   "id": "m14",
+   "level": "medium",
+   "words": [
+    "The",
+    "shiny",
+    "red",
+    "car",
+    "stopped",
+    "suddenly."
+   ],
+   "emoji": "🚗"
+  },
+  {
+   "id": "m15",
+   "level": "medium",
+   "words": [
+    "We",
+    "saw",
+    "a",
+    "huge",
+    "elephant",
+    "today."
+   ],
+   "emoji": "🐘"
+  },
+  {
+   "id": "m16",
+   "level": "medium",
+   "words": [
+    "Is",
+    "it",
+    "going",
+    "to",
+    "rain?"
+   ],
+   "emoji": "🌧️"
+  },
+  {
+   "id": "m17",
+   "level": "medium",
+   "words": [
+    "My",
+    "grandfather",
+    "tells",
+    "funny",
+    "stories."
+   ],
+   "emoji": "📖"
+  },
+  {
+   "id": "m18",
+   "level": "medium",
+   "words": [
+    "The",
+    "children",
+    "played",
+    "in",
+    "the",
+    "garden."
+   ]
+  },
+  {
+   "id": "m19",
+   "level": "medium",
+   "words": [
+    "Which",
+    "bus",
+    "goes",
+    "to",
+    "school?"
+   ],
+   "emoji": "🚌"
+  },
+  {
+   "id": "m20",
+   "level": "medium",
+   "words": [
+    "A",
+    "small",
+    "turtle",
+    "crossed",
+    "the",
+    "road."
+   ],
+   "emoji": "🐢"
+  },
+  {
+   "id": "m21",
+   "level": "medium",
+   "words": [
+    "Mia",
+    "and",
+    "Ben",
+    "planted",
+    "tiny",
+    "seeds."
+   ],
+   "alternatives": [
+    [
+     "Ben",
+     "and",
+     "Mia",
+     "planted",
+     "tiny",
+     "seeds."
+    ]
+   ],
+   "emoji": "🌱"
+  },
+  {
+   "id": "m22",
+   "level": "medium",
+   "words": [
+    "When",
+    "does",
+    "the",
+    "film",
+    "start?"
+   ],
+   "emoji": "🎬"
+  },
+  {
+   "id": "m23",
+   "level": "medium",
+   "words": [
+    "The",
+    "old",
+    "clock",
+    "ticks",
+    "slowly."
+   ],
+   "emoji": "⏰"
+  },
+  {
+   "id": "m24",
+   "level": "medium",
+   "words": [
+    "Please",
+    "close",
+    "the",
+    "open",
+    "window."
+   ]
+  },
+  {
+   "id": "m25",
+   "level": "medium",
+   "words": [
+    "Did",
+    "you",
+    "wash",
+    "your",
+    "hands?"
+   ],
+   "emoji": "🧼"
+  },
+  {
+   "id": "m26",
+   "level": "medium",
+   "words": [
+    "Our",
+    "new",
+    "teacher",
+    "reads",
+    "aloud."
+   ],
+   "emoji": "📚"
+  },
+  {
+   "id": "m27",
+   "level": "medium",
+   "words": [
+    "The",
+    "hungry",
+    "caterpillar",
+    "ate",
+    "leaves."
+   ],
+   "emoji": "🐛"
+  },
+  {
+   "id": "m28",
+   "level": "medium",
+   "words": [
+    "Whose",
+    "bag",
+    "is",
+    "on",
+    "the",
+    "chair?"
+   ],
+   "emoji": "🎒"
+  },
+  {
+   "id": "m29",
+   "level": "medium",
+   "words": [
+    "Mom",
+    "cooked",
+    "a",
+    "delicious",
+    "dinner",
+    "tonight."
+   ],
+   "emoji": "🍲"
+  },
+  {
+   "id": "m30",
+   "level": "medium",
+   "words": [
+    "Do",
+    "your",
+    "friends",
+    "play",
+    "cricket?"
+   ],
+   "emoji": "🏏"
+  },
+  {
+   "id": "m31",
+   "level": "medium",
+   "words": [
+    "The",
+    "brown",
+    "horse",
+    "runs",
+    "fast."
+   ],
+   "emoji": "🐴"
+  },
+  {
+   "id": "m32",
+   "level": "medium",
+   "words": [
+    "Can",
+    "you",
+    "hear",
+    "the",
+    "music?"
+   ],
+   "emoji": "🎵"
+  },
+  {
+   "id": "m33",
+   "level": "medium",
+   "words": [
+    "Tom",
+    "and",
+    "Sara",
+    "found",
+    "shiny",
+    "shells."
+   ],
+   "alternatives": [
+    [
+     "Sara",
+     "and",
+     "Tom",
+     "found",
+     "shiny",
+     "shells."
+    ]
+   ],
+   "emoji": "🐚"
+  },
+  {
+   "id": "m34",
+   "level": "medium",
+   "words": [
+    "Wow,",
+    "that",
+    "is",
+    "a",
+    "huge",
+    "cake!"
+   ],
+   "emoji": "🎂"
+  },
+  {
+   "id": "h01",
+   "level": "hard",
+   "words": [
+    "I",
+    "wore",
+    "a",
+    "coat",
+    "because",
+    "it",
+    "was",
+    "cold."
+   ],
+   "distractor": "banana",
+   "emoji": "🧥"
+  },
+  {
+   "id": "h02",
+   "level": "hard",
+   "words": [
+    "Sam",
+    "wanted",
+    "to",
+    "play",
+    "outside",
+    "but",
+    "it",
+    "was",
+    "raining."
+   ],
+   "distractor": "elephant",
+   "emoji": "🌧️"
+  },
+  {
+   "id": "h03",
+   "level": "hard",
+   "words": [
+    "We",
+    "bought",
+    "apples",
+    "and",
+    "we",
+    "baked",
+    "a",
+    "pie."
+   ],
+   "distractor": "under",
+   "emoji": "🥧"
+  },
+  {
+   "id": "h04",
+   "level": "hard",
+   "words": [
+    "The",
+    "baby",
+    "cried",
+    "because",
+    "she",
+    "was",
+    "very",
+    "hungry."
+   ],
+   "distractor": "across",
+   "emoji": "👶"
+  },
+  {
+   "id": "h05",
+   "level": "hard",
+   "words": [
+    "Mia",
+    "likes",
+    "painting",
+    "but",
+    "Ben",
+    "prefers",
+    "football."
+   ],
+   "distractor": "seven",
+   "emoji": "🎨"
+  },
+  {
+   "id": "h06",
+   "level": "hard",
+   "words": [
+    "I",
+    "took",
+    "an",
+    "umbrella",
+    "because",
+    "the",
+    "sky",
+    "was",
+    "grey."
+   ],
+   "distractor": "table",
+   "emoji": "☂️"
+  },
+  {
+   "id": "h07",
+   "level": "hard",
+   "words": [
+    "My",
+    "brother",
+    "plays",
+    "the",
+    "guitar",
+    "and",
+    "I",
+    "play",
+    "the",
+    "piano."
+   ],
+   "distractor": "above",
+   "emoji": "🎸"
+  },
+  {
+   "id": "h08",
+   "level": "hard",
+   "words": [
+    "The",
+    "farmer",
+    "woke",
+    "early",
+    "because",
+    "the",
+    "cows",
+    "were",
+    "hungry."
+   ],
+   "distractor": "paper",
+   "emoji": "🐄"
+  },
+  {
+   "id": "h09",
+   "level": "hard",
+   "words": [
+    "We",
+    "stayed",
+    "home",
+    "because",
+    "it",
+    "was",
+    "too",
+    "hot",
+    "outside."
+   ],
+   "distractor": "carry",
+   "emoji": "🏠"
+  },
+  {
+   "id": "h10",
+   "level": "hard",
+   "words": [
+    "Dad",
+    "cooked",
+    "rice",
+    "and",
+    "Mom",
+    "made",
+    "a",
+    "salad."
+   ],
+   "distractor": "silent",
+   "emoji": "🍚"
+  },
+  {
+   "id": "h11",
+   "level": "hard",
+   "words": [
+    "I",
+    "was",
+    "tired",
+    "but",
+    "I",
+    "finished",
+    "my",
+    "homework."
+   ],
+   "distractor": "garden",
+   "emoji": "📝"
+  },
+  {
+   "id": "h12",
+   "level": "hard",
+   "words": [
+    "The",
+    "teacher",
+    "smiled",
+    "because",
+    "everyone",
+    "did",
+    "well."
+   ],
+   "distractor": "ladder",
+   "emoji": "🏫"
+  },
+  {
+   "id": "h13",
+   "level": "hard",
+   "words": [
+    "Ravi",
+    "went",
+    "to",
+    "bed",
+    "early",
+    "because",
+    "he",
+    "was",
+    "sleepy."
+   ],
+   "distractor": "lemon",
+   "emoji": "🛏️"
+  },
+  {
+   "id": "h14",
+   "level": "hard",
+   "words": [
+    "She",
+    "wanted",
+    "a",
+    "puppy",
+    "but",
+    "her",
+    "mother",
+    "said",
+    "no."
+   ],
+   "distractor": "river",
+   "emoji": "🐶"
+  },
+  {
+   "id": "h15",
+   "level": "hard",
+   "words": [
+    "Birds",
+    "fly",
+    "south",
+    "because",
+    "winter",
+    "is",
+    "coming."
+   ],
+   "distractor": "pencil",
+   "emoji": "🐦"
+  },
+  {
+   "id": "h16",
+   "level": "hard",
+   "words": [
+    "I",
+    "like",
+    "tea",
+    "but",
+    "my",
+    "sister",
+    "likes",
+    "juice."
+   ],
+   "distractor": "mountain",
+   "emoji": "🍵"
+  },
+  {
+   "id": "h17",
+   "level": "hard",
+   "words": [
+    "The",
+    "match",
+    "was",
+    "cancelled",
+    "because",
+    "it",
+    "rained",
+    "all",
+    "day."
+   ],
+   "distractor": "singing",
+   "emoji": "🏏"
+  },
+  {
+   "id": "h18",
+   "level": "hard",
+   "words": [
+    "We",
+    "sang",
+    "songs",
+    "and",
+    "we",
+    "clapped",
+    "our",
+    "hands."
+   ],
+   "distractor": "beside",
+   "emoji": "🎵"
+  },
+  {
+   "id": "h19",
+   "level": "hard",
+   "words": [
+    "Anna",
+    "dropped",
+    "her",
+    "glass",
+    "and",
+    "it",
+    "broke",
+    "into",
+    "pieces."
+   ],
+   "distractor": "orange",
+   "emoji": "🥛"
+  },
+  {
+   "id": "h20",
+   "level": "hard",
+   "words": [
+    "He",
+    "ran",
+    "fast",
+    "but",
+    "he",
+    "missed",
+    "the",
+    "bus."
+   ],
+   "distractor": "chair",
+   "emoji": "🚌"
+  },
+  {
+   "id": "h21",
+   "level": "hard",
+   "words": [
+    "The",
+    "flowers",
+    "died",
+    "because",
+    "nobody",
+    "watered",
+    "them."
+   ],
+   "distractor": "walking",
+   "emoji": "🥀"
+  },
+  {
+   "id": "h22",
+   "level": "hard",
+   "words": [
+    "I",
+    "wanted",
+    "ice",
+    "cream",
+    "but",
+    "the",
+    "shop",
+    "was",
+    "closed."
+   ],
+   "distractor": "bridge",
+   "emoji": "🍦"
+  },
+  {
+   "id": "h23",
+   "level": "hard",
+   "words": [
+    "Our",
+    "team",
+    "won",
+    "because",
+    "we",
+    "practised",
+    "every",
+    "day."
+   ],
+   "distractor": "frog",
+   "emoji": "🏆"
+  },
+  {
+   "id": "h24",
+   "level": "hard",
+   "words": [
+    "Tara",
+    "packed",
+    "her",
+    "bag",
+    "and",
+    "she",
+    "walked",
+    "to",
+    "school."
+   ],
+   "distractor": "kitchen",
+   "emoji": "🎒"
+  },
+  {
+   "id": "h25",
+   "level": "hard",
+   "words": [
+    "I",
+    "waited",
+    "because",
+    "the",
+    "soup",
+    "was",
+    "hot."
+   ],
+   "distractor": "above",
+   "emoji": "🍲"
+  },
+  {
+   "id": "h26",
+   "level": "hard",
+   "words": [
+    "Dev",
+    "likes",
+    "cricket",
+    "and",
+    "Sam",
+    "likes",
+    "chess."
+   ],
+   "distractor": "yellow",
+   "emoji": "♟️"
+  },
+  {
+   "id": "h27",
+   "level": "hard",
+   "words": [
+    "It",
+    "was",
+    "sunny",
+    "but",
+    "the",
+    "wind",
+    "was",
+    "cold."
+   ],
+   "distractor": "bread",
+   "emoji": "🌬️"
+  },
+  {
+   "id": "h28",
+   "level": "hard",
+   "words": [
+    "They",
+    "left",
+    "early",
+    "because",
+    "the",
+    "train",
+    "was",
+    "late."
+   ],
+   "distractor": "snowy",
+   "emoji": "🚆"
+  },
+  {
+   "id": "h29",
+   "level": "hard",
+   "words": [
+    "I",
+    "opened",
+    "the",
+    "window",
+    "because",
+    "the",
+    "room",
+    "was",
+    "warm."
+   ],
+   "distractor": "pillow",
+   "emoji": "🏠"
+  },
+  {
+   "id": "h30",
+   "level": "hard",
+   "words": [
+    "My",
+    "dog",
+    "barked",
+    "loudly",
+    "because",
+    "a",
+    "stranger",
+    "knocked."
+   ],
+   "distractor": "tomato",
+   "emoji": "🐕"
+  },
+  {
+   "id": "h31",
+   "level": "hard",
+   "words": [
+    "We",
+    "went",
+    "to",
+    "the",
+    "beach",
+    "and",
+    "we",
+    "built",
+    "a",
+    "sandcastle."
+   ],
+   "distractor": "behind",
+   "emoji": "🏖️"
+  },
+  {
+   "id": "h32",
+   "level": "hard",
+   "words": [
+    "The",
+    "boy",
+    "was",
+    "happy",
+    "because",
+    "he",
+    "won",
+    "a",
+    "prize."
+   ],
+   "distractor": "ocean",
+   "emoji": "🏅"
+  },
+  {
+   "id": "h33",
+   "level": "hard",
+   "words": [
+    "Mom",
+    "was",
+    "busy",
+    "but",
+    "she",
+    "helped",
+    "me",
+    "anyway."
+   ],
+   "distractor": "spoon",
+   "emoji": "👩"
+  },
+  {
+   "id": "h34",
+   "level": "hard",
+   "words": [
+    "Do",
+    "you",
+    "want",
+    "tea",
+    "or",
+    "do",
+    "you",
+    "want",
+    "milk?"
+   ],
+   "distractor": "cloud",
+   "emoji": "🥛"
+  },
+  {
+   "id": "h35",
+   "level": "hard",
+   "words": [
+    "Tom",
+    "and",
+    "Sara",
+    "went",
+    "to",
+    "the",
+    "beach",
+    "and",
+    "swam."
+   ],
+   "distractor": "behind",
+   "alternatives": [
+    [
+     "Sara",
+     "and",
+     "Tom",
+     "went",
+     "to",
+     "the",
+     "beach",
+     "and",
+     "swam."
+    ]
+   ],
+   "emoji": "🏖️"
+  }
+ ]
+}
