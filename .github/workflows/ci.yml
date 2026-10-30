@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+# A newer push to the same branch makes an older run pointless.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # The project has no dependencies, so there is nothing to install.
+      - name: Unit and integrity tests
+        run: npm test
+
+      - name: Build the static site
+        run: npm run build
+
+      - name: The built site holds only shippable files
+        run: |
+          test -f dist/index.html
+          test -d dist/src
+          test ! -e dist/tests
+          test ! -e dist/docs
