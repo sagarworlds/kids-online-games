@@ -10,12 +10,12 @@ export const RAIN_WATER = 3;
 export const HEAT_WATER_LOSS = 3;
 export const CLOUD_CAP = 4;
 
-/** @type {Readonly<Record<Weather, { icon: string, label: string, effect: string }>>} */
+/** @type {Readonly<Record<Weather, { icon: string, label: string, because: string, effect: string }>>} */
 export const WEATHER = Object.freeze({
-  sunny: Object.freeze({ icon: '☀️', label: 'Sunny', effect: 'A normal day.' }),
-  rainy: Object.freeze({ icon: '🌧️', label: 'Rainy', effect: `The rain adds ${RAIN_WATER} water to the soil by itself.` }),
-  cloudy: Object.freeze({ icon: '☁️', label: 'Cloudy', effect: `Clouds hide the sun, so the plant gets no more than ${CLOUD_CAP} sunlight.` }),
-  heat: Object.freeze({ icon: '🔥', label: 'Heat wave', effect: `The heat dries the soil: ${HEAT_WATER_LOSS} of the water is lost, so give more.` }),
+  sunny: Object.freeze({ icon: '☀️', label: 'Sunny', because: 'it is sunny', effect: 'A normal day.' }),
+  rainy: Object.freeze({ icon: '🌧️', label: 'Rainy', because: 'it is rainy', effect: `The rain adds ${RAIN_WATER} water to the soil by itself.` }),
+  cloudy: Object.freeze({ icon: '☁️', label: 'Cloudy', because: 'it is cloudy', effect: `Clouds hide the sun, so the plant gets no more than ${CLOUD_CAP} sunlight.` }),
+  heat: Object.freeze({ icon: '🔥', label: 'Heat wave', because: 'there is a heat wave', effect: `The heat dries the soil: ${HEAT_WATER_LOSS} of the water is lost, so give more.` }),
 });
 
 /**

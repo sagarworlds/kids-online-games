@@ -54,7 +54,7 @@ export const GAMES = Object.freeze([
 
   game('food-chain-builder', 'Food Chain Builder', 'science', '🐟', 'Food chains', true),
 
-  game('plant-grower', 'Plant Grower', 'science', '🌱', 'Plants'),
+  game('plant-grower', 'Plant Grower', 'science', '🌱', 'Plants', true),
 
   game('simon-says', 'Simon Says', 'memory', '🎵', 'Memory', true),
 

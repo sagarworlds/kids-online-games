@@ -145,7 +145,7 @@ test('the weather is repeatable for a seed, varies between seeds and every day o
 
 test('every kind of weather has an icon, a label and a sentence saying what it does', () => {
   assert.deepEqual(Object.keys(WEATHER), ['sunny', 'rainy', 'cloudy', 'heat']);
-  for (const w of Object.values(WEATHER)) assert.ok(w.icon && w.label && w.effect.length > 10);
+  for (const w of Object.values(WEATHER)) assert.ok(w.icon && w.label && w.effect.length > 10 && /^(it is|there is) /.test(w.because), w.label);
   assert.match(WEATHER.rainy.effect, /adds 3 water/);
 });
 
