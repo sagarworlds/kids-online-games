@@ -63,4 +63,6 @@ export const GAMES = Object.freeze([
   game('table-tower', 'Table Tower', 'math', '🗼', 'Tables to 30', true),
 
   game('matra-mixer', 'Matra Mixer', 'language', '🚂', 'Barakhadi', true),
+
+  game('trace-trail', 'Trace Trail', 'language', '✏️', 'Handwriting', true),
 ]);
