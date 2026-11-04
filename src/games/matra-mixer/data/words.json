@@ -1,0 +1,566 @@
+{
+ "hi": [
+  {
+   "word": "कमल",
+   "emoji": "🪷",
+   "meaning": "lotus"
+  },
+  {
+   "word": "घर",
+   "emoji": "🏠",
+   "meaning": "house"
+  },
+  {
+   "word": "जल",
+   "emoji": "💧",
+   "meaning": "water"
+  },
+  {
+   "word": "नल",
+   "emoji": "🚰",
+   "meaning": "tap"
+  },
+  {
+   "word": "मगर",
+   "emoji": "🐊",
+   "meaning": "crocodile"
+  },
+  {
+   "word": "नमक",
+   "emoji": "🧂",
+   "meaning": "salt"
+  },
+  {
+   "word": "गमला",
+   "emoji": "🪴",
+   "meaning": "flower pot"
+  },
+  {
+   "word": "चमचा",
+   "emoji": "🥄",
+   "meaning": "spoon"
+  },
+  {
+   "word": "कलम",
+   "emoji": "🖊️",
+   "meaning": "pen"
+  },
+  {
+   "word": "रात",
+   "emoji": "🌙",
+   "meaning": "night"
+  },
+  {
+   "word": "नाक",
+   "emoji": "👃",
+   "meaning": "nose"
+  },
+  {
+   "word": "कान",
+   "emoji": "👂",
+   "meaning": "ear"
+  },
+  {
+   "word": "जाल",
+   "emoji": "🕸️",
+   "meaning": "net"
+  },
+  {
+   "word": "गाजर",
+   "emoji": "🥕",
+   "meaning": "carrot"
+  },
+  {
+   "word": "पुल",
+   "emoji": "🌉",
+   "meaning": "bridge"
+  },
+  {
+   "word": "नगर",
+   "emoji": "🏙️",
+   "meaning": "city"
+  },
+  {
+   "word": "मछली",
+   "emoji": "🐟",
+   "meaning": "fish"
+  },
+  {
+   "word": "हाथी",
+   "emoji": "🐘",
+   "meaning": "elephant"
+  },
+  {
+   "word": "सेब",
+   "emoji": "🍎",
+   "meaning": "apple"
+  },
+  {
+   "word": "फूल",
+   "emoji": "🌸",
+   "meaning": "flower"
+  },
+  {
+   "word": "चूहा",
+   "emoji": "🐭",
+   "meaning": "mouse"
+  },
+  {
+   "word": "भालू",
+   "emoji": "🐻",
+   "meaning": "bear"
+  },
+  {
+   "word": "मोर",
+   "emoji": "🦚",
+   "meaning": "peacock"
+  },
+  {
+   "word": "गाय",
+   "emoji": "🐄",
+   "meaning": "cow"
+  },
+  {
+   "word": "बैल",
+   "emoji": "🐂",
+   "meaning": "ox"
+  },
+  {
+   "word": "खरगोश",
+   "emoji": "🐇",
+   "meaning": "rabbit"
+  },
+  {
+   "word": "शेर",
+   "emoji": "🦁",
+   "meaning": "lion"
+  },
+  {
+   "word": "तोता",
+   "emoji": "🦜",
+   "meaning": "parrot"
+  },
+  {
+   "word": "दूध",
+   "emoji": "🥛",
+   "meaning": "milk"
+  },
+  {
+   "word": "ताला",
+   "emoji": "🔒",
+   "meaning": "lock"
+  },
+  {
+   "word": "थाली",
+   "emoji": "🍽️",
+   "meaning": "plate"
+  },
+  {
+   "word": "बकरी",
+   "emoji": "🐐",
+   "meaning": "goat"
+  },
+  {
+   "word": "तीर",
+   "emoji": "🏹",
+   "meaning": "arrow"
+  },
+  {
+   "word": "नाव",
+   "emoji": "⛵",
+   "meaning": "boat"
+  },
+  {
+   "word": "बादल",
+   "emoji": "☁️",
+   "meaning": "cloud"
+  },
+  {
+   "word": "सूरज",
+   "emoji": "☀️",
+   "meaning": "sun"
+  },
+  {
+   "word": "तारा",
+   "emoji": "⭐",
+   "meaning": "star"
+  },
+  {
+   "word": "पतंग",
+   "emoji": "🪁",
+   "meaning": "kite"
+  },
+  {
+   "word": "बंदर",
+   "emoji": "🐒",
+   "meaning": "monkey"
+  },
+  {
+   "word": "ज्ञान",
+   "emoji": "📖",
+   "meaning": "knowledge"
+  },
+  {
+   "word": "पत्र",
+   "emoji": "✉️",
+   "meaning": "letter"
+  },
+  {
+   "word": "मित्र",
+   "emoji": "🤝",
+   "meaning": "friend"
+  },
+  {
+   "word": "छात्र",
+   "emoji": "🧑‍🎓",
+   "meaning": "student"
+  },
+  {
+   "word": "चित्र",
+   "emoji": "🖼️",
+   "meaning": "picture"
+  },
+  {
+   "word": "कक्षा",
+   "emoji": "🏫",
+   "meaning": "classroom"
+  },
+  {
+   "word": "परीक्षा",
+   "emoji": "📝",
+   "meaning": "exam"
+  },
+  {
+   "word": "संतरा",
+   "emoji": "🍊",
+   "meaning": "orange"
+  },
+  {
+   "word": "चंदा",
+   "emoji": "🌕",
+   "meaning": "moon"
+  },
+  {
+   "word": "रंग",
+   "emoji": "🎨",
+   "meaning": "colour"
+  },
+  {
+   "word": "तंबू",
+   "emoji": "⛺",
+   "meaning": "tent"
+  },
+  {
+   "word": "मंदिर",
+   "emoji": "🛕",
+   "meaning": "temple"
+  },
+  {
+   "word": "नक्षत्र",
+   "emoji": "🌠",
+   "meaning": "constellation"
+  },
+  {
+   "word": "बॅट",
+   "emoji": "🏏",
+   "meaning": "bat"
+  },
+  {
+   "word": "बॉल",
+   "emoji": "⚽",
+   "meaning": "ball"
+  },
+  {
+   "word": "चॉकलेट",
+   "emoji": "🍫",
+   "meaning": "chocolate"
+  },
+  {
+   "word": "कॅमेरा",
+   "emoji": "📷",
+   "meaning": "camera"
+  },
+  {
+   "word": "बॅग",
+   "emoji": "👜",
+   "meaning": "bag"
+  },
+  {
+   "word": "कॉपी",
+   "emoji": "📓",
+   "meaning": "notebook"
+  }
+ ],
+ "mr": [
+  {
+   "word": "घर",
+   "emoji": "🏠",
+   "meaning": "house"
+  },
+  {
+   "word": "पान",
+   "emoji": "🍃",
+   "meaning": "leaf"
+  },
+  {
+   "word": "नाक",
+   "emoji": "👃",
+   "meaning": "nose"
+  },
+  {
+   "word": "कान",
+   "emoji": "👂",
+   "meaning": "ear"
+  },
+  {
+   "word": "जग",
+   "emoji": "🌍",
+   "meaning": "world"
+  },
+  {
+   "word": "मगर",
+   "emoji": "🐊",
+   "meaning": "crocodile"
+  },
+  {
+   "word": "चमचा",
+   "emoji": "🥄",
+   "meaning": "spoon"
+  },
+  {
+   "word": "गाजर",
+   "emoji": "🥕",
+   "meaning": "carrot"
+  },
+  {
+   "word": "कलम",
+   "emoji": "🖊️",
+   "meaning": "pen"
+  },
+  {
+   "word": "पूल",
+   "emoji": "🌉",
+   "meaning": "bridge"
+  },
+  {
+   "word": "रात",
+   "emoji": "🌙",
+   "meaning": "night"
+  },
+  {
+   "word": "जल",
+   "emoji": "💧",
+   "meaning": "water"
+  },
+  {
+   "word": "नगर",
+   "emoji": "🏙️",
+   "meaning": "city"
+  },
+  {
+   "word": "गाय",
+   "emoji": "🐄",
+   "meaning": "cow"
+  },
+  {
+   "word": "नाव",
+   "emoji": "⛵",
+   "meaning": "boat"
+  },
+  {
+   "word": "ससा",
+   "emoji": "🐇",
+   "meaning": "rabbit"
+  },
+  {
+   "word": "मोर",
+   "emoji": "🦚",
+   "meaning": "peacock"
+  },
+  {
+   "word": "बैल",
+   "emoji": "🐂",
+   "meaning": "ox"
+  },
+  {
+   "word": "फूल",
+   "emoji": "🌸",
+   "meaning": "flower"
+  },
+  {
+   "word": "झाड",
+   "emoji": "🌳",
+   "meaning": "tree"
+  },
+  {
+   "word": "दूध",
+   "emoji": "🥛",
+   "meaning": "milk"
+  },
+  {
+   "word": "चिमणी",
+   "emoji": "🐦",
+   "meaning": "sparrow"
+  },
+  {
+   "word": "पोपट",
+   "emoji": "🦜",
+   "meaning": "parrot"
+  },
+  {
+   "word": "भात",
+   "emoji": "🍚",
+   "meaning": "rice"
+  },
+  {
+   "word": "वाघ",
+   "emoji": "🐅",
+   "meaning": "tiger"
+  },
+  {
+   "word": "घोडा",
+   "emoji": "🐴",
+   "meaning": "horse"
+  },
+  {
+   "word": "गवत",
+   "emoji": "🌾",
+   "meaning": "grass"
+  },
+  {
+   "word": "दार",
+   "emoji": "🚪",
+   "meaning": "door"
+  },
+  {
+   "word": "ताट",
+   "emoji": "🍽️",
+   "meaning": "plate"
+  },
+  {
+   "word": "भाजी",
+   "emoji": "🥬",
+   "meaning": "vegetable"
+  },
+  {
+   "word": "सायकल",
+   "emoji": "🚲",
+   "meaning": "bicycle"
+  },
+  {
+   "word": "मासा",
+   "emoji": "🐟",
+   "meaning": "fish"
+  },
+  {
+   "word": "तारा",
+   "emoji": "⭐",
+   "meaning": "star"
+  },
+  {
+   "word": "कमळ",
+   "emoji": "🪷",
+   "meaning": "lotus"
+  },
+  {
+   "word": "केळी",
+   "emoji": "🍌",
+   "meaning": "banana"
+  },
+  {
+   "word": "फळ",
+   "emoji": "🍎",
+   "meaning": "fruit"
+  },
+  {
+   "word": "शाळा",
+   "emoji": "🏫",
+   "meaning": "school"
+  },
+  {
+   "word": "कळी",
+   "emoji": "🌱",
+   "meaning": "bud"
+  },
+  {
+   "word": "नळ",
+   "emoji": "🚰",
+   "meaning": "tap"
+  },
+  {
+   "word": "जाळे",
+   "emoji": "🕸️",
+   "meaning": "net"
+  },
+  {
+   "word": "पतंग",
+   "emoji": "🪁",
+   "meaning": "kite"
+  },
+  {
+   "word": "रंग",
+   "emoji": "🎨",
+   "meaning": "colour"
+  },
+  {
+   "word": "चित्र",
+   "emoji": "🖼️",
+   "meaning": "picture"
+  },
+  {
+   "word": "पत्र",
+   "emoji": "✉️",
+   "meaning": "letter"
+  },
+  {
+   "word": "मित्र",
+   "emoji": "🤝",
+   "meaning": "friend"
+  },
+  {
+   "word": "मंदिर",
+   "emoji": "🛕",
+   "meaning": "temple"
+  },
+  {
+   "word": "तंबू",
+   "emoji": "⛺",
+   "meaning": "tent"
+  },
+  {
+   "word": "नक्षत्र",
+   "emoji": "🌠",
+   "meaning": "constellation"
+  },
+  {
+   "word": "बॅट",
+   "emoji": "🏏",
+   "meaning": "bat"
+  },
+  {
+   "word": "बॉल",
+   "emoji": "⚽",
+   "meaning": "ball"
+  },
+  {
+   "word": "चॉकलेट",
+   "emoji": "🍫",
+   "meaning": "chocolate"
+  },
+  {
+   "word": "कॅमेरा",
+   "emoji": "📷",
+   "meaning": "camera"
+  },
+  {
+   "word": "बॅग",
+   "emoji": "👜",
+   "meaning": "bag"
+  },
+  {
+   "word": "कॉपी",
+   "emoji": "📓",
+   "meaning": "notebook"
+  }
+ ]
+}
