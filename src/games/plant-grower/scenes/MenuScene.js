@@ -22,7 +22,7 @@ export class MenuScene extends PlantScene {
         const earned = bestStars[roundKey(plant.id, levelId)] ?? 0;
         const unlocked = open.has(plant.id);
         const card = el('button', {
-          class: `seed${unlocked ? '' : ' is-locked'}`, attrs: { type: 'button', 'aria-disabled': !unlocked, 'aria-label': unlocked ? `${plant.name} seed. ${earned} of 3 stars at ${LEVELS[levelId].label}.` : `${plant.name} seed, available at ${LEVELS[plant.unlock].label} level.` },
+          class: `seed${unlocked ? '' : ' is-locked'}`, attrs: { type: 'button', 'aria-disabled': String(!unlocked), 'aria-label': unlocked ? `${plant.name} seed. ${earned} of 3 stars at ${LEVELS[levelId].label}.` : `${plant.name} seed, available at ${LEVELS[plant.unlock].label} level.` },
           on: { click: () => { if (!unlocked) return; services.audio.play('click'); this.routes.play({ plantId: plant.id, levelId }); } },
         },
         el('span', { class: 'seed__icon', text: plant.icon, attrs: { 'aria-hidden': 'true' } }),
