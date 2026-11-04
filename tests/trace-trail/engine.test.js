@@ -137,6 +137,24 @@ test('a pencil that is only a little off the path still counts, a long way off d
   assert.equal(bad.fraction, 0);
 });
 
+test('sweeping straight across a wave, within reach of its crests, does not carry the snail along it', () => {
+  const wave = resample(Array.from({ length: 80 }, (_, i) => [8 + i, 65 + 26 * Math.sin((i / 80) * Math.PI * 4)]));
+  const t = new StrokeTracker(wave, { tolerance: 18 });
+  t.start(wave[0]);
+  for (let x = 12; x <= 90; x += 4) t.move([x, 66 + 22 * 0]);
+  assert.notEqual(t.status, 'done');
+  assert.ok(t.fraction < 0.75, `a straight sweep got ${t.fraction} of the way`);
+  const honest = new StrokeTracker(wave, { tolerance: 18 });
+  honest.start(wave[0]);
+  for (let i = 1; i < wave.length; i += 2) honest.move(wave[i]);
+  assert.equal(honest.status, 'done', 'following the wave does finish it');
+  // Wandering a long way with the pencil, off the path, cannot bring progress either.
+  const wanderer = new StrokeTracker(across, { tolerance: 14 });
+  wanderer.start(across[0]);
+  for (let i = 0; i < 30; i++) wanderer.move([20 + (i % 2) * 6, 100 + (i % 2) * 6]);
+  assert.ok(wanderer.fraction < 0.2, `jiggling on the spot got ${wanderer.fraction}`);
+});
+
 test('a fast pencil is checked all the way, not only where a point was reported', () => {
   const t = new StrokeTracker(across, { tolerance: TOL });
   t.start([20, 100]);

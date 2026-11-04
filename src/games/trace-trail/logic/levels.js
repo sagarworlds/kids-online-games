@@ -12,9 +12,9 @@ import { SETS } from './glyphs/index.js';
 
 /** @type {Readonly<Record<LevelId, Readonly<LevelConfig>>>} */
 export const LEVELS = Object.freeze({
-  easy: Object.freeze({ id: 'easy', label: 'Easy', blurb: 'Lines, curves and numbers', setIds: Object.freeze(['strokes', 'numbers']), tolerance: 18, perRound: 5 }),
-  medium: Object.freeze({ id: 'medium', label: 'Medium', blurb: 'Letters', setIds: Object.freeze(['capitals', 'small', 'devanagari']), tolerance: 15, perRound: 5 }),
-  hard: Object.freeze({ id: 'hard', label: 'Hard', blurb: 'Syllables and words', setIds: Object.freeze(['words-en', 'words-dev']), tolerance: 13, perRound: 3 }),
+  easy: Object.freeze({ id: 'easy', label: 'Easy', blurb: 'Lines, curves and numbers', setIds: Object.freeze(['strokes', 'numbers']), tolerance: 14, perRound: 5 }),
+  medium: Object.freeze({ id: 'medium', label: 'Medium', blurb: 'Letters', setIds: Object.freeze(['capitals', 'small', 'devanagari']), tolerance: 11, perRound: 5 }),
+  hard: Object.freeze({ id: 'hard', label: 'Hard', blurb: 'Syllables and words', setIds: Object.freeze(['words-en', 'words-dev']), tolerance: 9, perRound: 3 }),
 });
 export const LEVEL_IDS = Object.freeze(Object.keys(LEVELS));
 
@@ -50,4 +50,18 @@ export const glyphStars = (score) => starsForAccuracy(score);
 export function roundStars(results) {
   if (results.length === 0) return 0;
   return Math.floor(results.reduce((sum, r) => sum + r.stars, 0) / results.length + 0.5);
+}
+
+/** Even on a small screen the path is at least this wide to hit, in screen pixels, so a finger or a thick stylus can follow it. */
+export const MIN_TOLERANCE_PX = 16;
+
+/**
+ * How far from the path the pencil may be, in drawing units: the level's tolerance, or wider if that would be narrower than
+ * MIN_TOLERANCE_PX on this screen (a long word shrinks to fit a phone).
+ * @param {{ tolerance: number }} level
+ * @param {number} scale Screen pixels for each drawing unit.
+ * @returns {number}
+ */
+export function effectiveTolerance(level, scale) {
+  return scale > 0 ? Math.max(level.tolerance, MIN_TOLERANCE_PX / scale) : level.tolerance;
 }

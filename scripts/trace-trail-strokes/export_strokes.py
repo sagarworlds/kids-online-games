@@ -34,7 +34,7 @@ for ch, ident in IDS.items():
 js = """// Devanagari stroke data: the centre lines of each letter, split into strokes and put in writing order (left parts first, the
 // upright stem later; the headline is added last by the code). Generated, not written by hand, so do not edit the numbers: see
 // "How the Devanagari strokes were made" in README.md. The centre lines were found from the letter shapes of Noto Sans
-// Devanagari (Copyright 2022 The Noto Project Authors, SIL Open Font License 1.1, https://openfontlicense.org), and the stroke
+// Devanagari (Copyright 2022 The Noto Project Authors, SIL Open Font License 1.1; the licence text is at openfontlicense.org), and the stroke
 // order was set by a simple rule, so a teacher should check both.
 /* eslint-disable */
 export const DEVANAGARI_DATA = """ + json.dumps(out, ensure_ascii=False, separators=(',', ':')).replace('},{"id"', '},\n{"id"') + ";\n"

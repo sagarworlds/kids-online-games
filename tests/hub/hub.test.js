@@ -206,9 +206,9 @@ test('"Also reset name" removes the profile too, still leaving other keys alone'
 
 // ---- registry --------------------------------------------------------------
 
-test('registry lists all 18 games exactly once with every required field', () => {
-  assert.equal(GAMES.length, 18);
-  assert.equal(new Set(GAMES.map((g) => g.slug)).size, 18);
+test('registry lists all 19 games exactly once with every required field', () => {
+  assert.equal(GAMES.length, 19);
+  assert.equal(new Set(GAMES.map((g) => g.slug)).size, 19);
   const subjects = new Set(SUBJECTS.map((s) => s.id));
   for (const g of GAMES) {
     for (const field of ['slug', 'title', 'subject', 'icon', 'path', 'learningTag']) {
@@ -219,9 +219,9 @@ test('registry lists all 18 games exactly once with every required field', () =>
   }
 });
 
-test('subject grouping matches the specs (5 math, 4 language, 3 logic, 4 science, 2 memory)', () => {
+test('subject grouping matches the specs (5 math, 5 language, 3 logic, 4 science, 2 memory)', () => {
   const count = (id) => GAMES.filter((g) => g.subject === id).length;
-  assert.deepEqual(['math', 'language', 'logic', 'science', 'memory'].map(count), [5, 4, 3, 4, 2]);
+  assert.deepEqual(['math', 'language', 'logic', 'science', 'memory'].map(count), [5, 5, 3, 4, 2]);
 });
 
 test('every game marked available has its page on disk (every card link opens a game)', () => {

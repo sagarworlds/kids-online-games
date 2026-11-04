@@ -15,6 +15,11 @@ import { dist, SPACING, pathLength } from './shapes.js';
 const LOOK_BACK = 2;
 /** The stroke counts as finished when the pencil is within this many points of the end. */
 const END_SLACK = 2;
+/**
+ * Progress can only run ahead of the pencil's own travel by this factor (plus a little room at the start). Without it a pencil that
+ * sweeps straight across a wave or a zigzag, staying within the tolerance of its crests, would be carried all the way along it.
+ */
+const TRAVEL_FACTOR = 1.3;
 /** A start counts when the pencil goes down within this many tolerances of the start of the stroke. */
 export const START_FACTOR = 1.8;
 
@@ -130,8 +135,10 @@ export class StrokeTracker {
       if (hit.distance <= this.#tolerance) {
         onPath = true;
         this.#onPath += step;
-        if (hit.index > this.#progress) {
-          this.#progress = hit.index;
+        const reachable = Math.floor((this.#travelled * TRAVEL_FACTOR + this.#tolerance * 2) / SPACING);
+        const index = Math.min(hit.index, reachable);
+        if (index > this.#progress) {
+          this.#progress = index;
           progressed = true;
         }
       } else {

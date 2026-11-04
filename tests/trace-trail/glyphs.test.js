@@ -11,8 +11,9 @@ import {
   ENGLISH_WORDS, DEVANAGARI_WORDS, ENGLISH_WORD_GLYPHS, DEVANAGARI_WORD_GLYPHS, layoutEnglish, layoutDevanagari,
 } from '../../src/games/trace-trail/logic/glyphs/words.js';
 import { SETS, SET_IDS } from '../../src/games/trace-trail/logic/glyphs/index.js';
-import { LEVELS, LEVEL_IDS, roundKey, pickGlyphs, glyphStars, roundStars } from '../../src/games/trace-trail/logic/levels.js';
+import { LEVELS, LEVEL_IDS, roundKey, pickGlyphs, glyphStars, roundStars, effectiveTolerance, MIN_TOLERANCE_PX } from '../../src/games/trace-trail/logic/levels.js';
 import { GlyphTracer } from '../../src/games/trace-trail/logic/trace.js';
+import { paginate, rowLayout, ROWS_PER_PAGE } from '../../src/games/trace-trail/logic/worksheet.js';
 
 function codeOf(fn) {
   try {
@@ -108,11 +109,11 @@ test('every glyph is well formed: strokes of a real length, inside the box, a se
 test('every glyph can be written by following its strokes in order (exactly, and a little off to each side)', () => {
   for (const [id, set] of Object.entries(SETS)) {
     for (const glyph of set.glyphs) {
-      const exact = write(glyph, 13);
+      const exact = write(glyph, 9);
       assert.ok(exact.score >= 0.97, `${id}/${glyph.id}: exact score ${exact.score}`);
       assert.deepEqual([exact.orderMistakes, exact.directionMistakes], [0, 0]);
-      const wobbly = write(glyph, 15, 5);
-      assert.ok(wobbly.score >= 0.8, `${id}/${glyph.id}: a pencil 5 off the path scores ${wobbly.score}`);
+      const wobbly = write(glyph, 11, 5);
+      assert.ok(wobbly.score >= 0.8, `${id}/${glyph.id}: a pencil 5 units off the path scores ${wobbly.score}`);
     }
   }
 });
@@ -231,7 +232,7 @@ test('levels: strokes and numbers, then letters, then words; the pencil is forgi
   assert.deepEqual(LEVEL_IDS.map((id) => LEVELS[id].setIds), [['strokes', 'numbers'], ['capitals', 'small', 'devanagari'], ['words-en', 'words-dev']]);
   assert.ok(LEVELS.easy.tolerance > LEVELS.medium.tolerance && LEVELS.medium.tolerance > LEVELS.hard.tolerance);
   assert.ok(LEVEL_IDS.every((id) => LEVELS[id].setIds.every((s) => SETS[s])));
-  assert.ok(LEVEL_IDS.every((id) => LEVELS[id].tolerance >= 12 && LEVELS[id].perRound >= 3));
+  assert.ok(LEVEL_IDS.every((id) => LEVELS[id].tolerance >= 9 && LEVELS[id].perRound >= 3));
   assert.throws(() => { LEVELS.easy.tolerance = 1; }, TypeError);
   assert.equal(roundKey('capitals'), 'trace-capitals');
 });
@@ -253,4 +254,25 @@ test('stars: a careful glyph is 3, a fair one 2, and a round is the average with
   assert.equal(roundStars([{ stars: 3 }, { stars: 2 }]), 3);
   assert.equal(roundStars([{ stars: 1 }, { stars: 2 }]), 2);
   assert.equal(roundStars([{ stars: 2 }, { stars: 1 }, { stars: 1 }]), 1);
+});
+
+test('effectiveTolerance: the level\'s width, or wider where the page is shrunk to fit a small screen', () => {
+  assert.equal(effectiveTolerance(LEVELS.hard, 2), 9, 'plenty of room: the level decides');
+  assert.equal(effectiveTolerance(LEVELS.hard, 1), MIN_TOLERANCE_PX, 'at one pixel a unit the path is 16 pixels wide');
+  assert.ok(Math.abs(effectiveTolerance(LEVELS.hard, 0.5) * 0.5 - MIN_TOLERANCE_PX) < 1e-9, 'never narrower than 16 screen pixels');
+  assert.equal(effectiveTolerance(LEVELS.easy, 0), 14, 'a page with no size yet uses the level');
+});
+
+test('worksheets: pages of rows, and a row has fewer copies when the glyph is wide', () => {
+  const pages = paginate(CAPITALS, ROWS_PER_PAGE['four-line']);
+  assert.equal(pages.length, Math.ceil(26 / ROWS_PER_PAGE['four-line']));
+  assert.deepEqual(pages.flat().map((g) => g.id).join(''), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+  assert.ok(pages.slice(0, -1).every((p) => p.length === ROWS_PER_PAGE['four-line']));
+  assert.deepEqual(paginate([], 5), []);
+  assert.equal(codeOf(() => paginate([1], 0)), 'BAD_PAGE_SIZE');
+  assert.equal(codeOf(() => paginate([1], 2.5)), 'BAD_PAGE_SIZE');
+  assert.deepEqual(rowLayout({ w: 60 }), { dotted: 3, empty: 2 });
+  assert.deepEqual(rowLayout({ w: 120 }), { dotted: 2, empty: 1 });
+  assert.deepEqual(rowLayout({ w: 220 }), { dotted: 1, empty: 1 });
+  for (const g of ENGLISH_WORD_GLYPHS) assert.ok(rowLayout(g).dotted >= 1);
 });

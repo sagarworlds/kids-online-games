@@ -1,7 +1,7 @@
 // Devanagari stroke data: the centre lines of each letter, split into strokes and put in writing order (left parts first, the
 // upright stem later; the headline is added last by the code). Generated, not written by hand, so do not edit the numbers: see
 // "How the Devanagari strokes were made" in README.md. The centre lines were found from the letter shapes of Noto Sans
-// Devanagari (Copyright 2022 The Noto Project Authors, SIL Open Font License 1.1, https://openfontlicense.org), and the stroke
+// Devanagari (Copyright 2022 The Noto Project Authors, SIL Open Font License 1.1; the licence text is at openfontlicense.org), and the stroke
 // order was set by a simple rule, so a teacher should check both.
 /* eslint-disable */
 export const DEVANAGARI_DATA = [{"id":"ka","char":"क","w":110,"headline":[8.0,101.1],"strokes":[[[44.2,59.1],[40.6,59.1],[37.0,59.1],[33.5,59.4],[29.9,60.1],[26.8,61.3],[22.7,64.3],[20.7,66.6],[19.1,69.8],[18.4,73.4],[18.3,77.0],[18.9,80.6],[19.8,83.1],[22.1,86.5],[25.5,89.1],[28.7,90.5],[31.9,91.2],[35.4,91.3],[39.0,91.2],[42.0,90.6],[45.6,89.3],[49.0,87.6],[51.8,86.6],[55.4,85.4],[56.8,84.8]],[[57.3,40.0],[57.3,49.5],[57.3,53.1],[57.3,56.7],[57.3,60.3],[57.3,63.9],[57.3,67.4],[57.4,71.0],[57.6,74.2],[57.3,77.8],[57.3,81.4],[57.2,85.0],[57.3,88.5],[57.3,92.1],[57.3,95.7],[57.3,99.3],[57.3,102.8],[57.3,105.2]],[[58.1,72.6],[61.3,71.3],[64.9,70.2],[67.9,68.6],[70.4,67.6],[74.0,66.9],[77.6,66.8],[81.2,67.4],[83.4,68.9],[86.1,71.5],[88.1,74.3],[89.0,77.4],[89.4,81.0],[89.1,84.5],[88.5,88.1],[87.4,91.7],[85.5,95.5],[83.8,98.0],[82.4,99.3]]]},
