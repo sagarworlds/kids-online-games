@@ -4,7 +4,9 @@ import { createButton } from '../../../engine/ui/Button.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { prefersReducedMotion } from '../../../engine/utils/motion.js';
 import { GameError } from '../../../engine/utils/errors.js';
+import { createMachine } from '../../../engine/utils/stateMachine.js';
 import { Race } from '../logic/race.js';
+import { RACE_FLOW } from '../logic/raceFlow.machine.js';
 import { getLevel, RACE_LENGTH, WOBBLE_MS } from '../logic/levels.js';
 import { ghostProgressAt } from '../logic/ghost.js';
 import { loadGhost, readWeights, tablesKey } from '../logic/saveData.js';
@@ -27,7 +29,9 @@ export class RaceScene extends RacingScene {
   #setup = null;
   #ghost = null;
   #reduced = false;
-  #phase = 'countdown';
+  /** Where the race is in its life; the legal moves are in `raceFlow.machine.js`. */
+  #flow = createMachine(RACE_FLOW);
+  /** Shown over a `pausable` state without changing it. */
   #paused = false;
   #elapsedMs = 0;
   #countdown = COUNTDOWN_SECONDS;
@@ -134,12 +138,12 @@ export class RaceScene extends RacingScene {
   // ----------------------------------------------------------------- input
 
   #onKey(event) {
-    if (this.#phase === 'done') return;
+    if (this.#flow.is('done')) return;
     if (event.key === 'Escape') {
       this.#setPaused(!this.#paused);
       return;
     }
-    if (this.#paused || this.#phase !== 'racing' || this.#lock > 0) return;
+    if (this.#paused || !this.#flow.is('racing') || this.#lock > 0) return;
     // Keys 1 to 4 choose an answer button. (In typing mode the digits go into the box instead.)
     if (this.#level.mode === 'choice' && /^[1-4]$/.test(event.key) && !event.repeat) this.#panel.choose(Number(event.key) - 1);
   }
@@ -151,10 +155,10 @@ export class RaceScene extends RacingScene {
   }
 
   #setPaused(paused) {
-    if (this.#phase === 'finishing' || this.#phase === 'done' || paused === this.#paused) return;
+    if (!this.#flow.hasTag('pausable') || paused === this.#paused) return;
     this.#paused = paused;
     this.#pauseEl.hidden = !paused;
-    this.#panel.setDisabled(paused || this.#phase !== 'racing' || this.#lock > 0);
+    this.#panel.setDisabled(paused || !this.#flow.is('racing') || this.#lock > 0);
     if (paused) this.#resumeButton.focus();
     else this.#panel.focus();
     this.#announce(paused ? 'Paused' : 'Back in the race');
@@ -162,7 +166,7 @@ export class RaceScene extends RacingScene {
 
   /** @param {number|string} value */
   #onAnswer(value) {
-    if (this.#phase !== 'racing' || this.#paused || this.#lock > 0) return;
+    if (!this.#flow.is('racing') || this.#paused || this.#lock > 0) return;
     const { audio } = this.services;
     const result = this.#race.answer(value, this.#elapsedMs);
     const handlers = {
@@ -196,7 +200,7 @@ export class RaceScene extends RacingScene {
   }
 
   #beginFinish() {
-    this.#phase = 'finishing';
+    this.#flow.must('FINISH');
     this.#finishTimer = FINISH_SECONDS;
     this.#panel.setDisabled(true);
     this.services.audio.play('cheer');
@@ -220,18 +224,18 @@ export class RaceScene extends RacingScene {
     this.#wobble = Math.max(0, this.#wobble - dt / (WOBBLE_MS / 1000));
     this.#boost = Math.max(0, this.#boost - dt / BOOST_SECONDS);
 
-    if (this.#phase === 'countdown') {
+    if (this.#flow.is('countdown')) {
       this.#countdown -= dt;
       this.#bannerEl.hidden = false;
       this.#bannerEl.textContent = this.#countdown > 1.2 ? 'Ready…' : this.#countdown > 0.4 ? 'Set…' : 'Go!';
       if (this.#countdown <= 0) {
-        this.#phase = 'racing';
+        this.#flow.must('GO');
         this.#bannerEl.hidden = true;
         this.#panel.setDisabled(false);
         this.#panel.focus();
         this.#announce('Go!');
       }
-    } else if (this.#phase === 'racing') {
+    } else if (this.#flow.is('racing')) {
       this.#elapsedMs += dt * 1000;
       if (this.#lock > 0) {
         this.#lock -= dt;
@@ -247,10 +251,10 @@ export class RaceScene extends RacingScene {
         this.#hudClock = 0;
         this.#hud.setStat('time', formatTime(this.#elapsedMs));
       }
-    } else if (this.#phase === 'finishing') {
+    } else if (this.#flow.is('finishing')) {
       this.#finishTimer -= dt;
       if (this.#finishTimer <= 0) {
-        this.#phase = 'done';
+        this.#flow.must('END');
         this.routes.results({ ...this.#setup, summary: this.#race.summary(), ghost: this.#ghost });
         return;
       }
@@ -262,7 +266,7 @@ export class RaceScene extends RacingScene {
   /** Cars glide to where they should be, and only ever forwards: the target never decreases, so neither does a car. */
   #animateCars(dt) {
     const ease = 1 - Math.exp(-EASE_PER_SECOND * dt);
-    const ghostTarget = this.#phase === 'countdown' ? 0 : ghostProgressAt(this.#ghost.run, this.#elapsedMs);
+    const ghostTarget = this.#flow.is('countdown') ? 0 : ghostProgressAt(this.#ghost.run, this.#elapsedMs);
     const nextPlayer = this.#shownPlayer + (this.#race.progress - this.#shownPlayer) * ease;
     const nextGhost = this.#shownGhost + (ghostTarget - this.#shownGhost) * ease;
     const moved = Math.max(0, nextPlayer - this.#shownPlayer);

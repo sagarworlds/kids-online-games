@@ -1,3 +1,6 @@
+import { createMachine } from '../../../engine/utils/stateMachine.js';
+import { MATCH_TURN_MACHINE } from './matchState.machine.js';
+
 /**
  * @typedef {import('./deck.js').Card} Card
  * @typedef {'idle'|'oneUp'|'twoUp'} Phase
@@ -20,7 +23,8 @@
  */
 export class MatchGame {
   #cards;
-  #phase = 'idle';
+  /** The turn rules live in `matchState.machine.js`. */
+  #machine = createMachine(MATCH_TURN_MACHINE);
   #first = null;
   #second = null;
   #moves = 0;
@@ -36,7 +40,7 @@ export class MatchGame {
   /** @returns {Card[]} A snapshot of the cards (changing it does not change the game). */
   get cards() { return this.#cards.map((c) => ({ ...c })); }
   /** @returns {Phase} */
-  get phase() { return this.#phase; }
+  get phase() { return this.#machine.state; }
   get moves() { return this.#moves; }
   get matchedPairs() { return this.#matchedPairs; }
   get totalPairs() { return this.#totalPairs; }
@@ -50,13 +54,13 @@ export class MatchGame {
   flip(cardId) {
     const card = this.#cards[cardId];
     if (!card) return { type: 'ignored', reason: 'no-such-card' };
-    if (this.#phase === 'twoUp') return { type: 'ignored', reason: 'waiting-for-flip-back' };
+    if (this.#machine.is('twoUp')) return { type: 'ignored', reason: 'waiting-for-flip-back' };
     if (card.state !== 'down') return { type: 'ignored', reason: card.state === 'up' ? 'already-up' : 'already-matched' };
 
     card.state = 'up';
-    if (this.#phase === 'idle') {
+    if (this.#machine.is('idle')) {
       this.#first = card;
-      this.#phase = 'oneUp';
+      this.#machine.must('FLIP_FIRST');
       return { type: 'flipped', cardId };
     }
 
@@ -67,11 +71,11 @@ export class MatchGame {
       card.state = 'matched';
       this.#matchedPairs += 1;
       this.#first = null;
-      this.#phase = 'idle';
+      this.#machine.must('MATCH');
       return { type: 'matched', pairId: card.pairId, ids: [first.id, card.id] };
     }
     this.#second = card;
-    this.#phase = 'twoUp';
+    this.#machine.must('MISMATCH');
     return { type: 'mismatch', ids: [first.id, card.id] };
   }
 
@@ -80,13 +84,13 @@ export class MatchGame {
    * @returns {number[]} The ids that were turned back (empty if nothing was waiting).
    */
   settle() {
-    if (this.#phase !== 'twoUp') return [];
+    if (!this.#machine.is('twoUp')) return [];
     const ids = [this.#first.id, this.#second.id];
     this.#first.state = 'down';
     this.#second.state = 'down';
     this.#first = null;
     this.#second = null;
-    this.#phase = 'idle';
+    this.#machine.must('SETTLE');
     return ids;
   }
 }

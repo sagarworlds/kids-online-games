@@ -53,6 +53,7 @@ src/hub/                   Home page: games registry, player name, profile, rese
 src/app/createApp.js       Wires services for a game page (composition helper)
 src/games/<slug>/          One folder per game (index.html, main.js, scenes/, logic/, data/, style.css)
 tests/                     Node tests (engine, hub, each game's logic/)
+docs/                      SPEC.md (the design) and STATE_MACHINES.md (every state machine, with diagrams)
 scripts/                   build.mjs (copy to dist/), serve.mjs (local server)
 ```
 
@@ -71,6 +72,13 @@ scripts/                   build.mjs (copy to dist/), serve.mjs (local server)
 1. Create `src/games/<slug>/` following the structure and rules in `docs/SPEC.md`.
 2. In `src/hub/gamesRegistry.js`, set that game's `available` to `true`.
 3. Add tests under `tests/<slug>/` for its `logic/` files, then run `npm test`.
+
+## State machines
+
+Screens and rules with phases (ready → playing → finishing → done) are declared as data in `*.machine.js` files and driven
+with `src/engine/utils/stateMachine.js`, not with loose booleans. [`docs/STATE_MACHINES.md`](docs/STATE_MACHINES.md) lists
+every machine (and the ones still to migrate) with diagrams generated from the code. After changing a machine, run
+`npm run machines` to refresh them; `npm test` fails if they are out of date.
 
 ## Status
 
