@@ -138,6 +138,31 @@ stateDiagram-v2
 ```
 <!-- machine:trace-trail/stroke:end -->
 
+### `trace-trail/glyph-flow`: one glyph on the tracing screen
+
+`src/games/trace-trail/logic/glyphFlow.machine.js`, used by `TraceScene`. Replaces `#demoing`, `#done` and the test
+`!this.#tracer` (which meant "not started yet"). Watch is refused until the tracing rules exist, Skip works at any time
+before the glyph is finished, and a second press of the last *Next* is refused instead of asking for the results twice.
+(`#off`, "the pencil has strayed", stays a display flag: it changes colours, not what is allowed.)
+
+<!-- machine:trace-trail/glyph-flow:start -->
+```mermaid
+stateDiagram-v2
+  [*] --> starting
+  starting --> demoing: SHOW_DEMO
+  starting --> tracing: BEGIN_TURN
+  starting --> done: FINISH
+  demoing --> demoing: WATCH
+  demoing --> tracing: DEMO_ENDED
+  demoing --> done: FINISH
+  tracing --> demoing: WATCH
+  tracing --> done: FINISH
+  done --> starting: NEXT
+  done --> leaving: LEAVE
+  leaving --> [*]
+```
+<!-- machine:trace-trail/glyph-flow:end -->
+
 ### `number-ninja/play-flow`: the falling-stars screen
 
 `src/games/number-ninja/logic/playFlow.machine.js`, used by `PlayScene`. Replaces `#finishing`, `#done` and the test
@@ -212,7 +237,6 @@ ones that looked like more than a latch. Nothing here is known to be broken; thi
 
 | Where | What it hides | Suggested states |
 | --- | --- | --- |
-| `trace-trail/scenes/TraceScene` | `#demoing`, `#done` and `#off` (plus whether a glyph has started) | `starting → demoing → tracing → done` (`#off` is a display flag, not a state) |
 | `spot-the-difference/scenes/PlayScene` | `#phase` (`playing`/`done`) beside a `#pausedBy` set | `playing → done`, tag `pausable` |
 | `trace-trail/logic/trace.js` `GlyphTracer` | `#down`, `#current`, `done` | `ready → down → … → done` |
 | `engine/services/InputService` | `#pointer` (`null` / pressed / `dragging`) | `idle → pressed → dragging` |
