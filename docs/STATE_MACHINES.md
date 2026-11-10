@@ -261,12 +261,12 @@ plant, a spelling record) that is replaced by pure functions. It has no phases, 
 
 ## Findings
 
-Making the machines explicit turned up two real defects.
+Making the machines explicit, and testing them in a browser, turned up two real defects.
 
 1. **Fixed: Simon Says could freeze for good.** If the tab was hidden during any pause (the "Get ready…" moment, the pause
    after a won round, the pause before a retry), the pending pause was cancelled but nothing recorded that it had to be
    resumed, so the game never carried on. The old flags could not express that state; `simon-says/play-flow` can.
-2. **Not fixed here: Word Builder Bubbles' screen-reader buttons never pop a bubble.** `physics.step` returns *new* bubble
-   objects every frame, but each screen-reader button keeps the object it was built with, so `#pop` rejects it
-   (`!this.#bubbles.includes(bubble)`). The keyboard letter path and the mouse and touch path work. A fix is to look the
-   bubble up by `id`. It is unrelated to state machines, so it belongs in its own `SP/bugfix/` branch.
+2. **Fixed: Word Builder Bubbles' screen-reader buttons never popped a bubble.** `physics.step` returns *new* bubble
+   objects every frame, but each screen-reader button kept the object it was built with, so `#pop` rejected it
+   (`!this.#bubbles.includes(bubble)`). `#pop` now finds the live bubble by `id`. This was unrelated to state machines;
+   it turned up while testing them.

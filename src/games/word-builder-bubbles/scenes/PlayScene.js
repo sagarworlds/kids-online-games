@@ -267,8 +267,15 @@ export class PlayScene extends BubblesScene {
 
   // -------------------------------------------------------------- popping
 
-  #pop(bubble) {
-    if (!this.#canPlay() || !this.#bubbles.includes(bubble)) return;
+  /**
+   * Pops a bubble. Callers may hold an old snapshot of it (the screen-reader buttons are only rebuilt when the set of
+   * bubbles changes, but `step` makes new bubble objects every frame), so it is found again by `id`, which never changes.
+   * @param {{ id: number }} target
+   */
+  #pop(target) {
+    if (!this.#canPlay()) return;
+    const bubble = this.#bubbles.find((b) => b.id === target.id);
+    if (!bubble) return; // already popped, or drifted away and replaced
     const { audio } = this.services;
     const slotIndex = this.#state.filled;
     const outcome = tryLetter(this.#state, bubble.letter);
