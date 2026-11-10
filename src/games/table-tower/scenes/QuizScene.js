@@ -1,6 +1,7 @@
 import { TowerBase } from './TowerBase.js';
 import { el } from '../../../engine/utils/dom.js';
 import { GameError } from '../../../engine/utils/errors.js';
+import { createMachine } from '../../../engine/utils/stateMachine.js';
 import { createButton, setDisabled } from '../../../engine/ui/Button.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { createProgressBar } from '../../../engine/ui/ProgressBar.js';
@@ -8,6 +9,7 @@ import { LEVELS, isFloor, levelOfFloor, isFloorOpen, challengeSeconds } from '..
 import { buildChallenge, buildRevision, QuizSession } from '../logic/session.js';
 import { makeChoices, parseAnswer, describeAnswer } from '../logic/questions.js';
 import { workingFor } from '../logic/splits.js';
+import { QUIZ_FLOW } from '../logic/quizFlow.machine.js';
 
 /** After a right answer the next question follows after this many seconds. */
 const NEXT_AFTER_RIGHT = 0.6;
@@ -27,7 +29,9 @@ export class QuizScene extends TowerBase {
   #floor = null;
   #level = null;
   #session = null;
-  #phase = 'asking';
+  /** Where the quiz screen is; the legal moves are in `quizFlow.machine.js`. */
+  #flow = createMachine(QUIZ_FLOW);
+  /** Reasons the screen is held (a hidden tab, the settings dialog); it runs only when there are none. */
   #paused = new Set();
   #wait = 0;
   #shownSecond = -1;
@@ -104,7 +108,6 @@ export class QuizScene extends TowerBase {
   #ask() {
     const { services } = this;
     const question = this.#session.current;
-    this.#phase = 'asking';
     this.#feedbackEl.replaceChildren();
     this.#feedbackEl.className = 'quiz__feedback';
     this.#nextButton.hidden = true;
@@ -129,7 +132,7 @@ export class QuizScene extends TowerBase {
   }
 
   #submitTyped() {
-    if (this.#phase !== 'asking' || this.#paused.size > 0) return;
+    if (!this.#flow.is('asking') || this.#paused.size > 0) return;
     const value = parseAnswer(this.#input.value);
     if (value === null) {
       this.#feedbackEl.textContent = 'Type a whole number.';
@@ -142,11 +145,11 @@ export class QuizScene extends TowerBase {
   // --------------------------------------------------------------- answers
 
   #answer(value) {
-    if (this.#phase !== 'asking' || this.#paused.size > 0) return;
+    if (!this.#flow.is('asking') || this.#paused.size > 0) return;
     const result = this.#session.answer(value);
     if (!result) return;
     const { services } = this;
-    this.#phase = 'feedback';
+    this.#flow.must('ANSWER');
     this.#lockAnswer(result, value);
     if (result.correct) {
       services.audio.play('ding');
@@ -181,22 +184,27 @@ export class QuizScene extends TowerBase {
   }
 
   #next() {
-    if (this.#phase !== 'feedback') return;
+    if (!this.#flow.is('feedback')) return;
     this.#wait = 0;
     this.#session.advance();
-    if (this.#session.over) this.#finish();
-    else this.#ask();
+    if (this.#session.over) {
+      this.#finish('FINISH');
+    } else {
+      this.#flow.must('NEXT');
+      this.#ask();
+    }
   }
 
-  #finish() {
-    this.#phase = 'done';
+  /** @param {'FINISH'|'TIME_UP'} event Why the quiz ended: the last question was answered, or the time ran out. */
+  #finish(event) {
+    this.#flow.must(event);
     this.routes.results({ kind: this.#mode, floor: this.#floor ?? undefined, levelId: this.#level.id, summary: this.#session.summary() });
   }
 
   // ----------------------------------------------------------------- input
 
   #onKey(event) {
-    if (this.#phase !== 'asking' || this.#paused.size > 0 || this.#level.answerMode !== 'choice' || event.repeat) return;
+    if (!this.#flow.is('asking') || this.#paused.size > 0 || this.#level.answerMode !== 'choice' || event.repeat) return;
     if (/^[1-4]$/.test(event.key)) this.#answer(this.#choiceValues[Number(event.key) - 1]);
   }
 
@@ -217,8 +225,8 @@ export class QuizScene extends TowerBase {
   // ------------------------------------------------------------------ loop
 
   update(dt) {
-    if (this.#phase === 'done' || this.#paused.size > 0) return;
-    if (this.#phase === 'feedback') {
+    if (this.#flow.is('done') || this.#paused.size > 0) return;
+    if (this.#flow.is('feedback')) {
       if (this.#wait > 0) {
         this.#wait -= dt;
         if (this.#wait <= 0) this.#next();
@@ -235,6 +243,6 @@ export class QuizScene extends TowerBase {
       this.#hud.setStat('time', formatTime(left));
       this.#timeBar.set(left);
     }
-    if (timedOut) this.#finish();
+    if (timedOut) this.#finish('TIME_UP');
   }
 }

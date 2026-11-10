@@ -2,11 +2,13 @@ import { NinjaScene } from './NinjaScene.js';
 import { el } from '../../../engine/utils/dom.js';
 import { clamp } from '../../../engine/utils/geometry.js';
 import { createRng } from '../../../engine/utils/random.js';
+import { createMachine } from '../../../engine/utils/stateMachine.js';
 import { prefersReducedMotion } from '../../../engine/utils/motion.js';
 import { createButton } from '../../../engine/ui/Button.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { ICONS } from '../../../engine/ui/icons.js';
 import { NinjaRound, START_SHIELDS } from '../logic/round.js';
+import { NINJA_PLAY_FLOW } from '../logic/playFlow.machine.js';
 import { appendDigit, backspace, parseAnswer } from '../logic/answerInput.js';
 import { problemToSpeech, problemToText } from '../logic/hints.js';
 import { createNumberPad } from '../ui/NumberPad.js';
@@ -59,9 +61,10 @@ export class PlayScene extends NinjaScene {
 
   // state
   #buffer = '';
+  /** Where the screen is in its life; the legal moves are in `playFlow.machine.js`. */
+  #flow = createMachine(NINJA_PLAY_FLOW);
+  /** Shown over a `pausable` state without changing it. */
   #paused = false;
-  #finishing = false;
-  #done = false;
   #endCountdown = 0;
   #ready = READY_SECONDS;
   #time = 0;
@@ -210,12 +213,12 @@ export class PlayScene extends NinjaScene {
   // ---------------------------------------------------------------- input
 
   #onKey(event) {
-    if (this.#done) return;
+    if (this.#flow.is('done')) return;
     if (event.key === 'Escape') {
       this.#setPaused(!this.#paused);
       return;
     }
-    if (this.#paused || this.#finishing) return;
+    if (!this.#canType()) return;
     if (/^[0-9]$/.test(event.key)) {
       this.#typeDigit(event.key);
     } else if (event.key === 'Backspace') {
@@ -228,19 +231,19 @@ export class PlayScene extends NinjaScene {
   }
 
   #typeDigit(digit) {
-    if (this.#paused || this.#finishing) return;
+    if (!this.#canType()) return;
     this.#buffer = appendDigit(this.#buffer, digit);
     this.#renderAnswer();
   }
 
   #backspace() {
-    if (this.#paused || this.#finishing) return;
+    if (!this.#canType()) return;
     this.#buffer = backspace(this.#buffer);
     this.#renderAnswer();
   }
 
   #submit() {
-    if (this.#paused || this.#finishing) return;
+    if (!this.#canType()) return;
     const value = parseAnswer(this.#buffer);
     if (value === null) return; // Enter on an empty box does nothing
     const result = this.#round.submit(value);
@@ -260,8 +263,13 @@ export class PlayScene extends NinjaScene {
     // Stay paused: the Resume button is the clear way back into the game.
   }
 
+  /** Typing, the number pad and Enter work only while the round is live and not paused. */
+  #canType() {
+    return !this.#paused && this.#flow.hasTag('inputOpen');
+  }
+
   #setPaused(paused) {
-    if (this.#finishing || paused === this.#paused) return;
+    if (!this.#flow.hasTag('pausable') || paused === this.#paused) return;
     this.#paused = paused;
     this.#pauseEl.hidden = !paused;
     this.#pad.setDisabled(paused);
@@ -320,31 +328,31 @@ export class PlayScene extends NinjaScene {
   }
 
   #beginFinish() {
-    if (this.#finishing) return;
-    this.#finishing = true;
+    if (!this.#flow.send('FINISH')) return;
     this.#endCountdown = END_DELAY[this.#round.endReason] ?? END_DELAY.complete;
   }
 
   // ---------------------------------------------------------------- loop
 
   update(dt) {
-    if (this.#paused || this.#done) return;
+    if (this.#paused || this.#flow.is('done')) return;
     this.#time += dt;
     this.#tickTransients(dt);
 
     this.#sinceMeasure += dt;
     if (this.#sinceMeasure > 0.5) this.#measure(); // fonts and wrapping can change panel height
 
-    if (this.#finishing) {
+    if (this.#flow.is('finishing')) {
       this.#endCountdown -= dt;
       if (this.#endCountdown <= 0) {
-        this.#done = true;
+        this.#flow.must('END');
         this.routes.results({ summary: this.#round.results() });
       }
       return;
     }
-    if (this.#ready > 0) {
+    if (this.#flow.is('ready')) {
       this.#ready -= dt;
+      if (this.#ready <= 0) this.#flow.must('GO');
       return;
     }
 
@@ -406,7 +414,7 @@ export class PlayScene extends NinjaScene {
     for (const star of this.#round.problems) this.#drawFalling(ctx, star);
     for (const reveal of this.#reveals) this.#drawReveal(ctx, reveal);
     for (const fx of this.#fx) this.#drawEffect(ctx, fx);
-    if (this.#ready > 0 && !this.#finishing) this.#drawCentreText(ctx, this.#ready > 0.4 ? 'Ready…' : 'Go!');
+    if (this.#flow.is('ready') && this.#ready > 0) this.#drawCentreText(ctx, this.#ready > 0.4 ? 'Ready…' : 'Go!');
   }
 
   #drawBackground(ctx) {

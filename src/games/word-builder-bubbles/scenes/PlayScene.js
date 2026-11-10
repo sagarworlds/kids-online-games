@@ -4,6 +4,7 @@ import { GameError } from '../../../engine/utils/errors.js';
 import { createButton, setDisabled } from '../../../engine/ui/Button.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { prefersReducedMotion } from '../../../engine/utils/motion.js';
+import { createMachine } from '../../../engine/utils/stateMachine.js';
 import { getLevel, WORDS_PER_ROUND, HINT_SECONDS, RESPAWN_SECONDS } from '../logic/levels.js';
 import { chooseDecoys } from '../logic/decoys.js';
 import { createBubbles, respawn } from '../logic/bubbleFactory.js';
@@ -11,6 +12,7 @@ import { step, bubbleAt, fitToBounds } from '../logic/physics.js';
 import { startWord, tryLetter, nextLetter, remainingLetters } from '../logic/spellingState.js';
 import { nearestWithLetter } from '../logic/keyboard.js';
 import { drawSea } from '../ui/SeaRenderer.js';
+import { BUBBLES_PLAY_FLOW } from '../logic/playFlow.machine.js';
 
 const FLY_MS = 450;
 const DRIFT_SECONDS = 1;
@@ -23,9 +25,10 @@ export class PlayScene extends BubblesScene {
   #state = null;
   #hintsLeft = 0;
   #reduced = false;
+  /** Where the word is in its life; the legal moves are in `playFlow.machine.js`. */
+  #flow = createMachine(BUBBLES_PLAY_FLOW);
+  /** Shown over a `pausable` state without changing it. */
   #paused = false;
-  #complete = false;
-  #done = false;
 
   // the sea
   #bounds = { width: 0, height: 0 };
@@ -141,6 +144,16 @@ export class PlayScene extends BubblesScene {
       this.#pauseEl, this.#srList, this.#announcer);
   }
 
+  /** True once the word is spelled (even after Next was pressed). */
+  #solved() {
+    return this.#flow.hasTag('solved');
+  }
+
+  /** Popping, tapping and hints work only while the word is live and not paused. */
+  #canPlay() {
+    return !this.#paused && this.#flow.hasTag('inputOpen');
+  }
+
   #announce(text) {
     this.#announcer.textContent = text;
   }
@@ -152,7 +165,7 @@ export class PlayScene extends BubblesScene {
       const filled = i < this.#shown;
       slot.textContent = filled ? word[i].toUpperCase() : '';
       slot.classList.toggle('is-filled', filled);
-      slot.classList.toggle('is-next', !this.#complete && i === next);
+      slot.classList.toggle('is-next', !this.#solved() && i === next);
       slot.setAttribute('aria-label', `Letter ${i + 1}: ${filled ? word[i] : 'empty'}`);
     });
   }
@@ -183,7 +196,7 @@ export class PlayScene extends BubblesScene {
 
   /** Makes the first bubbles once the sea has a size. */
   #ensureBubbles() {
-    if (this.#bubbles.length || this.#complete || this.#seaRect.w < 120 || this.#seaRect.h < 120) return;
+    if (this.#bubbles.length || this.#solved() || this.#seaRect.w < 120 || this.#seaRect.h < 120) return;
     const { services } = this;
     const letters = remainingLetters(this.#state);
     const decoys = chooseDecoys(this.#entry.word, this.#level.decoys, services.rng, { similar: this.#level.similarDecoys });
@@ -194,7 +207,7 @@ export class PlayScene extends BubblesScene {
   }
 
   #syncSrList() {
-    this.#srList.replaceChildren(...(this.#complete ? [] : this.#bubbles).map((b) => el('button', {
+    this.#srList.replaceChildren(...(this.#solved() ? [] : this.#bubbles).map((b) => el('button', {
       class: 'sr-bubble', text: `Bubble ${b.letter}`, attrs: { type: 'button' },
       on: { click: () => this.#pop(b) },
     })));
@@ -203,19 +216,19 @@ export class PlayScene extends BubblesScene {
   // ----------------------------------------------------------------- input
 
   #onTap({ originalEvent, onInteractive }) {
-    if (this.#paused || this.#complete || onInteractive) return;
+    if (!this.#canPlay() || onInteractive) return;
     const box = this.#seaEl.getBoundingClientRect();
     const bubble = bubbleAt(this.#bubbles, originalEvent.clientX - box.left, originalEvent.clientY - box.top, this.#time);
     if (bubble) this.#pop(bubble);
   }
 
   #onKey(event) {
-    if (this.#done) return;
+    if (this.#flow.is('done')) return;
     if (event.key === 'Escape') {
       this.#setPaused(!this.#paused);
       return;
     }
-    if (this.#paused || this.#complete || event.repeat) return;
+    if (!this.#canPlay() || event.repeat) return;
     const target = this.#slotCentre(Math.min(this.#state.filled, this.#entry.word.length - 1));
     const bubble = nearestWithLetter(this.#bubbles, event.key, target);
     if (bubble) this.#pop(bubble);
@@ -229,7 +242,7 @@ export class PlayScene extends BubblesScene {
   }
 
   #setPaused(paused) {
-    if (this.#complete || this.#done || paused === this.#paused) return;
+    if (!this.#flow.hasTag('pausable') || paused === this.#paused) return;
     this.#paused = paused;
     this.#pauseEl.hidden = !paused;
     if (paused) this.#resumeButton.focus();
@@ -237,7 +250,7 @@ export class PlayScene extends BubblesScene {
   }
 
   #hint() {
-    if (this.#hintsLeft <= 0 || this.#complete || this.#paused) return;
+    if (this.#hintsLeft <= 0 || !this.#canPlay()) return;
     const target = this.#slotCentre(Math.min(this.#state.filled, this.#entry.word.length - 1));
     const bubble = nearestWithLetter(this.#bubbles.filter((b) => !b.isDecoy), nextLetter(this.#state), target);
     if (!bubble) {
@@ -255,7 +268,7 @@ export class PlayScene extends BubblesScene {
   // -------------------------------------------------------------- popping
 
   #pop(bubble) {
-    if (this.#complete || this.#paused || !this.#bubbles.includes(bubble)) return;
+    if (!this.#canPlay() || !this.#bubbles.includes(bubble)) return;
     const { audio } = this.services;
     const slotIndex = this.#state.filled;
     const outcome = tryLetter(this.#state, bubble.letter);
@@ -266,7 +279,7 @@ export class PlayScene extends BubblesScene {
 
     const handlers = {
       correct: () => { audio.play('pop'); this.#flyToSlot(bubble, slotIndex); this.#announce(`${bubble.letter}`); },
-      complete: () => { audio.play('pop'); this.#flyToSlot(bubble, slotIndex); this.#complete = true; this.#celebrate(); },
+      complete: () => { audio.play('pop'); this.#flyToSlot(bubble, slotIndex); this.#flow.must('SOLVE'); this.#celebrate(); },
       wrong: () => this.#onWrong(bubble),
     };
     const handle = handlers[outcome.result];
@@ -330,7 +343,7 @@ export class PlayScene extends BubblesScene {
     const next = createButton({
       label: last ? 'See results' : 'Next word', icon: '▶', variant: 'primary', big: true,
       onClick: () => {
-        this.#done = true;
+        if (!this.#flow.send('LEAVE')) return; // a second press must not route twice
         const round = { ...this.round, index: this.round.index + 1, results: [...this.round.results, result], hintsLeft: this.#hintsLeft };
         if (last) this.routes.results(round);
         else this.routes.play(round);
@@ -344,7 +357,7 @@ export class PlayScene extends BubblesScene {
   // ------------------------------------------------------------------ loop
 
   update(dt) {
-    if (this.#paused || this.#done) return;
+    if (this.#paused || this.#flow.is('done')) return;
     this.#time += dt;
     this.#sinceMeasure += dt;
     if (this.#sinceMeasure > 0.5 || !this.#seaRect.w) this.#measure();
@@ -369,7 +382,7 @@ export class PlayScene extends BubblesScene {
     if (this.#respawns.length) {
       for (const r of this.#respawns) r.timer -= dt;
       const due = this.#respawns.filter((r) => r.timer <= 0);
-      if (due.length && !this.#complete) {
+      if (due.length && !this.#solved()) {
         for (const r of due) {
           this.#bubbles = [...this.#bubbles, respawn(r.old, this.#bubbles, this.#bounds, this.services.rng, this.#level.speed, this.#nextId++)];
         }
@@ -383,7 +396,7 @@ export class PlayScene extends BubblesScene {
     if (!ctx || this.#seaRect.w < 40) return;
     drawSea(ctx, this.#seaRect, {
       bubbles: this.#bubbles, time: this.#time, glowId: this.#glow?.id ?? null, drifting: this.#drifting,
-      sparkles: this.#sparkles, reduced: this.#reduced, complete: this.#complete,
+      sparkles: this.#sparkles, reduced: this.#reduced, complete: this.#solved(),
     });
   }
 }
