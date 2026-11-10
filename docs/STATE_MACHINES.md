@@ -71,6 +71,33 @@ stateDiagram-v2
 ```
 <!-- machine:engine/pointer-gesture:end -->
 
+### `engine/drag-gesture`: the press behind a drag helper
+
+`src/engine/ui/dragGesture.machine.js`, used by `makeDraggable` (`engine/ui/DragDrop.js`: Planet Hop, Sentence Train,
+Matra Mixer and Shop Keeper) and by the food chain builder's `attachLinkGesture`. Replaces the "does `press` have a copy
+yet" test in one and the `dragging` flag in the other. Unlike `engine/pointer-gesture`, a pointer going down while a press is
+running is **ignored**, so a resting palm cannot interrupt a drag. Escape, a cancelled pointer and tearing the element down
+are all `CANCEL`. The record of *which* press (pointer, start point, the copy) stays in a variable. The `suppressClick` /
+`swallowClick` flag also stays: it is a flag that lasts one tick after a drag so the browser's next click is not also a tap,
+and it can overlap a new press, so it is a timed latch and not a phase.
+
+There are no unit tests for the helpers themselves (they need a real DOM). Before the change, a Playwright script recorded
+what each does with a real mouse (a tap, a drag to empty space, to a slot, Escape, a cancelled pointer, a second pointer);
+the new code produced byte-identical records. The script is not in the repo.
+
+<!-- machine:engine/drag-gesture:start -->
+```mermaid
+stateDiagram-v2
+  [*] --> idle
+  idle --> pressed: POINTER_DOWN
+  pressed --> dragging: DRAG_START
+  pressed --> idle: POINTER_UP
+  pressed --> idle: CANCEL
+  dragging --> idle: POINTER_UP
+  dragging --> idle: CANCEL
+```
+<!-- machine:engine/drag-gesture:end -->
+
 ### `simon-says/game`: the rules of one game
 
 `src/games/simon-says/logic/simonGame.machine.js`, used by `SimonGame`. `start()` and `addStep()` begin a new sequence from
@@ -296,7 +323,6 @@ ones that looked like more than a latch. Nothing here is known to be broken; thi
 
 | Where | What it hides | Suggested states |
 | --- | --- | --- |
-| `engine/ui/DragDrop`, `food-chain-builder/ui/LinkGesture` | `press` (`null` / pressed / ghost shown) and the `suppressClick` latch | `idle → pressed → dragging → settling` |
 | `matra-mixer/logic/session.js` `RoundSession` | `#tries` and `#answered` | `asking → (retry) → revealed → over` |
 | `table-tower/logic/session.js` `QuizSession` | `#answeredCurrent` and `#timedOut` | `asking → answered`, `timedOut` |
 | `engine/ui/ParentGate` | wrong answer re-asks inside a modal | `asking → (wrong → asking) → passed / cancelled` |
@@ -356,5 +382,5 @@ Noted, and deliberately not changed:
 3. **A second pointer replaces the gesture in `InputService`.** If another finger goes down while one is already pressed or
    dragging, the first is forgotten: its lift is ignored, and a drag in progress is dropped without a `dragend`. Nothing in
    the app listens for drag events yet and the only `tap` listener is Word Builder Bubbles, so this has no visible effect
-   today. `DragDrop`, `LinkGesture` and the trace board all do the opposite (they ignore the second pointer). The machine
+   today. `DragDrop` and `LinkGesture` (see `engine/drag-gesture`) and the trace board all do the opposite: they ignore the second pointer. The machine
    keeps the old behaviour and says so; if a game ever listens for drags, pick one rule and change it in the machine.

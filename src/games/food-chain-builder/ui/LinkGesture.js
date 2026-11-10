@@ -1,4 +1,6 @@
 import { exceedsThreshold } from '../../../engine/utils/dragMath.js';
+import { createMachine } from '../../../engine/utils/stateMachine.js';
+import { DRAG_GESTURE_MACHINE } from '../../../engine/ui/dragGesture.machine.js';
 
 /**
  * Draw-an-arrow-by-dragging: press on a card, drag, and let go on another card. A line follows the pointer while it is
@@ -19,23 +21,27 @@ import { exceedsThreshold } from '../../../engine/utils/dragMath.js';
  * @returns {{ destroy: () => void }}
  */
 export function attachLinkGesture(board, { cardIdAt, centreOf, toBoard, onLive, onLink, canStart = () => true }) {
-  /** @type {{ pointerId: number, id: string, start: { x: number, y: number }, dragging: boolean }|null} */
+  /** @type {{ pointerId: number, id: string, start: { x: number, y: number } }|null} Which card and pointer; the phase is `gesture`. */
   let press = null;
+  /** Whether that press is waiting, being dragged, or over; the legal moves are in `engine/ui/dragGesture.machine.js`. */
+  const gesture = createMachine(DRAG_GESTURE_MACHINE);
+  /** Set for a moment after a drag ends, so the click the browser raises next is not also a tap. A timed flag, not a phase. */
   let swallowClick = false;
 
   const down = (event) => {
-    if (press || (event.pointerType === 'mouse' && event.button !== 0) || !canStart()) return;
+    if (!gesture.is('idle') || (event.pointerType === 'mouse' && event.button !== 0) || !canStart()) return;
     const card = event.target.closest?.('.card');
     if (!card) return;
-    press = { pointerId: event.pointerId, id: card.dataset.id, start: { x: event.clientX, y: event.clientY }, dragging: false };
+    press = { pointerId: event.pointerId, id: card.dataset.id, start: { x: event.clientX, y: event.clientY } };
+    gesture.must('POINTER_DOWN');
   };
 
   const move = (event) => {
     if (!press || event.pointerId !== press.pointerId) return;
     const point = { x: event.clientX, y: event.clientY };
-    if (!press.dragging) {
+    if (gesture.is('pressed')) {
       if (!exceedsThreshold(press.start, point)) return;
-      press.dragging = true;
+      gesture.must('DRAG_START');
       board.setPointerCapture?.(event.pointerId);
     }
     const over = cardIdAt(point.x, point.y);
@@ -46,7 +52,9 @@ export function attachLinkGesture(board, { cardIdAt, centreOf, toBoard, onLive, 
     if (!press || event.pointerId !== press.pointerId) return;
     const ended = press;
     press = null;
-    if (!ended.dragging) return;
+    const wasDragging = gesture.is('dragging');
+    gesture.must(event.type === 'pointercancel' ? 'CANCEL' : 'POINTER_UP');
+    if (!wasDragging) return;
     swallowClick = true;
     setTimeout(() => { swallowClick = false; }, 0);
     onLive(null);
