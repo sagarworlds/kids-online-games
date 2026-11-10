@@ -48,6 +48,29 @@ This page lists **every** machine we found, says which are now explicit, and say
 
 ## Explicit machines
 
+### `engine/pointer-gesture`: one pointer, from press to lift
+
+`src/engine/services/pointerGesture.machine.js`, used by `InputService`. Replaces the `dragging` flag inside the pointer
+record. The record still holds *which* pointer and where it went down; the machine holds *what phase it is in*. Lifting a
+`pressed` pointer is a `tap`, lifting a `dragging` one is a `dragend`, and cancelling a drag is a `dragend` flagged
+`cancelled`. Before the change, six tests in `tests/engine/core.test.js` pinned down the cancel, second-pointer and reuse
+behaviour on the old code; they pass unchanged on the new.
+
+<!-- machine:engine/pointer-gesture:start -->
+```mermaid
+stateDiagram-v2
+  [*] --> idle
+  idle --> pressed: POINTER_DOWN
+  pressed --> pressed: POINTER_DOWN
+  pressed --> dragging: DRAG_START
+  pressed --> idle: POINTER_UP
+  pressed --> idle: CANCEL
+  dragging --> pressed: POINTER_DOWN
+  dragging --> idle: POINTER_UP
+  dragging --> idle: CANCEL
+```
+<!-- machine:engine/pointer-gesture:end -->
+
 ### `simon-says/game`: the rules of one game
 
 `src/games/simon-says/logic/simonGame.machine.js`, used by `SimonGame`. `start()` and `addStep()` begin a new sequence from
@@ -273,7 +296,6 @@ ones that looked like more than a latch. Nothing here is known to be broken; thi
 
 | Where | What it hides | Suggested states |
 | --- | --- | --- |
-| `engine/services/InputService` | `#pointer` (`null` / pressed / `dragging`) | `idle → pressed → dragging` |
 | `engine/ui/DragDrop`, `food-chain-builder/ui/LinkGesture` | `press` (`null` / pressed / ghost shown) and the `suppressClick` latch | `idle → pressed → dragging → settling` |
 | `matra-mixer/logic/session.js` `RoundSession` | `#tries` and `#answered` | `asking → (retry) → revealed → over` |
 | `table-tower/logic/session.js` `QuizSession` | `#answeredCurrent` and `#timedOut` | `asking → answered`, `timedOut` |
@@ -319,7 +341,7 @@ plant, a spelling record) that is replaced by pure functions. It has no phases, 
 
 ## Findings
 
-Making the machines explicit, and testing them in a browser, turned up two real defects.
+Making the machines explicit, and testing them in a browser, turned up two real defects and one quirk worth knowing.
 
 1. **Fixed: Simon Says could freeze for good.** If the tab was hidden during any pause (the "Get ready…" moment, the pause
    after a won round, the pause before a retry), the pending pause was cancelled but nothing recorded that it had to be
@@ -328,3 +350,11 @@ Making the machines explicit, and testing them in a browser, turned up two real 
    objects every frame, but each screen-reader button kept the object it was built with, so `#pop` rejected it
    (`!this.#bubbles.includes(bubble)`). `#pop` now finds the live bubble by `id`. This was unrelated to state machines;
    it turned up while testing them.
+
+Noted, and deliberately not changed:
+
+3. **A second pointer replaces the gesture in `InputService`.** If another finger goes down while one is already pressed or
+   dragging, the first is forgotten: its lift is ignored, and a drag in progress is dropped without a `dragend`. Nothing in
+   the app listens for drag events yet and the only `tap` listener is Word Builder Bubbles, so this has no visible effect
+   today. `DragDrop`, `LinkGesture` and the trace board all do the opposite (they ignore the second pointer). The machine
+   keeps the old behaviour and says so; if a game ever listens for drags, pick one rule and change it in the machine.
