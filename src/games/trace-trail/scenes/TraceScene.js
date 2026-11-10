@@ -2,12 +2,14 @@ import { TraceBase } from './TraceBase.js';
 import { el } from '../../../engine/utils/dom.js';
 import { GameError } from '../../../engine/utils/errors.js';
 import { prefersReducedMotion } from '../../../engine/utils/motion.js';
+import { createMachine } from '../../../engine/utils/stateMachine.js';
 import { createButton } from '../../../engine/ui/Button.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { launchConfetti } from '../../../engine/ui/Confetti.js';
 import { LEVELS, pickGlyphs, glyphStars, effectiveTolerance } from '../logic/levels.js';
 import { SETS } from '../logic/glyphs/index.js';
 import { GlyphTracer, demoTimeline, demoState } from '../logic/trace.js';
+import { GLYPH_FLOW } from '../logic/glyphFlow.machine.js';
 import { createTraceBoard } from '../ui/TraceBoard.js';
 
 const TONE_ICON = { good: '✔', bad: '✖', info: 'ℹ' };
@@ -31,9 +33,9 @@ export class TraceScene extends TraceBase {
   #off = false;
   #timeline = null;
   #demoTime = 0;
-  #demoing = false;
+  /** Where the screen is for the current glyph; the legal moves are in `glyphFlow.machine.js`. */
+  #flow = createMachine(GLYPH_FLOW);
   #mistakes = 0;
-  #done = false;
 
   #hud = null;
   #stage = null;
@@ -58,7 +60,7 @@ export class TraceScene extends TraceBase {
     });
     this.#stage = el('div', { class: 'stage' });
     this.#noteEl = el('p', { class: 'trace__note', attrs: { role: 'status' } });
-    this.#watch = createButton({ label: 'Watch', icon: '✏️', onClick: () => this.#startDemo() });
+    this.#watch = createButton({ label: 'Watch', icon: '✏️', onClick: () => { if (this.#flow.send('WATCH')) this.#beginDemo(); } });
     this.#skip = createButton({ label: 'Skip', icon: '⏭', ariaLabel: 'Skip this one', onClick: () => this.#finish(true) });
     this.#next = createButton({ label: 'Next', icon: '▶', variant: 'primary', big: true, onClick: () => this.#advance() });
     this.#next.hidden = true;
@@ -75,7 +77,6 @@ export class TraceScene extends TraceBase {
   #show() {
     const glyph = this.#glyphs[this.#index];
     this.#glyph = glyph;
-    this.#done = false;
     this.#mistakes = 0;
     this.#ink = [];
     this.#off = false;
@@ -97,25 +98,30 @@ export class TraceScene extends TraceBase {
 
   /** Starts a glyph: the tracing rules (sized for this screen) and, unless motion is reduced, the demonstration first. */
   #begin() {
-    if (!this.#board || this.#done) return;
+    // Refused if the glyph was skipped before this frame arrived.
+    if (!this.#board || !this.#flow.is('starting')) return;
     this.#tracer = new GlyphTracer(this.#glyph.strokes, { tolerance: effectiveTolerance(this.#level, this.#board.scale()) });
     this.#board.setCurrent(0);
     this.#timeline = demoTimeline(this.#glyph.strokes);
-    if (prefersReducedMotion()) this.#yourTurn();
-    else this.#startDemo();
+    if (prefersReducedMotion()) {
+      this.#flow.must('BEGIN_TURN');
+      this.#yourTurn();
+    } else {
+      this.#flow.must('SHOW_DEMO');
+      this.#beginDemo();
+    }
   }
 
-  #startDemo() {
-    if (!this.#tracer || this.#done) return;
-    this.#demoing = true;
+  /** Starts showing the demonstration (the flow is already `demoing`). */
+  #beginDemo() {
     this.#demoTime = 0;
     this.#board.lock(true);
     this.#board.setSnail(null);
     this.#say('Watch the pencil. It starts at each numbered dot.', 'info');
   }
 
+  /** Hands over to the child (the flow is already `tracing`). */
   #yourTurn() {
-    this.#demoing = false;
     this.#board.setDemo(null);
     this.#board.lock(false);
     this.#board.setCurrent(this.#tracer.current);
@@ -131,7 +137,7 @@ export class TraceScene extends TraceBase {
   // ------------------------------------------------------------ the pencil
 
   #down(point) {
-    if (!this.#tracer || this.#demoing || this.#done) return;
+    if (!this.#flow.is('tracing')) return;
     const event = this.#tracer.pointerDown(point);
     if (event.type === 'started') {
       this.#ink = [point];
@@ -153,7 +159,7 @@ export class TraceScene extends TraceBase {
   }
 
   #move(point) {
-    if (!this.#tracer || this.#demoing || this.#done || this.#ink.length === 0) return;
+    if (!this.#flow.is('tracing') || this.#ink.length === 0) return;
     const index = this.#tracer.current;
     const event = this.#tracer.pointerMove(point);
     if (!event) return;
@@ -186,7 +192,7 @@ export class TraceScene extends TraceBase {
   }
 
   #up() {
-    if (!this.#tracer || this.#demoing || this.#done || this.#ink.length === 0) return;
+    if (!this.#flow.is('tracing') || this.#ink.length === 0) return;
     const event = this.#tracer.pointerUp();
     this.#ink = [];
     this.#board.setInk([], false);
@@ -202,9 +208,7 @@ export class TraceScene extends TraceBase {
 
   /** @param {boolean} skipped */
   #finish(skipped) {
-    if (this.#done) return;
-    this.#done = true;
-    this.#demoing = false;
+    if (!this.#flow.send('FINISH')) return;
     this.#board.setDemo(null);
     this.#board.lock(true);
     const { services } = this;
@@ -226,11 +230,13 @@ export class TraceScene extends TraceBase {
   }
 
   #advance() {
-    if (!this.#done) return;
+    if (!this.#flow.is('done')) return;
     this.#index += 1;
     if (this.#index >= this.#glyphs.length) {
+      this.#flow.must('LEAVE'); // a second press of Next must not ask for the results twice
       this.routes.results({ setId: this.#set.id, levelId: this.#level.id, results: this.#results });
     } else {
+      this.#flow.must('NEXT');
       this.#show();
     }
   }
@@ -243,11 +249,14 @@ export class TraceScene extends TraceBase {
   }
 
   update(dt) {
-    if (!this.#demoing || !this.#timeline) return;
+    if (!this.#flow.is('demoing') || !this.#timeline) return;
     this.#demoTime += dt;
     const state = demoState(this.#timeline, this.#demoTime);
     this.#board.setDemo(state);
-    if (state.finished) this.#yourTurn();
+    if (state.finished) {
+      this.#flow.must('DEMO_ENDED');
+      this.#yourTurn();
+    }
   }
 }
 
