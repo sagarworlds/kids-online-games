@@ -1,12 +1,14 @@
 import { SimonScene } from './SimonScene.js';
 import { el } from '../../../engine/utils/dom.js';
 import { sleep } from '../../../engine/utils/timer.js';
+import { createMachine } from '../../../engine/utils/stateMachine.js';
 import { createButton, setDisabled } from '../../../engine/ui/Button.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { createProgressBar } from '../../../engine/ui/ProgressBar.js';
 import { getLevel } from '../logic/levels.js';
 import { padsFor } from '../logic/pads.js';
 import { SimonGame } from '../logic/simonGame.js';
+import { SIMON_PLAY_FLOW } from '../logic/playFlow.machine.js';
 import { playbackTimings } from '../logic/timings.js';
 import { playSequence } from '../logic/sequencePlayer.js';
 import { createPadBoard } from '../ui/PadBoard.js';
@@ -34,12 +36,11 @@ export class PlayScene extends SimonScene {
   #timer = null;
   #replayButton = null;
   #abort = new AbortController();
-  #accepting = false;
+  /** What the screen is doing now. The legal moves are in `playFlow.machine.js`. */
+  #flow = createMachine(SIMON_PLAY_FLOW);
   #remaining = 0;
   #flash = new Map();
   #offs = [];
-  #leftEarly = false;
-  #needsReplay = false;
 
   /** @param {{ levelId: 'easy'|'medium'|'hard', mode: 'classic'|'reverse' }} params */
   enter({ levelId, mode }) {
@@ -82,7 +83,7 @@ export class PlayScene extends SimonScene {
   }
 
   exit() {
-    this.#leftEarly = true;
+    this.#flow.send('LEAVE');
     this.#abort.abort(); // stops the sequence player and every pending pause
     for (const off of this.#offs) off();
     this.#offs = [];
@@ -93,7 +94,7 @@ export class PlayScene extends SimonScene {
   /** Plays the current sequence, then opens the input window. */
   async #run(message, delayMs = 0) {
     const { audio } = this.services;
-    this.#accepting = false;
+    // The caller has already moved the flow to `listening`.
     this.#pads.setEnabled(false);
     this.#timer.set(0);
     setDisabled(this.#replayButton, true);
@@ -107,20 +108,19 @@ export class PlayScene extends SimonScene {
         light: (id, on) => this.#pads.light(id, on),
         tone: (id, ms) => audio.playTone(padsFor(6)[id].freqHz, ms),
       });
-      if (!played) {
-        this.#needsReplay = !this.#leftEarly; // cancelled by a hidden tab, not by leaving
-        return;
-      }
+      // Cancelled (tab hidden or child left): the flow already knows why, and showing the tab resumes it.
+      if (!played) return;
     } catch (error) {
       if (error?.code === 'ABORTED') return;
       throw error;
     }
+    // Refused if the flow moved on (hidden or left) while the last note was finishing.
+    if (!this.#flow.send('PLAYED')) return;
     this.#game.beginInput();
     this.#openInput();
   }
 
   #openInput() {
-    this.#accepting = true;
     this.#pads.setEnabled(true);
     this.#remaining = this.#level.timeoutSeconds;
     this.#status(this.mode === 'reverse' ? 'Your turn: play it backwards!' : 'Your turn!');
@@ -128,21 +128,23 @@ export class PlayScene extends SimonScene {
   }
 
   async #replay() {
-    if (!this.#accepting || !this.#game.useReplay()) return;
+    if (!this.#flow.is('answering') || !this.#game.useReplay()) return;
+    this.#flow.must('REPLAY');
     await this.#run('Listen…');
     // The sequence replays without penalty; #run reopens input when it ends.
   }
 
   #onVisibility(hidden) {
     if (hidden) {
-      if (!this.#accepting && this.#game.phase !== 'over') {
+      // Only a sequence or a pause is cancelled; while the child is answering, the (frame-driven) clock freezes by itself.
+      if (this.#flow.send('HIDE')) {
         this.#abort.abort();
         this.#abort = new AbortController();
         this.#pads.light(-1, false);
       }
-    } else if (this.#needsReplay) {
-      this.#needsReplay = false;
-      this.#run('Welcome back. Listen again!', 400);
+    } else if (this.#flow.send('SHOW')) {
+      if (this.#flow.is('between')) this.#nextRound();
+      else this.#run('Welcome back. Listen again!', 400);
     }
   }
 
@@ -150,7 +152,7 @@ export class PlayScene extends SimonScene {
 
   #press(padId) {
     // Taps while the sequence plays are ignored, not queued (the pads look disabled, too).
-    if (!this.#accepting || this.#game.phase !== 'input') return;
+    if (!this.#flow.is('answering') || this.#game.phase !== 'input') return;
     const { audio } = this.services;
     const pad = padsFor(this.#level.pads).find((p) => p.id === padId);
     audio.playTone(pad.freqHz, 260);
@@ -166,7 +168,7 @@ export class PlayScene extends SimonScene {
     if (result === 'ok') {
       this.#remaining = this.#level.timeoutSeconds;
     } else if (result === 'roundComplete') {
-      this.#accepting = false;
+      this.#flow.must('ROUND_DONE');
       this.#pads.setEnabled(false);
       this.#timer.set(0);
       audio.play('arpeggio');
@@ -174,11 +176,11 @@ export class PlayScene extends SimonScene {
       this.#hud.setStat('best', this.#game.best);
       this.#nextRound();
     } else if (result === 'retry') {
-      this.#accepting = false;
+      this.#flow.must('RETRY');
       audio.play('hmm');
       this.#run(timedOut ? "Time's up! Listen again!" : 'Listen again!', 600);
     } else if (result === 'gameOver') {
-      this.#accepting = false;
+      this.#flow.must('GAME_OVER');
       this.#pads.setEnabled(false);
       audio.play('hmm');
       this.#status(timedOut ? "Time's up! Let us see how you did…" : 'Good try! Let us see how you did…');
@@ -193,6 +195,7 @@ export class PlayScene extends SimonScene {
       if (error?.code === 'ABORTED') return;
       throw error;
     }
+    if (!this.#flow.send('NEXT')) return;
     this.#game.addStep();
     this.#showLength();
     this.#run('Watch and listen…');
@@ -214,7 +217,7 @@ export class PlayScene extends SimonScene {
     for (const [padId, left] of this.#flash) {
       if (left - dt <= 0) { this.#flash.delete(padId); this.#pads.light(padId, false); } else this.#flash.set(padId, left - dt);
     }
-    if (!this.#accepting) return;
+    if (!this.#flow.is('answering')) return;
     // The answer clock only runs while the child may answer; after it runs out it counts as a wrong tap.
     this.#remaining -= dt;
     this.#timer.set(Math.max(0, (this.#remaining / this.#level.timeoutSeconds) * 100));
