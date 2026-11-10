@@ -1,5 +1,7 @@
 import { GameError } from '../../../engine/utils/errors.js';
 import { dist, SPACING, pathLength } from './shapes.js';
+import { createMachine } from '../../../engine/utils/stateMachine.js';
+import { STROKE_MACHINE } from './stroke.machine.js';
 
 /**
  * The tracing rules. Nothing here knows about the screen: it is given points in drawing units and says what they mean.
@@ -31,7 +33,8 @@ export class StrokeTracker {
   #tolerance;
   #startRadius;
   #lookAhead;
-  #status = 'idle';
+  /** The stroke's life cycle lives in `stroke.machine.js`. */
+  #machine = createMachine(STROKE_MACHINE);
   #progress = 0;
   #last = null;
   #travelled = 0;
@@ -61,7 +64,7 @@ export class StrokeTracker {
 
   /** @returns {'idle'|'tracing'|'done'} */
   get status() {
-    return this.#status;
+    return this.#machine.state;
   }
 
   /** How far along the path the pencil has got, 0 to 1. */
@@ -95,11 +98,11 @@ export class StrokeTracker {
    *   Not accepted: `wrong-end` if it went down at the end of the stroke (the wrong direction), otherwise `too-far`.
    */
   start(point) {
-    if (this.#status === 'done') return { accepted: false, reason: 'too-far' };
+    if (this.#machine.is('done')) return { accepted: false, reason: 'too-far' };
     const first = this.#path[0];
     const last = this.#path[this.#path.length - 1];
     if (dist(point, first) <= this.#startRadius) {
-      this.#status = 'tracing';
+      this.#machine.must('START');
       this.#progress = 0;
       this.#last = point;
       this.#travelled = 0;
@@ -120,7 +123,7 @@ export class StrokeTracker {
    * @returns {{ onPath: boolean, progressed: boolean, done: boolean }}
    */
   move(point) {
-    if (this.#status !== 'tracing') return { onPath: false, progressed: false, done: this.#status === 'done' };
+    if (!this.#machine.is('tracing')) return { onPath: false, progressed: false, done: this.#machine.is('done') };
     const from = this.#last;
     this.#last = point;
     const length = dist(from, point);
@@ -146,7 +149,7 @@ export class StrokeTracker {
       }
       if (this.#progress >= this.#path.length - 1 - END_SLACK) {
         this.#progress = this.#path.length - 1;
-        this.#status = 'done';
+        this.#machine.must('FINISH');
         this.#accuracy = this.#travelled === 0 ? 1 : Math.min(1, this.#onPath / this.#travelled);
         return { onPath: true, progressed: true, done: true };
       }
@@ -159,14 +162,14 @@ export class StrokeTracker {
    * @returns {{ completed: boolean, gaveUp: boolean }}
    */
   end() {
-    if (this.#status === 'tracing') {
+    if (this.#machine.is('tracing')) {
       this.#failures += 1;
-      this.#status = 'idle';
+      this.#machine.must('GIVE_UP');
       this.#progress = 0;
       this.#last = null;
       return { completed: false, gaveUp: true };
     }
-    return { completed: this.#status === 'done', gaveUp: false };
+    return { completed: this.#machine.is('done'), gaveUp: false };
   }
 
   /** The nearest point of the path within the window around the progress point. */

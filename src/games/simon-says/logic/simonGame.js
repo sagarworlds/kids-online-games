@@ -1,5 +1,7 @@
 import { GameError } from '../../../engine/utils/errors.js';
 import { randInt } from '../../../engine/utils/random.js';
+import { createMachine } from '../../../engine/utils/stateMachine.js';
+import { SIMON_GAME_MACHINE } from './simonGame.machine.js';
 
 /**
  * @typedef {'idle'|'playing'|'input'|'retry'|'over'} Phase
@@ -23,7 +25,8 @@ export class SimonGame {
   #startLength;
   #rng;
   #inputIndex = 0;
-  #phase = 'idle';
+  /** The phase rules live in `simonGame.machine.js`. */
+  #machine = createMachine(SIMON_GAME_MACHINE);
   #lives = LIVES_PER_SEQUENCE;
   #best = 0;
   #rounds = 0;
@@ -46,7 +49,7 @@ export class SimonGame {
   /** @returns {readonly number[]} The pad ids the child has to repeat (in playing order). */
   get sequence() { return this.#sequence; }
   /** @returns {Phase} */
-  get phase() { return this.#phase; }
+  get phase() { return this.#machine.state; }
   get lives() { return this.#lives; }
   /** @returns {number} Longest sequence completed so far: the score. */
   get best() { return this.#best; }
@@ -54,7 +57,7 @@ export class SimonGame {
   get roundsCompleted() { return this.#rounds; }
   get reverse() { return this.#reverse; }
   get inputIndex() { return this.#inputIndex; }
-  get replayAvailable() { return !this.#replayUsed && this.#phase !== 'over'; }
+  get replayAvailable() { return !this.#replayUsed && !this.#machine.is('over'); }
 
   /** Starts a new game with a random sequence of the level's start length. */
   start() {
@@ -62,7 +65,7 @@ export class SimonGame {
     this.#reset();
     this.#best = 0;
     this.#rounds = 0;
-    this.#phase = 'playing';
+    this.#machine.must('START');
   }
 
   /**
@@ -72,16 +75,14 @@ export class SimonGame {
   addStep() {
     this.#sequence = [...this.#sequence, this.#randomPad()];
     this.#reset();
-    this.#phase = 'playing';
+    this.#machine.must('ADD_STEP');
     return this.#sequence;
   }
 
   /** Called by the scene when it has finished playing the sequence: the child may answer now. */
   beginInput() {
-    if (this.#phase === 'playing' || this.#phase === 'retry') {
-      this.#inputIndex = 0;
-      this.#phase = 'input';
-    }
+    // Refused (and so ignored) unless the sequence has just been shown.
+    if (this.#machine.send('BEGIN_INPUT')) this.#inputIndex = 0;
   }
 
   /**
@@ -103,7 +104,7 @@ export class SimonGame {
    * @returns {PressResult}
    */
   press(padId) {
-    if (this.#phase !== 'input') return 'ignored';
+    if (!this.#machine.is('input')) return 'ignored';
     const expected = this.#reverse
       ? this.#sequence[this.#sequence.length - 1 - this.#inputIndex]
       : this.#sequence[this.#inputIndex];
@@ -113,24 +114,24 @@ export class SimonGame {
     if (this.#inputIndex < this.#sequence.length) return 'ok';
     this.#best = Math.max(this.#best, this.#sequence.length);
     this.#rounds += 1;
-    this.#phase = 'idle'; // the scene calls addStep() when it is ready for the next round
+    this.#machine.must('ROUND_COMPLETE'); // the scene calls addStep() when it is ready for the next round
     return 'roundComplete';
   }
 
   /** The input timer ran out: counts exactly like a wrong press. @returns {PressResult} */
   timeout() {
-    if (this.#phase !== 'input') return 'ignored';
+    if (!this.#machine.is('input')) return 'ignored';
     return this.#fail();
   }
 
   #fail() {
     this.#lives -= 1;
     if (this.#lives > 0) {
-      this.#phase = 'retry';
+      this.#machine.must('RETRY');
       this.#inputIndex = 0;
       return 'retry';
     }
-    this.#phase = 'over';
+    this.#machine.must('GAME_OVER');
     return 'gameOver';
   }
 
