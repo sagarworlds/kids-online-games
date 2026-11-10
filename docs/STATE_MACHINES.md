@@ -138,6 +138,25 @@ stateDiagram-v2
 ```
 <!-- machine:trace-trail/stroke:end -->
 
+### `trace-trail/glyph-tracer`: the pencil on a whole glyph
+
+`src/games/trace-trail/logic/glyphTracer.machine.js`, used by `GlyphTracer`. Replaces the `#down` flag and the test
+`#current >= strokes`. Together with `stroke` (one stroke) and `glyph-flow` (the screen around it) it covers the three
+levels of tracing. Which of `STROKE_DONE` and `GLYPH_DONE` happens depends on whether the stroke was the last, which the
+glyph knows and the machine does not. `#current` stays a plain index: it says *which* stroke, not *what is allowed*.
+
+<!-- machine:trace-trail/glyph-tracer:start -->
+```mermaid
+stateDiagram-v2
+  [*] --> ready
+  ready --> down: PEN_DOWN
+  down --> ready: PEN_UP
+  down --> ready: STROKE_DONE
+  down --> done: GLYPH_DONE
+  done --> [*]
+```
+<!-- machine:trace-trail/glyph-tracer:end -->
+
 ### `trace-trail/glyph-flow`: one glyph on the tracing screen
 
 `src/games/trace-trail/logic/glyphFlow.machine.js`, used by `TraceScene`. Replaces `#demoing`, `#done` and the test
@@ -254,7 +273,6 @@ ones that looked like more than a latch. Nothing here is known to be broken; thi
 
 | Where | What it hides | Suggested states |
 | --- | --- | --- |
-| `trace-trail/logic/trace.js` `GlyphTracer` | `#down`, `#current`, `done` | `ready → down → … → done` |
 | `engine/services/InputService` | `#pointer` (`null` / pressed / `dragging`) | `idle → pressed → dragging` |
 | `engine/ui/DragDrop`, `food-chain-builder/ui/LinkGesture` | `press` (`null` / pressed / ghost shown) and the `suppressClick` latch | `idle → pressed → dragging → settling` |
 | `matra-mixer/logic/session.js` `RoundSession` | `#tries` and `#answered` | `asking → (retry) → revealed → over` |

@@ -2,6 +2,7 @@ import { GameError } from '../../../engine/utils/errors.js';
 import { dist, SPACING, pathLength } from './shapes.js';
 import { createMachine } from '../../../engine/utils/stateMachine.js';
 import { STROKE_MACHINE } from './stroke.machine.js';
+import { GLYPH_TRACER_MACHINE } from './glyphTracer.machine.js';
 
 /**
  * The tracing rules. Nothing here knows about the screen: it is given points in drawing units and says what they mean.
@@ -197,10 +198,12 @@ export const MAX_MISTAKE_PENALTY = 0.3;
  */
 export class GlyphTracer {
   #trackers;
+  /** Which stroke is being written. */
   #current = 0;
   #orderMistakes = 0;
   #directionMistakes = 0;
-  #down = false;
+  /** Whether the pencil is up, down or finished; the legal moves are in `glyphTracer.machine.js`. */
+  #machine = createMachine(GLYPH_TRACER_MACHINE);
   #startRadius;
 
   /**
@@ -220,7 +223,7 @@ export class GlyphTracer {
   }
 
   get done() {
-    return this.#current >= this.#trackers.length;
+    return this.#machine.is('done');
   }
 
   get strokeCount() {
@@ -238,11 +241,11 @@ export class GlyphTracer {
    * @returns {{ type: 'started' }|{ type: 'wrong-order', stroke: number }|{ type: 'wrong-direction' }|{ type: 'far' }|{ type: 'ignored' }}
    */
   pointerDown(point) {
-    if (this.done || this.#down) return { type: 'ignored' };
+    if (!this.#machine.is('ready')) return { type: 'ignored' };
     const tracker = this.#trackers[this.#current];
     const result = tracker.start(point);
     if (result.accepted) {
-      this.#down = true;
+      this.#machine.must('PEN_DOWN');
       return { type: 'started' };
     }
     // The pencil went down somewhere that is not the start of this stroke: say what is wrong, and count it.
@@ -266,14 +269,18 @@ export class GlyphTracer {
    *   Null when the pencil is not down.
    */
   pointerMove(point) {
-    if (!this.#down || this.done) return null;
+    if (!this.#machine.is('down')) return null;
     const index = this.#current;
     const tracker = this.#trackers[index];
     const result = tracker.move(point);
     if (result.done) {
-      this.#down = false;
       this.#current += 1;
-      return this.done ? { type: 'glyph-done' } : { type: 'stroke-done', stroke: index };
+      if (this.#current >= this.#trackers.length) {
+        this.#machine.must('GLYPH_DONE');
+        return { type: 'glyph-done' };
+      }
+      this.#machine.must('STROKE_DONE');
+      return { type: 'stroke-done', stroke: index };
     }
     return { type: 'progress', onPath: result.onPath, fraction: tracker.fraction, position: tracker.position };
   }
@@ -283,8 +290,8 @@ export class GlyphTracer {
    * @returns {{ type: 'gave-up', stroke: number }|{ type: 'ignored' }}
    */
   pointerUp() {
-    if (!this.#down) return { type: 'ignored' };
-    this.#down = false;
+    if (!this.#machine.is('down')) return { type: 'ignored' };
+    this.#machine.must('PEN_UP');
     const index = this.#current;
     this.#trackers[index].end();
     return { type: 'gave-up', stroke: index };
