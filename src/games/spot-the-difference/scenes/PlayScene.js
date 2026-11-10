@@ -2,6 +2,7 @@ import { SpotBase, MIX } from './SpotBase.js';
 import { el } from '../../../engine/utils/dom.js';
 import { GameError } from '../../../engine/utils/errors.js';
 import { clamp } from '../../../engine/utils/geometry.js';
+import { createMachine } from '../../../engine/utils/stateMachine.js';
 import { createButton, setDisabled } from '../../../engine/ui/Button.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { createProgressBar } from '../../../engine/ui/ProgressBar.js';
@@ -12,6 +13,7 @@ import { MIN_TAP_PX } from '../logic/hitTest.js';
 import { formatClock } from '../logic/labels.js';
 import { createRound, createPlay, puzzleSeed, tap, foundCount, isComplete, useHint, sceneStars, sceneScore, isRoundOver } from '../logic/round.js';
 import { createPicture } from '../ui/Picture.js';
+import { PICTURE_FLOW } from '../logic/pictureFlow.machine.js';
 
 /** The keyboard pointer moves this far (picture units) for an arrow key, and further with Shift held. */
 const POINTER_STEP = 16;
@@ -43,7 +45,8 @@ export class PlayScene extends SpotBase {
   #round = null;
   #puzzle = null;
   #play = null;
-  #phase = 'playing';
+  /** Where the screen is for the current picture; the legal moves are in `pictureFlow.machine.js`. */
+  #flow = createMachine(PICTURE_FLOW);
   /** Seconds spent on this picture, counting only while it is being played (not paused). */
   #elapsed = 0;
   /** Time since the scene began, in ms. Only used to time the pause after a miss. */
@@ -160,7 +163,7 @@ export class PlayScene extends SpotBase {
     this.#hintButton.querySelector('span:last-child').textContent = `Hint (${left})`;
     setDisabled(this.#hintButton, left === 0);
     // Once the picture is done there is nothing left to hint at, and the Next button takes its place.
-    this.#hintButton.hidden = this.#phase !== 'playing';
+    this.#hintButton.hidden = !this.#flow.is('playing');
   }
 
   #syncTime() {
@@ -182,7 +185,6 @@ export class PlayScene extends SpotBase {
     // A failure here (GameError PUZZLE_FAILED after three tries) is not caught: it reaches the error screen with its context logged.
     this.#puzzle = generatePuzzle({ themeId, levelId: this.#level.id, seed: puzzleSeed(this.#round.seed, index), themes: data.themes, templates: data.templates });
     this.#play = createPlay(this.#puzzle.differences.length);
-    this.#phase = 'playing';
     this.#elapsed = 0;
     this.#shownSecond = -1;
 
@@ -204,11 +206,13 @@ export class PlayScene extends SpotBase {
   }
 
   #next() {
-    if (this.#phase !== 'done') return;
+    if (!this.#flow.is('done')) return;
     if (isRoundOver(this.#round)) {
+      this.#flow.must('LEAVE'); // a second press of the last Next must not ask for the results twice
       this.routes.results({ themeId: this.#themeChoice, levelId: this.#level.id, results: this.#round.results });
       return;
     }
+    this.#flow.must('NEXT_PICTURE');
     this.#startPicture();
     this.#stageEl.firstElementChild?.focus({ preventScroll: true });
   }
@@ -232,7 +236,7 @@ export class PlayScene extends SpotBase {
     const arrow = ARROWS[event.key];
     if (arrow) {
       event.preventDefault();
-      if (this.#phase !== 'playing' || this.#paused) return;
+      if (!this.#flow.is('playing') || this.#paused) return;
       const step = event.shiftKey ? POINTER_STEP_BIG : POINTER_STEP;
       this.#pointer = { x: clamp(this.#pointer.x + arrow[0] * step, 0, SCENE_WIDTH), y: clamp(this.#pointer.y + arrow[1] * step, 0, SCENE_HEIGHT) };
       this.#showPointerOn(index);
@@ -259,7 +263,7 @@ export class PlayScene extends SpotBase {
    * @param {number} scale Screen pixels for each picture unit, so the area to tap is at least 48 px on this screen.
    */
   #tapAt(point, index, scale) {
-    if (this.#phase !== 'playing' || this.#paused) return;
+    if (!this.#flow.is('playing') || this.#paused) return;
     const { services } = this;
     const result = tap(this.#play, this.#puzzle, point, { now: this.#clockMs, minSize: MIN_TAP_PX / scale });
     if (result.outcome === 'hit') {
@@ -283,7 +287,7 @@ export class PlayScene extends SpotBase {
   }
 
   #hint() {
-    if (this.#phase !== 'playing' || this.#paused) return;
+    if (!this.#flow.is('playing') || this.#paused) return;
     const index = useHint(this.#round, this.#play);
     if (index === -1) return;
     for (const picture of this.#pictures) picture.showHint(this.#puzzle.differences[index].box);
@@ -303,7 +307,7 @@ export class PlayScene extends SpotBase {
       stars, score: sceneScore(timing, total), misses: timing.misses, elapsed: timing.elapsed,
       themeId: this.#puzzle.themeId, types: this.#puzzle.differences.map((d) => d.type),
     });
-    this.#phase = 'done';
+    this.#flow.must('FOUND_ALL');
     this.#pictures.forEach((p) => p.setPointer(null));
     for (const frame of this.#stageEl.children) frame.classList.add('is-done');
     this.#say(`All ${total} found! ${stars} ${stars === 1 ? 'star' : 'stars'}`, 'good');
@@ -335,7 +339,7 @@ export class PlayScene extends SpotBase {
     this.#clockMs += dt * 1000;
     for (const picture of this.#pictures) picture.tick(dt);
     if (this.#play && this.#clockMs >= this.#play.cooldownUntil) this.#stageEl.classList.remove('is-cooling');
-    if (this.#phase !== 'playing' || this.#paused) return;
+    if (!this.#flow.is('playing') || this.#paused) return;
     this.#elapsed += dt;
     const second = Math.floor(this.#elapsed);
     if (second !== this.#shownSecond) {

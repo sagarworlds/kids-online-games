@@ -228,6 +228,23 @@ stateDiagram-v2
 ```
 <!-- machine:table-tower/quiz-flow:end -->
 
+### `spot-the-difference/picture-flow`: one picture
+
+`src/games/spot-the-difference/logic/pictureFlow.machine.js`, used by `PlayScene`. Replaces the string `#phase`
+(`playing`/`done`). A second press of the last *Next* is refused instead of asking for the results twice. As in
+`table-tower/quiz-flow`, the pause *reasons* (`hidden`, `settings`) stay a `Set`, because several can hold the picture at once.
+
+<!-- machine:spot-the-difference/picture-flow:start -->
+```mermaid
+stateDiagram-v2
+  [*] --> playing
+  playing --> done: FOUND_ALL
+  done --> playing: NEXT_PICTURE
+  done --> leaving: LEAVE
+  leaving --> [*]
+```
+<!-- machine:spot-the-difference/picture-flow:end -->
+
 ## Still implicit
 
 Found by searching `src/` for `#phase`, `#status`, `#state` and `#mode` fields and for boolean latches, then reading the
@@ -237,7 +254,6 @@ ones that looked like more than a latch. Nothing here is known to be broken; thi
 
 | Where | What it hides | Suggested states |
 | --- | --- | --- |
-| `spot-the-difference/scenes/PlayScene` | `#phase` (`playing`/`done`) beside a `#pausedBy` set | `playing → done`, tag `pausable` |
 | `trace-trail/logic/trace.js` `GlyphTracer` | `#down`, `#current`, `done` | `ready → down → … → done` |
 | `engine/services/InputService` | `#pointer` (`null` / pressed / `dragging`) | `idle → pressed → dragging` |
 | `engine/ui/DragDrop`, `food-chain-builder/ui/LinkGesture` | `press` (`null` / pressed / ghost shown) and the `suppressClick` latch | `idle → pressed → dragging → settling` |
