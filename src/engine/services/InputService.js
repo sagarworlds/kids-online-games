@@ -12,6 +12,9 @@
  * ignore such taps, and ignore Enter/Space from them so one press never acts twice.
  */
 
+import { createMachine } from '../utils/stateMachine.js';
+import { POINTER_GESTURE_MACHINE } from './pointerGesture.machine.js';
+
 const INTERACTIVE = 'button, a[href], input, select, textarea, summary, [role="button"]';
 const TEXT_FIELD = 'input, textarea, select, [contenteditable="true"]';
 
@@ -25,7 +28,10 @@ export class InputService {
   #doc;
   #dragThreshold;
   #handlers = new Map();
+  /** Which pointer is being followed, and where it went down. Its phase (pressed, dragging) is `#gesture`. */
   #pointer = null;
+  /** The phase of that gesture; the legal moves are in `pointerGesture.machine.js`. */
+  #gesture = createMachine(POINTER_GESTURE_MACHINE);
   #disposers = [];
 
   /**
@@ -106,7 +112,8 @@ export class InputService {
 
   #onDown(event) {
     if (event.button !== undefined && event.button > 0) return; // primary button only
-    this.#pointer = { id: event.pointerId, startX: event.clientX, startY: event.clientY, dragging: false };
+    this.#pointer = { id: event.pointerId, startX: event.clientX, startY: event.clientY };
+    this.#gesture.must('POINTER_DOWN'); // a pointer already down is replaced
   }
 
   #onMove(event) {
@@ -114,27 +121,31 @@ export class InputService {
     if (!p || p.id !== event.pointerId) return;
     const dx = event.clientX - p.startX;
     const dy = event.clientY - p.startY;
-    if (!p.dragging && Math.hypot(dx, dy) >= this.#dragThreshold) {
-      p.dragging = true;
+    if (this.#gesture.is('pressed') && Math.hypot(dx, dy) >= this.#dragThreshold) {
+      this.#gesture.must('DRAG_START');
       this.emit('dragstart', this.#payload(event, { dx, dy }));
     }
-    if (p.dragging) this.emit('drag', this.#payload(event, { dx, dy }));
+    if (this.#gesture.is('dragging')) this.emit('drag', this.#payload(event, { dx, dy }));
   }
 
   #onUp(event) {
     const p = this.#pointer;
     if (!p || p.id !== event.pointerId) return;
     this.#pointer = null;
+    const wasDragging = this.#gesture.is('dragging');
+    this.#gesture.must('POINTER_UP');
     const dx = event.clientX - p.startX;
     const dy = event.clientY - p.startY;
-    this.emit(p.dragging ? 'dragend' : 'tap', this.#payload(event, { dx, dy }));
+    this.emit(wasDragging ? 'dragend' : 'tap', this.#payload(event, { dx, dy }));
   }
 
   #onCancel(event) {
     const p = this.#pointer;
     if (!p || p.id !== event.pointerId) return;
     this.#pointer = null;
-    if (p.dragging) this.emit('dragend', this.#payload(event, { cancelled: true }));
+    const wasDragging = this.#gesture.is('dragging');
+    this.#gesture.must('CANCEL');
+    if (wasDragging) this.emit('dragend', this.#payload(event, { cancelled: true }));
   }
 
   #onKey(event) {

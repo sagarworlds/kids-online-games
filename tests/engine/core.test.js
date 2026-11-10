@@ -195,6 +195,77 @@ test('secondary mouse buttons and other pointers are ignored', () => {
   assert.equal(taps.length, 0);
 });
 
+// The pointer gesture, pinned down before it was made an explicit machine: these describe what the service has always done.
+
+test('a cancelled press is not a tap, and the lift that follows it is ignored', () => {
+  const { input, pointer } = inputRig();
+  const seen = [];
+  for (const t of ['tap', 'dragstart', 'drag', 'dragend']) input.on(t, (e) => seen.push([t, Boolean(e.cancelled)]));
+  pointer('pointerdown', 10, 10);
+  pointer('pointercancel', 10, 10);
+  pointer('pointerup', 10, 10);
+  assert.deepEqual(seen, []);
+});
+
+test('a cancelled drag ends with dragend flagged as cancelled, and never becomes a tap', () => {
+  const { input, pointer } = inputRig();
+  const seen = [];
+  for (const t of ['tap', 'dragstart', 'drag', 'dragend']) input.on(t, (e) => seen.push([t, Boolean(e.cancelled)]));
+  pointer('pointerdown', 0, 0);
+  pointer('pointermove', 30, 0);
+  pointer('pointercancel', 30, 0);
+  pointer('pointerup', 30, 0);
+  assert.deepEqual(seen, [['dragstart', false], ['drag', false], ['dragend', true]]);
+});
+
+test('the drag starts at the threshold, not before it, and moves of another pointer are ignored', () => {
+  const { input, pointer } = inputRig();
+  const seen = [];
+  for (const t of ['dragstart', 'drag']) input.on(t, () => seen.push(t));
+  pointer('pointerdown', 0, 0);
+  pointer('pointermove', 7, 0);
+  assert.deepEqual(seen, [], 'just under the 8 px threshold');
+  pointer('pointermove', 99, 0, { pointerId: 2 });
+  assert.deepEqual(seen, [], 'another pointer does not move this gesture');
+  pointer('pointermove', 8, 0);
+  assert.deepEqual(seen, ['dragstart', 'drag'], 'exactly at the threshold counts');
+});
+
+test('a second pointer going down replaces the gesture: only its lift is a tap', () => {
+  const { input, pointer } = inputRig();
+  const taps = [];
+  input.on('tap', (e) => taps.push(e.x));
+  pointer('pointerdown', 10, 10, { pointerId: 1 });
+  pointer('pointerdown', 50, 10, { pointerId: 2 });
+  pointer('pointerup', 10, 10, { pointerId: 1 });
+  assert.deepEqual(taps, [], 'the first pointer was dropped');
+  pointer('pointerup', 50, 10, { pointerId: 2 });
+  assert.deepEqual(taps, [-50]);
+});
+
+test('a second pointer going down mid-drag drops that drag without a dragend, then behaves as a fresh press', () => {
+  const { input, pointer } = inputRig();
+  const seen = [];
+  for (const t of ['tap', 'dragstart', 'drag', 'dragend']) input.on(t, () => seen.push(t));
+  pointer('pointerdown', 0, 0, { pointerId: 1 });
+  pointer('pointermove', 30, 0, { pointerId: 1 });
+  pointer('pointerdown', 60, 0, { pointerId: 2 });
+  pointer('pointermove', 61, 0, { pointerId: 1 });
+  pointer('pointerup', 60, 0, { pointerId: 2 });
+  assert.deepEqual(seen, ['dragstart', 'drag', 'tap']);
+});
+
+test('the service is reusable: a new press works after a tap, after a drag and after a cancel', () => {
+  const { input, pointer } = inputRig();
+  const seen = [];
+  for (const t of ['tap', 'dragend']) input.on(t, () => seen.push(t));
+  pointer('pointerdown', 0, 0); pointer('pointerup', 0, 0);
+  pointer('pointerdown', 0, 0); pointer('pointermove', 40, 0); pointer('pointerup', 40, 0);
+  pointer('pointerdown', 0, 0); pointer('pointermove', 40, 0); pointer('pointercancel', 40, 0);
+  pointer('pointerdown', 0, 0); pointer('pointerup', 0, 0);
+  assert.deepEqual(seen, ['tap', 'dragend', 'dragend', 'tap']);
+});
+
 test('keys are forwarded, flagged when they come from a button, and skipped in text fields', () => {
   const { input, keyTarget } = inputRig();
   const keys = [];
