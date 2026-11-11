@@ -2,7 +2,8 @@
 
 Sixteen browser games for children aged 8–10: maths, languages, logic, science and memory.
 Plain HTML, CSS and JavaScript (ES modules). No frameworks, no bundler, no external CDNs,
-no ads, no cookies, no analytics. All progress stays in the browser's `localStorage`.
+no ads, no cookies, no analytics. The only third-party code is three.js, copied into `src/vendor/three/`
+for the 3D versions of some games. All progress stays in the browser's `localStorage`.
 
 The full design is in [`docs/SPEC.md`](docs/SPEC.md).
 
@@ -49,6 +50,8 @@ few other security headers. If you add an asset type from another origin, update
 ```
 index.html                 Home page (hub)
 src/engine/                Game loop, scenes, services (input, audio, storage, rewards, speech), UI kit
+src/engine/three/           Shared 3D layer: stage, orbit camera, labels, 3D-or-2D choice (see docs/SPEC.md)
+src/vendor/three/           three.js r187, vendored unchanged (MIT)
 src/hub/                   Home page: games registry, player name, profile, reset
 src/app/createApp.js       Wires services for a game page (composition helper)
 src/games/<slug>/          One folder per game (index.html, main.js, scenes/, logic/, data/, style.css)
@@ -72,6 +75,12 @@ scripts/                   build.mjs (copy to dist/), serve.mjs (local server)
 1. Create `src/games/<slug>/` following the structure and rules in `docs/SPEC.md`.
 2. In `src/hub/gamesRegistry.js`, set that game's `available` to `true`.
 3. Add tests under `tests/<slug>/` for its `logic/` files, then run `npm test`.
+
+## 3D versions
+
+Some games have a 3D version drawn with three.js; every game keeps its 2D version, which is also the fallback when a
+device has no WebGL 2 or 3D fails. The library is loaded only when a 3D scene opens. The rules for adding one are in
+the "3D versions (Three.js)" section of [`docs/SPEC.md`](docs/SPEC.md).
 
 ## State machines
 

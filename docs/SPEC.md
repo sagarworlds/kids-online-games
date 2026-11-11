@@ -37,8 +37,9 @@ All 16 games run on one tiny engine: a scene manager, a game loop, and injected 
 **Tech constraints**
 
 - Vanilla JavaScript (ES2022 modules), HTML5, CSS3. No frameworks, no bundler, no external CDNs.
+- One exception: the 3D versions use three.js, copied into `src/vendor/three/` and loaded only by 3D scenes (see "3D versions (Three.js)").
 - Runs by opening `index.html` through any static server (`npx serve .`). Works offline.
-- Target: Chrome, Edge, Safari, Firefox (latest 2 versions); tablets 768px+ and desktops. Portrait and landscape.
+- Target: Chrome, Edge, Safari, Firefox (latest 2 versions); tablets 768px+ and desktops. Portrait and landscape. The 3D versions also target phones from 360px wide.
 - Canvas for action games; DOM + CSS for card, drag-and-drop and quiz games.
 - Unit tests with Node's built-in runner (`node --test`), so no test dependencies either.
 
@@ -211,6 +212,81 @@ All 16 games are reached from one home page (`/index.html`). It greets the child
 - [ ] Every game has a Home button and uses the player name on its results screen
 - [ ] Works when `localStorage` is unavailable (in-memory fallback, no crash)
 - [ ] Reset clears only `kidsgames:*` keys
+
+## 3D versions (Three.js)
+
+Twelve games have a 3D version drawn with three.js. The 2D version of every game stays, and it is what a child gets when the device cannot do 3D, when 3D fails, or when they choose it. The rules and scoring are the same in both: a 3D version replaces scenes, never `logic/`.
+
+**The one library**
+
+- three.js r187 is copied into `src/vendor/three/` (MIT). It is the only third-party code in the site. No CDN, no npm install, no bundler: the site still works offline and the Content-Security-Policy stays same-origin.
+- Games import it only through `src/engine/three/three.js`. To upgrade, follow `src/vendor/three/README.md`.
+- The library is about 2 MB. A game loads its 3D scene with a dynamic `import()` only after choosing the 3D view, so the 2D version and the home page never download it. `tests/site.test.js` enforces this: static imports of three.js are allowed only in files under a `three/` folder or named `*3D.js`.
+
+**Shared 3D layer (`src/engine/three/`)**
+
+| Module | Responsibility |
+| --- | --- |
+| `three.js` | Re-exports the vendored library (single import point) |
+| `support.js` | `hasWebGL2()`, `pickQuality(hints)`, `resolveViewMode()`; pure and unit-tested |
+| `view.js` | `createViewChoice({ storage, slug })`: which view to show, saving the child's pick, falling back after an error |
+| `viewPreference.js` | Reads and writes the pick in the game's own save data (`extra.viewMode`) |
+| `Stage3D.js` | Renderer, scene, camera, resize, `pick()` for taps, lost-context handling, `dispose()` |
+| `OrbitInput.js` + `orbitMath.js` | Drag to turn, pinch or wheel to zoom, arrow keys and + / -; reports taps |
+| `labels.js` | `makeLabel(text)`: text inside the scene as a camera-facing sprite |
+| `ViewToggle.js` | The "3D view / 2D view" button |
+
+**How a game adds its 3D version**
+
+1. Put 3D scenes in `src/games/<slug>/three/` (for example `three/Play3DScene.js`). They extend the engine `Scene`, build a `Stage3D` in `enter()`, call `stage.render()` from `render()` and `stage.dispose()` from `exit()`.
+2. In `main.js`, create `const view = createViewChoice({ storage, slug })`. Where the 2D play scene is opened, check `view.mode()`; for `'3d'` load the scene with `await import('./three/Play3DScene.js')`.
+3. Wrap that import and the scene's start in try/catch. On any error, or when `Stage3D` reports a lost context, log it, call `view.fallBack()` and open the 2D scene instead. A child must never see a blank or frozen screen.
+4. Show the view toggle (menu or play header) only when `view.supported` is true. Changing it calls `view.choose(mode)` and reopens the play scene.
+5. Keep all rules in the existing `logic/` files. New pure maths for 3D (layouts, paths, camera positions) goes in `logic/` too, with tests. Menu and results scenes stay as they are.
+
+**Mobile rules (phones from 360 px wide)**
+
+- Touch first: one finger turns, two fingers zoom, a tap selects. Nothing depends on a mouse, hover or keyboard. Every game action also has a visible button at least 48 x 48 px.
+- Layout: on a narrow portrait screen the 3D view goes on top (at least 45% of the height) with the controls below; in landscape the controls go beside it. No page scrolling during play.
+- Light scenes: low-poly shapes built in code (no model files), `MeshLambertMaterial` or `MeshBasicMaterial`, at most 3 lights, no shadow maps (use a flat "blob" under objects if needed), textures drawn on a canvas at most 512 px.
+- `pickQuality()` decides pixel ratio and antialiasing; use `stage.quality.detail` to halve segment and object counts on weak devices.
+- Free what you create: `stage.dispose()` on exit, and `disposeObject()` for anything removed during play.
+- Respect `prefers-reduced-motion`: no camera shake, fly-throughs become cuts, spinning stops.
+- The frame loop already stops in a hidden tab; do not add timers that keep running.
+
+**Accessibility in 3D**
+
+- Whatever the picture says must also be in the DOM: the question, the score, the state of the board, and feedback through a polite live region. The canvas gets a short `aria-label`.
+- Full keyboard play, as in 2D. The orbit camera takes the arrow keys only while the canvas has focus.
+- Colour is never the only signal, in 3D too (add a shape, icon or label).
+
+**The twelve 3D versions**
+
+| Game | 3D idea | What 3D adds to the learning |
+| --- | --- | --- |
+| Planet Hop | Solar system to turn and zoom; rocket hops between planets; a jump on each surface shows gravity; "real size" switch | Scale, order and gravity are seen, not read |
+| Robot Path | Board seen from an angle that the child can turn; robot walks, turns and bumps in 3D | Left and right from the robot's point of view |
+| Flag & Capital Quest | Globe to spin; the plane flies an arc to each country; visited countries are marked | Where countries are on a round Earth |
+| Times-Table Racing | Track seen from behind the car; boost on a correct answer; see-through ghost car | Motivation; same facts |
+| Table Tower | A tower that grows a floor per cleared table, camera climbing; products built from block slabs (17 x 6 = 10 x 6 + 7 x 6) | Splitting a product into parts |
+| Plant Grower | A plant that grows in a pot to turn; the sun moves across the sky; rain and droop are visible | Cause and effect over days |
+| Pizza Fractions | A pizza whose slices lift when chosen; toppings sit on slices | Parts of a whole |
+| Lights Out | Lantern board in 3D; on Hard a cube whose lights wrap around the edges | Neighbour reasoning on a surface |
+| Pattern Detective | Sequences of solids (cube, cone, sphere, cylinder) that can rotate | Shape names; rotation patterns |
+| Number Ninja | Falling 3D stars that split when the answer is right | Motivation; same facts |
+| Simon Says | Pads that press down and glow | Motivation; same sequence memory |
+| Sentence Train | Toy train with word carriages that drives off when the sentence is right | Motivation; same word order |
+
+Each game's README describes its 3D view, its controls and anything that differs from this table.
+
+**Definition of done (3D version)**
+
+- [ ] The 2D version still works unchanged and is reachable with the view toggle
+- [ ] With WebGL 2 turned off, or after a simulated context loss, the game opens in 2D with no error screen
+- [ ] Playable by touch on a 390 x 844 phone screen in portrait, and by keyboard on desktop
+- [ ] No three.js download on the 2D path (static-import rule passes)
+- [ ] Same stars and saved progress as the 2D version for the same play
+- [ ] `npm test` passes, including tests for any new `logic/`
 
 ## Game 1 — Number Ninja (`number-ninja`)
 

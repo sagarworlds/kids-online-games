@@ -30,6 +30,9 @@ const cssFiles = srcFiles.filter((f) => f.endsWith('.css'));
 const htmlFiles = [join(ROOT, 'index.html'), join(ROOT, '404.html'), ...srcFiles.filter((f) => f.endsWith('.html'))].filter(existsSync);
 const read = (f) => readFileSync(f, 'utf8');
 
+/** Third-party code copied into the repo (see src/vendor/three/README.md). */
+const VENDOR_DIR = 'src/vendor/';
+
 /** Removes comments so words like "document" in a JSDoc line do not count as code. */
 const stripComments = (code) => code.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:'"`\\])\/\/.*$/gm, '$1');
 
@@ -101,9 +104,41 @@ test('nothing in the shipped site calls out to another origin (no CDNs, fonts, a
   const allowed = ['http://www.w3.org/']; // XML namespaces such as the SVG one are identifiers, not requests
   const problems = [];
   for (const file of [...htmlFiles, ...jsFiles, ...cssFiles, ...srcFiles.filter((f) => f.endsWith('.json'))]) {
+    // The vendored three.js mentions web addresses in comments and warning texts. It is checked by its own test
+    // below (exact file list), and at run time the Content-Security-Policy blocks any request to another origin.
+    if (rel(file).startsWith(VENDOR_DIR)) continue;
     for (const m of read(file).matchAll(/https?:\/\/[^\s'"`)<>]+/g)) {
       if (!allowed.some((prefix) => m[0].startsWith(prefix))) problems.push(`${rel(file)}: ${m[0]}`);
     }
+  }
+  assert.deepEqual(problems, []);
+});
+
+test('src/vendor/ holds exactly the reviewed third-party files, and only the engine imports them', () => {
+  // Third-party code skips the "no other origin" scan above, so nothing may be added here without a review:
+  // adding a file means updating this list on purpose.
+  const expected = ['src/vendor/three/LICENSE', 'src/vendor/three/README.md', 'src/vendor/three/three.core.js', 'src/vendor/three/three.module.js'];
+  assert.deepEqual(srcFiles.map(rel).filter((f) => f.startsWith(VENDOR_DIR)).sort(), expected);
+
+  const problems = [];
+  for (const file of jsFiles) {
+    const from = rel(file);
+    if (from.startsWith(VENDOR_DIR) || from === 'src/engine/three/three.js') continue;
+    if (/from\s+['"][^'"]*vendor\//.test(stripComments(read(file)))) problems.push(`${from}: import three.js through src/engine/three/three.js`);
+  }
+  assert.deepEqual(problems, []);
+});
+
+test('three.js is only loaded on demand: no page or 2D code path imports it statically', () => {
+  // The library is about 2 MB. A game's main.js, its 2D scenes and the hub must reach a 3D scene with import(),
+  // so children on the 2D version (or on a slow phone) never download it.
+  const pullsThree = (file) => /from\s+['"][^'"]*engine\/three\/(three|Stage3D|labels)\.js['"]/.test(stripComments(read(file)));
+  const problems = [];
+  for (const file of jsFiles) {
+    const from = rel(file);
+    const is3dFile = /(^|\/)(three|scenes3d|view3d)\//.test(from) || /3[dD]\.js$/.test(from);
+    if (from.startsWith(VENDOR_DIR) || from.startsWith('src/engine/three/') || is3dFile) continue;
+    if (pullsThree(file)) problems.push(`${from}: static import of three.js outside a 3D file (use import())`);
   }
   assert.deepEqual(problems, []);
 });
