@@ -24,6 +24,7 @@ export class CaseScene extends DetectiveScene {
   #stampEl = null;
   #afterEl = null;
   #announcer = null;
+  #view = null;
   #offs = [];
 
   /** @param {import('./DetectiveScene.js').Round} round */
@@ -39,6 +40,41 @@ export class CaseScene extends DetectiveScene {
   exit() {
     for (const off of this.#offs) off();
     this.#offs = [];
+    this.#view?.dispose?.();
+  }
+
+  /**
+   * Makes the picture of the sequence that goes with the flat strip, or nothing. The 3D case overrides this. What it makes may offer `hint(hint)` (told
+   * the hint after a wrong pick), `solve(answer)` (told the answer when the case is solved), `tick(dt)`, `draw()` and `dispose()`.
+   * @param {import('../logic/puzzle.js').Puzzle} puzzle
+   * @returns {object|null}
+   */
+  createView(puzzle) {
+    return null;
+  }
+
+  /**
+   * Puts the screen's parts together. The default is the flat case: the case file (with the strip of items), the hint, the four answer cards and
+   * the Next button. The 3D case overrides this to put its picture on top and everything else in a panel.
+   * @param {{ file: HTMLElement, hintBox: HTMLElement, options: HTMLElement, after: HTMLElement, announcer: HTMLElement, view: object|null }} parts
+   * @returns {HTMLElement} The `main` element.
+   */
+  layout({ file, hintBox, options, after, announcer }) {
+    return el('main', { class: 'case' }, file, hintBox, options, after, announcer);
+  }
+
+  /** Says something through the polite live region (screen readers). @param {string} text */
+  announce(text) {
+    this.#announce(text);
+  }
+
+  /** @param {number} dt Seconds since the last frame. */
+  update(dt) {
+    this.#view?.tick?.(dt);
+  }
+
+  render() {
+    this.#view?.draw?.();
   }
 
   // ------------------------------------------------------------------ DOM
@@ -92,7 +128,8 @@ export class CaseScene extends DetectiveScene {
 
     this.#afterEl = el('div', { class: 'case__after' });
     this.#announcer = el('div', { class: 'sr-only', attrs: { 'aria-live': 'polite' } });
-    this.ui.append(this.#hud.el, el('main', { class: 'case' }, file, hintBox, options, this.#afterEl, this.#announcer));
+    this.#view = this.createView(puzzle);
+    this.ui.append(this.#hud.el, this.layout({ file, hintBox, options, after: this.#afterEl, announcer: this.#announcer, view: this.#view }));
   }
 
   #announce(text) {
@@ -137,6 +174,7 @@ export class CaseScene extends DetectiveScene {
     (hint.between ?? []).forEach((label, i) => { this.#gapEls[i].textContent = label ?? ''; });
     // Nothing is written in a gap for the hidden item, so the child still has to work that one out.
     this.#slotEl.querySelector('.cell__label')?.replaceChildren();
+    this.#view?.hint?.(hint);
   }
 
   #onSolved(index) {
@@ -156,6 +194,7 @@ export class CaseScene extends DetectiveScene {
     this.#ruleEl.textContent = puzzle.ruleText;
     this.#ruleEl.hidden = false;
     this.#hintBox.hidden = true;
+    this.#view?.solve?.(puzzle.answer);
     this.#announce(`Solved! ${puzzle.ruleText}`);
 
     const last = round.index + 1 >= round.puzzles.length;

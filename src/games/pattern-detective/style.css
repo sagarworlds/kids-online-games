@@ -81,3 +81,32 @@
 .case-row__name { flex: 1; font-weight: 800; }
 .case-row__note { font-size: 0.8rem; font-weight: 700; color: var(--ink-soft); white-space: nowrap; }
 .result__actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+
+/* ---------- 3D case ---------- */
+/* The shared layout of the picture and the controls (`.scene3d*`) is in src/engine/ui/ui.css. */
+.menu__view { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.menu__viewnote { margin: 0; color: var(--ink-soft); font-size: 0.95rem; }
+
+.case3d .scene3d__panel { align-items: stretch; gap: 10px; padding-top: 8px; }
+/* The picture is the case file here, so the paper sheet has no frame of its own; its heading is kept for screen readers (the header already says
+   which case this is), and the stamp and the rule appear on it once the case is solved. */
+.case3d .file { padding: 0; background: transparent; border: 0; box-shadow: none; }
+.case3d .file__title { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+/* While the picture is showing, the flat strip of items is for screen readers only (it is kept in step with the case, and comes back if 3D stops). */
+.case3d:not(.case3d--flat) .strip { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.case3d .case__rule { margin-top: 4px; font-size: 1.05rem; }
+/* The stamp sits in the flow, under the title, so it never covers the title or the rule on a narrow panel. */
+.case3d .stamp { position: static; display: block; width: fit-content; margin: 4px auto 0; padding: 0 12px; font-size: 1.25rem; border-width: 4px; transform: rotate(-3deg); animation: none; }
+.case3d .hintbox { width: 100%; padding: 6px 12px; }
+.case3d .options { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; width: 100%; }
+.case3d .option { min-height: 76px; padding: 4px; }
+.case3d .option .item { width: 56px; height: 56px; }
+.case3d .option .item--number { font-size: 1.8rem; }
+.case3d .case__after { justify-content: center; }
+/* A short phone's header already takes a lot of height, so its picture is a little shorter than the shared 46% to leave room for the cards. */
+@media (max-width: 480px) and (max-height: 700px) { .case3d .scene3d__stage { flex-basis: 40dvh; } }
+/* If 3D stops working the picture goes (it is hidden) and the strip is shown again, on its sheet of paper. */
+.case3d--flat .file { padding: 12px 14px 16px; background: #fffdf3; border: 4px solid var(--ink); }
+.case3d--flat .file__title { position: static; width: auto; height: auto; margin: 0 0 8px; clip: auto; overflow: visible; white-space: normal; }
+.case3d--flat .scene3d__panel { padding-top: 12px; }
+@media (min-width: 700px) and (orientation: landscape) { .case3d .options { grid-template-columns: repeat(2, minmax(0, 1fr)); } .case3d .option { min-height: 96px; } .case3d .option .item { width: 72px; height: 72px; } }
