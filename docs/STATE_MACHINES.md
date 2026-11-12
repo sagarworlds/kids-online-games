@@ -287,6 +287,27 @@ stateDiagram-v2
 ```
 <!-- machine:spot-the-difference/picture-flow:end -->
 
+### `planet-hop/rocket-trip`: the rocket and astronaut on the 3D weigh-in
+
+`src/games/planet-hop/logic/rocketTrip.machine.js`, used by `three/Weigh3DScene.js`. A hop is accepted in every state: while
+`flying` it sends the rocket on to the new place from where it is, so a quick child is never told to wait. The astronaut is
+shown unless the state has the `inside` tag (only `flying`). The 3D line-up has no machine: it is the 2D line-up's data
+(`logic/lineup.js`) plus a few timed effects.
+
+<!-- machine:planet-hop/rocket-trip:start -->
+```mermaid
+stateDiagram-v2
+  [*] --> resting
+  resting --> flying: HOP
+  resting --> jumping: JUMP
+  flying --> flying: HOP
+  flying --> jumping: LAND
+  jumping --> flying: HOP
+  jumping --> jumping: JUMP
+  jumping --> resting: SETTLE
+```
+<!-- machine:planet-hop/rocket-trip:end -->
+
 ## Still implicit
 
 Found by searching `src/` for `#phase`, `#status`, `#state` and `#mode` fields and for boolean latches, then reading the
