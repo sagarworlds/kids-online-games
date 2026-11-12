@@ -1,4 +1,5 @@
 import { svgEl } from '../../../engine/utils/dom.js';
+import { toppingSpots } from '../logic/toppingSpots.js';
 
 /** The pizza is drawn in a 220 x 220 box centred on (0, 0); the crust reaches out to this radius. */
 export const CRUST_RADIUS = 100;
@@ -47,13 +48,6 @@ const GLYPHS = {
   ],
 };
 
-/** Where the toppings sit in a slice: [distance from the centre as a share of the radius, how far across the slice]. */
-const PLACEMENTS = {
-  wide: [[0.4, 0.5], [0.65, 0.25], [0.65, 0.75], [0.86, 0.5]],
-  medium: [[0.4, 0.5], [0.7, 0.28], [0.7, 0.72]],
-  narrow: [[0.45, 0.5], [0.76, 0.5]],
-};
-
 /**
  * The topping pieces for one slice, scaled down on thin slices so they stay inside it.
  * @param {string} topping A key of GLYPHS.
@@ -64,12 +58,8 @@ const PLACEMENTS = {
 export function toppingPieces(topping, index, count) {
   const glyph = GLYPHS[topping];
   if (!glyph) return [];
-  const spots = count <= 4 ? PLACEMENTS.wide : count <= 8 ? PLACEMENTS.medium : PLACEMENTS.narrow;
-  return spots.map(([distance, across], i) => {
-    const radius = distance * CHEESE_RADIUS;
-    const [x, y] = polar(radius, (index + across) / count);
-    const arc = (2 * Math.PI * radius) / count;
-    const scale = Math.max(0.5, Math.min(1, arc / 28));
-    return svgEl('g', { transform: `translate(${x.toFixed(2)} ${y.toFixed(2)}) rotate(${(i * 67) % 360}) scale(${scale.toFixed(2)})` }, ...glyph());
+  return toppingSpots(index, count, CHEESE_RADIUS).map(({ distance, across, scale, spin }) => {
+    const [x, y] = polar(distance * CHEESE_RADIUS, (index + across) / count);
+    return svgEl('g', { transform: `translate(${x.toFixed(2)} ${y.toFixed(2)}) rotate(${spin}) scale(${scale.toFixed(2)})` }, ...glyph());
   });
 }

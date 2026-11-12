@@ -71,7 +71,40 @@ logic/                            Pure rules, no DOM (all unit-tested):
   bonus.js, scoring.js, toppings.js
 ```
 
+## 3D view
+
+On a device that can do WebGL 2 the kitchen is 3D. A **3D view / 2D view** button on the menu switches and remembers the choice.
+The orders, the checking and its hints, the retries, the coins, the Hard bonus question, the stars and the saved progress are the
+same code as 2D (the 3D kitchen extends `KitchenScene` through two small hooks: how the pizza is made and how the screen is laid
+out), so the same seed and the same taps give the same customers, the same hints and the same stars in both views.
+
+- **The pizza** is round, on a plate, cut into its slices, and you can turn and zoom it (drag, pinch, scroll or the arrow keys).
+  **Tap a slice** to put the chosen topping on it, tap again to take it off. A slice with a topping **lifts and tips up**, and its
+  pieces drop onto it. Each topping has its own shape as well as its colour (a spotted disc, a ring, a cap and stem, a wedge), as on the
+  flat pizza. A tap in a cut between two slices goes to the slice that owns that spot, by the same rule as the flat pizza.
+- **After a wrong serve** the slices to look at **bob** and get **red dashes** round their edge (movement and colour are not the only
+  signs: the dashes are a shape, and each slice's button also says "check this one"). The thought bubble still shows the order as a
+  little pizza.
+- **There is a button for every slice**, under the picture, saying what is on it ("Slice 3 of 8: pepperoni"). It is the way to the slices
+  for the keyboard and screen readers (a picture cannot be reached with Tab), and a precise tap on a phone. The toppings lie along the
+  bottom of the picture; the order, Serve and the slice buttons are in the panel under it (beside it on a wide screen).
+- **If 3D cannot run**: no WebGL 2 means no 3D button; if the 3D file will not load, the flat kitchen opens. If 3D cannot start, or the
+  graphics are lost *in the middle of a customer*, the pizza carries on in the same place as the flat pizza with the slices done so
+  far, and the next customers are flat too for the rest of the visit. That only lasts for the visit; it does not change the saved choice.
+- **On a phone** the picture takes at least 40% of the screen's height, the order shrinks to a slip, the toppings share one row (only the
+  chosen one shows its name) and the Serve button stays in view while the panel scrolls. With "less motion" slices lift and pieces land
+  at once, flagged slices do not bob, and the camera does not glide. three.js is loaded with `import()` only when the 3D kitchen opens.
+
+Files: `logic/look3d.js` (how the slices are cut and turned into place, where pieces sit, how far a slice lifts, the red dashes, the first
+view) and `logic/toppingSpots.js` (where the pieces of a topping sit on a slice, used by the flat pizza too), unit-tested in
+`tests/pizza-fractions/look3d.test.js` (which also checks that the 3D layout agrees with `sliceAtPoint`); and `three/` (`pizzaModels`,
+`PizzaView3D`, `Kitchen3DScene`).
+
 ## Not yet verified
 
 Tested in headless Chromium (desktop and a phone-sized viewport with touch emulation): a full Easy round with a retry
 and a customer who leaves, keyboard use, border taps, and the Hard bonus. Not tried on a real touch device or Safari.
+
+The 3D version was tried in headless Chromium (desktop, three phone sizes, touch) but not on a real phone: please check how big the
+pizza and the buttons feel on a small screen. On a very small phone (360 x 640) the header takes so much height that the order slip and the
+Serve button share a short panel, and the slice buttons are reached by scrolling it.
