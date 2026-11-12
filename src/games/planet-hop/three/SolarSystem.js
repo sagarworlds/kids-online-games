@@ -3,7 +3,7 @@ import {
   BufferGeometry, Float32BufferAttribute, Points, PointsMaterial, DoubleSide, AdditiveBlending, Sprite, SpriteMaterial, CanvasTexture,
 } from '../../../engine/three/three.js';
 import { createRng } from '../../../engine/utils/random.js';
-import { approach } from '../logic/motion3d.js';
+import { approach } from '../../../engine/three/motionMath.js';
 import { SUN_RADIUS, PICK_MIN_RADIUS, bodyRadius, moonPoint, orbitPoint, orbitRadius } from '../logic/space3d.js';
 import { createPlanetTexture } from './planetTextures.js';
 

@@ -238,3 +238,16 @@ p { margin: 0 0 0.75em; }
 .stage3d__canvas { display: block; width: 100%; height: 100%; outline-offset: -3px; }
 .stage3d__canvas:focus-visible { outline: 3px solid var(--primary); }
 .view-toggle { white-space: nowrap; }
+
+/* A 3D game screen: the picture on top and the controls below on a phone held upright; side by side on a wide screen.
+   The picture is always at least 45% of the screen's height, and only the controls scroll (never the page). */
+.scene3d { flex: 1 1 auto; min-height: 0; width: 100%; display: flex; flex-direction: column; }
+.scene3d__stage { flex: 0 0 max(50%, 46dvh); min-height: 220px; background: var(--stage-bg, #0b1030); border-bottom: 4px solid var(--ink); }
+.scene3d__panel { flex: 1 1 0; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 8px 12px 20px; text-align: center; }
+/* Controls keep their own height and the panel scrolls: left to shrink, they would slide over one another. */
+.scene3d__panel > * { flex: none; }
+@media (orientation: landscape) and (min-width: 700px) {
+  .scene3d { flex-direction: row; }
+  .scene3d__stage { flex: 1 1 0; min-height: 0; border-bottom: 0; border-right: 4px solid var(--ink); }
+  .scene3d__panel { flex: 0 0 min(44%, 440px); }
+}
