@@ -16,6 +16,28 @@ faces*), loops, functions and planning ahead.
 4. A wall or the edge of the board stops the robot ("Robot hit a wall at step 4") and the block that
    caused it turns red with "✖ Stopped here". After two failed runs you get a hint.
 
+## 3D view
+
+On a device that can do WebGL 2 the puzzle opens in 3D by default. A **3D view / 2D view** button on the level map, and
+inside every 3D puzzle, switches and remembers the choice (the blocks you have built come with you). The rules, the
+blocks, running, stepping, hints, stars and saved progress are the same code as 2D, so the same play earns the same stars;
+only the board changes.
+
+- **The board** is the same grid, rocks, battery, gems and robot, seen at an angle. One finger or the mouse turns it, two
+  fingers or the wheel zoom, the arrow keys and + / − do both while the picture has focus, and **Whole board** glides back.
+- **The robot walks** to the next square, **turns on the spot** (right is clockwise seen from above), **leans into a rock
+  or the edge and bounces back** (the block that caused it still turns red with "✖ Stopped here"), **hops to pick up a
+  gem**, and dances when it reaches the battery. The nose and eyes show which way it faces.
+- **Robot's view** puts the camera behind the robot, looking the way it looks, and carries it along. Then a *turn left*
+  bends the picture to the left and a *turn right* to the right: the point of the game, since left and right in a program
+  are the robot's own, whichever way the board is turned. Switch it off to get your map view back.
+- **On a phone** the picture is at least 46% of the height with the run buttons pinned at the top of the controls, and the
+  blocks scroll below them (beside the picture in landscape). Every button is at least 48 px. With "less motion" turned on
+  the robot is simply where each step leaves it, the camera cuts instead of gliding, and nothing spins.
+- **If 3D cannot run** (no WebGL 2, the 3D file failing to load, the scene failing to start, or the graphics being lost
+  mid-puzzle) the 2D puzzle opens with no error screen, with your blocks. That only lasts for the visit; it does not change
+  the saved choice.
+
 ## Worlds and blocks
 
 | World | Levels | Board | New blocks |
@@ -58,9 +80,15 @@ logic/                           Pure rules, no DOM (all unit-tested)
   levels.js                      Parses and validates levels.json
   scoring.js, progress.js        Stars and which levels are open
   messages.js                    Run messages and hints
+  board3d.js                     3D geometry: where squares are, which way the robot faces and turns, what each step looks
+                                 like, the robot's-view camera (unit-tested)
 scenes/                          MapScene (level map), PuzzleScene (board + editor + playback), CompleteScene
 ui/BoardView.js                  SVG board: tiles, rocks, battery, gems, the robot
 ui/ProgramEditor.js              Palette, program strips, drag and drop, keyboard buttons
+three/                           The 3D view, loaded with import() only when a puzzle opens in 3D (the 2D game and the
+                                 home page never download three.js): Puzzle3DScene (the puzzle scene with a 3D board and
+                                 layout), BoardView3D (the board and its camera), boardModels (rocks, battery, gem, robot),
+                                 boardTheme (the world colours)
 ```
 
 Tests are in `tests/robot-path/`. `solver.js` (BFS) and `solutions.js` (a reference program for every level in
@@ -68,6 +96,9 @@ Worlds 2 and 3) live there, not in the shipped game, so the answers are not down
 
 ## What the tests guarantee
 
+- The 3D geometry (`tests/robot-path/board3d.test.js`): a right turn is clockwise seen from above and a left turn anticlockwise
+  from every heading, the robot never turns the long way round, the robot's-view camera sits behind the robot for every
+  heading, and playing every level's reference solution step by step ends where the rules say.
 - Every level can be reached (BFS) and is solvable within `maxBlocks`.
 - In World 1, `par` is the exact shortest route.
 - Every reference solution runs in the real interpreter and earns 3 stars.

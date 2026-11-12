@@ -9,7 +9,7 @@ import { createViewToggle } from '../../../engine/three/ViewToggle.js';
 import { LEVELS } from '../logic/levels.js';
 import { createLineup, place, allPlaced, lineupStars, lineupScore, lineupLabel } from '../logic/lineup.js';
 import { createSizer } from '../logic/scale.js';
-import { easeInOut, lerpPoint } from '../logic/motion3d.js';
+import { easeInOut, lerpPoint } from '../../../engine/three/motionMath.js';
 import { orbitPoint } from '../logic/space3d.js';
 import { createPlanetArt } from '../ui/PlanetArt.js';
 import { createSizeToggle } from '../ui/SizeToggle.js';

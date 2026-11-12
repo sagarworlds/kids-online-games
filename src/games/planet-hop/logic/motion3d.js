@@ -1,57 +1,13 @@
 /**
- * Movement maths for the 3D scenes: easing, a smooth camera, and the arc the rocket flies between two bodies.
- * Pure functions of time and points; the scenes decide when to call them (so nothing here keeps a clock).
+ * The rocket's flight between two bodies. The general movement maths (easing, a smooth camera, points in space) is in
+ * `src/engine/three/motionMath.js`, shared by every 3D version; only what is particular to the rocket is here.
+ * Pure functions of time and points; the scene decides when to call them (so nothing here keeps a clock).
  *
- * @typedef {import('./space3d.js').Point} Point
+ * @typedef {import('../../../engine/three/motionMath.js').Point} Point
  */
+import { easeInOut, lerpPoint, distanceBetween } from '../../../engine/three/motionMath.js';
 
 const clamp01 = (t) => Math.min(1, Math.max(0, t));
-
-/**
- * Slow start, slow stop. Used for the rocket's flight and for sliding a planet into its orbit.
- * @param {number} t Progress from 0 to 1 (values outside are held at the ends).
- * @returns {number} 0 to 1.
- */
-export function easeInOut(t) {
-  const x = clamp01(t);
-  return x * x * (3 - 2 * x);
-}
-
-/**
- * Moves a number a fraction of the way to its goal each frame, with the same feel on every frame rate: the fraction
- * depends on `dt`, so a slow phone and a fast desktop reach the goal at the same time.
- *
- * @param {number} current
- * @param {number} goal
- * @param {number} dt Seconds since the last frame.
- * @param {number} [rate] Bigger is quicker; 6 closes about 99% of the gap in 0.8 s.
- * @returns {number} Equal to `goal` once it is closer than a thousandth, so the motion really ends.
- */
-export function approach(current, goal, dt, rate = 6) {
-  if (!(dt > 0)) return current;
-  const next = current + (goal - current) * (1 - Math.exp(-rate * dt));
-  return Math.abs(goal - next) < 1e-3 ? goal : next;
-}
-
-/**
- * The shortest turn from one angle to another, so a camera swinging to a new view goes the short way round (never 350
- * degrees the long way).
- * @param {number} from Radians, any size.
- * @param {number} to Radians, any size.
- * @returns {number} Radians from -PI to PI; add it to `from` to arrive at `to`.
- */
-export function shortestTurn(from, to) {
-  const full = Math.PI * 2;
-  const wrapped = (((to - from + Math.PI) % full) + full) % full - Math.PI;
-  // A turn of exactly half a circle is the same either way round; always choose the positive one.
-  return wrapped === -Math.PI ? Math.PI : wrapped;
-}
-
-/** @param {Point} a @param {Point} b @returns {number} Straight-line distance. */
-export const distanceBetween = (a, b) => Math.hypot(a.x - b.x, a.y - b.y, a.z - b.z);
-
-/** @param {Point} a @param {Point} b @param {number} t 0 to 1. @returns {Point} */
-export const lerpPoint = (a, b, t) => ({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t, z: a.z + (b.z - a.z) * t });
 
 /**
  * How long a hop takes: longer for farther places, but never so short it is a blink or so long a child waits.

@@ -46,8 +46,8 @@ export class PuzzleScene extends RobotScene {
   #completed = false;
   #result = null;
 
-  /** @param {{ levelId: number }} params */
-  enter({ levelId }) {
+  /** @param {{ levelId: number, resume?: { program: import('../logic/interpreter.js').Program } }} params `resume` brings back the blocks the child had built (used when they switch between the 3D and 2D views). */
+  enter({ levelId, resume }) {
     const { services, data } = this;
     const level = findLevel(data.levels, levelId);
     if (!level) throw new GameError('UNKNOWN_LEVEL', `There is no level ${levelId}`, { levelId });
@@ -63,9 +63,10 @@ export class PuzzleScene extends RobotScene {
     });
     this.#hud.setStat('par', level.par);
 
-    this.#board = createBoardView(level);
+    this.#board = this.createBoard(level);
     this.#editor = createProgramEditor({
       level,
+      initial: resume?.program,
       onChange: (program) => this.#onProgramChange(program),
       onMessage: (text) => this.#setStatus(text, 'info'),
     });
@@ -82,17 +83,55 @@ export class PuzzleScene extends RobotScene {
     const controls = el('div', { class: 'controls', attrs: { role: 'group', 'aria-label': 'Run controls' } },
       this.#buttons.run, this.#buttons.step, this.#buttons.reset, this.#buttons.clear);
 
-    // Controls sit right under the board and messages appear below them, so the Run button never moves.
-    const boardColumn = el('section', { class: 'puzzle__board-col' },
-      el('div', { class: 'board-wrap' }, this.#board.el),
-      controls,
-      this.#statusEl,
-      firstTime && level.tip ? el('p', { class: 'puzzle__tip' }, el('strong', { text: 'Tip: ' }), level.tip) : null,
-      this.#hintEl);
-
     this.ui.classList.add('puzzle-scene');
-    this.ui.append(this.#hud.el, el('main', { class: 'puzzle' }, boardColumn, this.#editor.el));
+    this.ui.append(this.#hud.el, this.layout({
+      boardEl: this.#board.el, controls, status: this.#statusEl, editorEl: this.#editor.el,
+      tip: firstTime && level.tip ? el('p', { class: 'puzzle__tip' }, el('strong', { text: 'Tip: ' }), level.tip) : null,
+      hint: this.#hintEl,
+    }));
     this.#syncCounts();
+  }
+
+  // ------------------------------------------------------------ what a 3D version replaces
+
+  /**
+   * Makes the board the child watches. The 2D board is an SVG; the 3D version of this scene overrides this to return a 3D
+   * board with the same small interface (`reset`, `showFrame`, `celebrate`), plus the optional `update`, `render` and
+   * `dispose` that a 3D picture needs. Everything else (the blocks, running, hints, stars) is this class, so both views play
+   * and score the same.
+   * @param {import('../logic/levels.js').Level} level
+   * @returns {{
+   *   el: Element, reset: () => void, showFrame: (frame: import('../logic/interpreter.js').Frame) => void, celebrate: () => void,
+   *   update?: (dt: number) => void, render?: () => void, dispose?: () => void
+   * }}
+   */
+  createBoard(level) {
+    return createBoardView(level);
+  }
+
+  /**
+   * Arranges the screen's parts. The 2D screen has the board above its controls beside the block editor; the 3D version
+   * puts the picture on top (or beside) with every control in a scrolling panel next to it.
+   * @param {{ boardEl: Element, controls: HTMLElement, status: HTMLElement, tip: HTMLElement|null, hint: HTMLElement, editorEl: HTMLElement }} parts
+   * @returns {HTMLElement}
+   */
+  layout({ boardEl, controls, status, tip, hint, editorEl }) {
+    // Controls sit right under the board and messages appear below them, so the Run button never moves.
+    const boardColumn = el('section', { class: 'puzzle__board-col' }, el('div', { class: 'board-wrap' }, boardEl), controls, status, tip, hint);
+    return el('main', { class: 'puzzle' }, boardColumn, editorEl);
+  }
+
+  /** @returns {import('../logic/interpreter.js').Program} A copy of the blocks the child has built so far. */
+  currentProgram() {
+    return structuredClone(this.#program);
+  }
+
+  exit() {
+    this.#board?.dispose?.();
+  }
+
+  render() {
+    this.#board?.render?.();
   }
 
   // ------------------------------------------------------------ status
@@ -242,6 +281,7 @@ export class PuzzleScene extends RobotScene {
   // -------------------------------------------------------------- loop
 
   update(dt) {
+    this.#board.update?.(dt);
     if (this.#completed) return;
     if (this.#celebrating > 0) {
       this.#celebrating -= dt;

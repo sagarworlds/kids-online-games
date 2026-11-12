@@ -48,6 +48,22 @@
 .controls { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: min(100%, 520px); }
 .controls .btn { padding: 0.4rem 0.4rem; font-size: 0.95rem; gap: 0.3em; }
 
+/* ---------- 3D view (three.js) ---------- */
+/* The shared layout of the picture and the controls (`.scene3d*`) is in src/engine/ui/ui.css. */
+
+.map__view { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 8px; }
+.map__viewnote { margin: 0; color: var(--ink-soft); font-size: 0.95rem; }
+.puzzle3d .scene3d__panel { align-items: stretch; }
+/* The run buttons stay in view at the top of the panel while the blocks below scroll. */
+.puzzle3d .controls { position: sticky; top: -8px; z-index: 2; width: 100%; padding: 8px 0 4px; background: var(--bg); }
+.puzzle3d .board__status { width: 100%; min-height: 0; } /* the message pushes the blocks down when it appears; the run buttons above it do not move */
+.puzzle3d .puzzle__tip, .puzzle3d .puzzle__hint { font-size: 0.9rem; }
+.tools3d { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 8px; }
+.tools3d .btn { padding-inline: 10px; font-size: 0.9rem; gap: 0.3em; }
+/* A button that is switched on shows a tick as well as a colour. */
+.toggle-btn[aria-pressed='true'] { background: #fff3c4; border-width: 5px; }
+.toggle-btn[aria-pressed='true']::before { content: '✔'; font-weight: 800; }
+
 /* ---------- Board art ---------- */
 
 .world-1 { --tile-a: #d4eab4; --tile-b: #c3df9c; --rock: #9aa0aa; --shell: #5b3df5; --nose: #ffd23f; --line: #1f2544; }
