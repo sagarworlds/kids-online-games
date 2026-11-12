@@ -11,7 +11,6 @@ import { SimonGame } from '../logic/simonGame.js';
 import { SIMON_PLAY_FLOW } from '../logic/playFlow.machine.js';
 import { playbackTimings } from '../logic/timings.js';
 import { playSequence } from '../logic/sequencePlayer.js';
-import { createPadBoard } from '../ui/PadBoard.js';
 
 /** A pad the child taps stays lit this long. */
 const TAP_FLASH_SECONDS = 0.22;
@@ -55,18 +54,19 @@ export class PlayScene extends SimonScene {
       stats: [{ id: 'best', label: 'Best' }],
       onSettings: () => services.openSettings(),
     });
-    this.#pads = createPadBoard({ pads: padsFor(this.#level.pads), onPress: (id) => this.#press(id) });
+    this.#pads = this.createPads({ pads: padsFor(this.#level.pads), onPress: (id) => this.#press(id) });
     this.#lengthEl = el('p', { class: 'simon__length', attrs: { 'aria-live': 'off' } });
     this.#statusEl = el('p', { class: 'simon__status', attrs: { role: 'status' } });
     this.#timer = createProgressBar({ label: 'Time to answer', max: 100, value: 0 });
     this.#timer.el.classList.add('simon__timer');
     this.#replayButton = createButton({ label: 'Replay', icon: '🔁', onClick: () => this.#replay() });
 
-    this.ui.append(this.#hud.el, el('main', { class: 'simon' },
-      el('div', { class: 'simon__display' }, this.#lengthEl, this.#statusEl),
-      this.#pads.el, this.#timer.el,
-      el('div', { class: 'simon__controls' }, this.#replayButton),
-      el('p', { class: 'simon__note', text: this.mode === 'reverse' ? 'Reverse: play it BACKWARDS. Keys 1-6 work too.' : 'Keys 1-6 play the pads too.' })));
+    this.ui.append(this.#hud.el, this.layout({
+      display: el('div', { class: 'simon__display' }, this.#lengthEl, this.#statusEl),
+      pads: this.#pads, timer: this.#timer.el,
+      controls: el('div', { class: 'simon__controls' }, this.#replayButton),
+      note: el('p', { class: 'simon__note', text: this.mode === 'reverse' ? 'Reverse: play it BACKWARDS. Keys 1-6 work too.' : 'Keys 1-6 play the pads too.' }),
+    }));
 
     this.#offs.push(
       services.input.on('key', (event) => {
@@ -87,6 +87,17 @@ export class PlayScene extends SimonScene {
     this.#abort.abort(); // stops the sequence player and every pending pause
     for (const off of this.#offs) off();
     this.#offs = [];
+    this.#pads?.dispose?.();
+  }
+
+  /**
+   * Puts the screen's parts together. The default is the flat game: the length and the status, the pads, the answer clock, Replay and a note. The 3D
+   * game overrides this to put the picture of the pads on top and everything else in a panel.
+   * @param {{ display: HTMLElement, pads: { el: HTMLElement }, timer: HTMLElement, controls: HTMLElement, note: HTMLElement }} parts
+   * @returns {HTMLElement} The `main` element.
+   */
+  layout({ display, pads, timer, controls, note }) {
+    return el('main', { class: 'simon' }, display, pads.el, timer, controls, note);
   }
 
   // ----------------------------------------------------------- sequence
@@ -214,6 +225,7 @@ export class PlayScene extends SimonScene {
   // --------------------------------------------------------------- loop
 
   update(dt) {
+    this.#pads.tick?.(dt);
     for (const [padId, left] of this.#flash) {
       if (left - dt <= 0) { this.#flash.delete(padId); this.#pads.light(padId, false); } else this.#flash.set(padId, left - dt);
     }
@@ -222,6 +234,10 @@ export class PlayScene extends SimonScene {
     this.#remaining -= dt;
     this.#timer.set(Math.max(0, (this.#remaining / this.#level.timeoutSeconds) * 100));
     if (this.#remaining <= 0) this.#handle(this.#game.timeout(), true);
+  }
+
+  render() {
+    this.#pads?.draw?.();
   }
 
   // ------------------------------------------------------------ display
