@@ -164,3 +164,31 @@
   .plantart.is-happy .plantbody, .plantart .sweat__drop { animation: none; }
   .plantart .part, .plantart .stem, .plantart .plantbody, .plantart .puddle { transition: none; }
 }
+
+/* ---------- 3D garden ---------- */
+/* The shared layout of the picture and the controls (`.scene3d*`) is in src/engine/ui/ui.css. */
+.menu__view { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.menu__viewnote { margin: 0; color: var(--ink-soft); font-size: 0.95rem; }
+
+.plant3d { position: relative; }
+/* The thought bubble sits over the picture, under the top edge, like the flat plant's box. */
+.garden3d .bubble { top: 10px; z-index: 2; }
+.garden3d .scene3d__panel { align-items: stretch; text-align: left; }
+.garden3d .weatherbar { padding: 4px 10px; font-size: 0.95rem; }
+.garden3d .weatherbar__icon { font-size: 1.6rem; }
+.garden3d__vitals { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; }
+.garden3d .garden__controls, .garden3d .summary { width: 100%; }
+
+/* If 3D stops working mid-week the picture carries on as the flat plant, in the same place, on the weather's sky colour. */
+.plant3d--flat { display: flex; align-items: center; justify-content: center; }
+.plant3d--flat .plantart { width: min(210px, 62%); max-height: 90%; height: auto; }
+.plant3d.weather--sunny { background: linear-gradient(#bfe6ff, #f4fbff 75%); }
+.plant3d.weather--rainy { background: linear-gradient(#8aa5c4, #d3e1f0 75%); }
+.plant3d.weather--cloudy { background: linear-gradient(#b9c2cc, #e8ecf0 75%); }
+.plant3d.weather--heat { background: linear-gradient(#ffd08a, #fff1d6 75%); }
+/* On a small screen the plant's words and the weather's note take less room, so more of the picture and the sliders stay in view. */
+@media (max-width: 480px), (max-height: 480px) {
+  .garden3d .bubble { max-width: 76%; padding: 2px 10px; font-size: 0.85rem; }
+  .garden3d .weatherbar { gap: 8px; padding: 3px 8px; font-size: 0.88rem; }
+  .garden3d .weatherbar__icon { font-size: 1.4rem; }
+}
