@@ -24,7 +24,7 @@ export class LearnScene extends TowerBase {
     const trick = trickFor(floor);
     this.#cards = [
       { title: `Count in jumps of ${floor}`, build: () => el('div', {}, el('p', { class: 'learn__lead', text: `A times table is skip counting. Press Jump to hop along in ${floor}s.` }), createNumberLine({ table: floor, onJump: (to) => services.speech.speak(String(to)) }).el) },
-      { title: 'Split the sum into easy parts', build: () => el('div', {}, el('p', { class: 'learn__lead', text: 'Big sums are easier in pieces. Split the table into tens and ones, work each out, then add.' }), createSplitGrid({ table: floor }).el) },
+      { title: 'Split the sum into easy parts', build: () => el('div', {}, el('p', { class: 'learn__lead', text: 'Big sums are easier in pieces. Split the table into tens and ones, work each out, then add.' }), this.createSplitGrid(floor).el) },
       ...(trick ? [{ title: trick.title, build: () => this.#trickCard(trick) }] : []),
     ];
 
@@ -40,6 +40,28 @@ export class LearnScene extends TowerBase {
         createButton({ label: 'Try the ladder', icon: '🪜', variant: 'accent', onClick: () => this.routes.ladder(floor) }),
         createButton({ label: 'Back to the floor', onClick: () => this.routes.floor(floor) }))));
     this.#show();
+  }
+
+  /**
+   * Makes the grid picture of a split sum. The 3D version of this scene overrides it to show 3D slabs instead of flat blocks (the
+   * rows to choose and the written working are the same). The lessons and the Ladder and Challenge afterwards are this class.
+   * @param {number} table
+   * @returns {ReturnType<typeof createSplitGrid>}
+   */
+  createSplitGrid(table) {
+    return createSplitGrid({ table });
+  }
+
+  /** Called just before another card is shown, or when the scene ends: the place to free a card's 3D picture. */
+  releaseCard() {}
+
+  /** Draws the card being shown again (a 3D scene that has to drop its 3D picture mid-lesson uses this to show it flat). */
+  refreshCard() {
+    this.#show();
+  }
+
+  exit() {
+    this.releaseCard();
   }
 
   #trickCard(trick) {
@@ -64,6 +86,7 @@ export class LearnScene extends TowerBase {
   }
 
   #show() {
+    this.releaseCard();
     const card = this.#cards[this.#index];
     this.#body.replaceChildren(el('h1', { class: 'learn__title', text: card.title }), card.build());
     this.#counter.textContent = `Card ${this.#index + 1} of ${this.#cards.length}`;
