@@ -51,6 +51,27 @@ export class TripScene extends QuestScene {
     this.#map?.destroy();
   }
 
+  /**
+   * Makes the map the child looks at and taps. The 2D map is an SVG; the 3D version of this scene overrides this to return
+   * a globe with the same interface (plus the optional `update` and `render` a 3D picture needs). The questions, answers,
+   * progress and stars are this class, so both views play and score the same.
+   * @param {{ world: import('../ui/worldData.js').World, label: string, onTap?: (code: string|null) => void }} options
+   * @returns {ReturnType<typeof createWorldMap>}
+   */
+  createMap(options) {
+    return createWorldMap(options);
+  }
+
+  /** @returns {string} Extra classes for the screen's main element, with a leading space (the 3D version adds its layout). */
+  layoutClass() {
+    return '';
+  }
+
+  /** @returns {import('./QuestScene.js').Trip} The trip being played, so a 3D scene that cannot go on can reopen it in 2D. */
+  get trip() {
+    return this.#trip;
+  }
+
   /** The questions for a new trip. Map questions only go to countries that can be seen on their continent's map. */
   #startTrip({ levelId, continent }) {
     const { services, data } = this;
@@ -78,7 +99,7 @@ export class TripScene extends QuestScene {
     this.#hud.setStat('question', `${this.#trip.index + 1}/${TRIP_LENGTH}`);
     this.#hud.setStat('correct', this.#trip.results.filter((r) => r.correct).length);
 
-    this.#map = createWorldMap({
+    this.#map = this.createMap({
       world: data.world,
       label: isMap ? `Map of ${this.#country.continent}. Tap ${this.#country.name}.` : `Map of ${this.#country.continent}. Countries you have explored are coloured in.`,
       onTap: isMap ? (code) => this.#onMapTap(code) : undefined,
@@ -99,7 +120,7 @@ export class TripScene extends QuestScene {
     // The question, the map and the answers are separate blocks so the stylesheet can put the question above the map on a
     // phone (a child must read what to tap before looking for it) and the answers right under a flag question.
     this.#fallbackEl = fallback;
-    this.ui.append(this.#hud.el, el('main', { class: `trip${isMap ? ' trip--map' : ''}` },
+    this.ui.append(this.#hud.el, el('main', { class: `trip${isMap ? ' trip--map' : ''}${this.layoutClass()}` },
       el('section', { class: 'trip__ask' }, ...this.#promptNodes()),
       el('div', { class: 'trip__map' }, this.#map.el),
       el('section', { class: 'trip__answer' }, fallback, this.#optionsEl, this.#statusEl, this.#afterEl),

@@ -125,3 +125,47 @@
 @media (prefers-reduced-motion: reduce) {
   .option, .continent { transition: none; }
 }
+
+/* ---------- 3D view (three.js) ---------- */
+/* The shared layout classes (`.scene3d*`) are in src/engine/ui/ui.css; the globe sits where the flat map sat. */
+
+.map--globe { background: #050a24; }
+.map__stage { position: absolute; inset: 0; }
+/* On the globe the buttons sit in the corner of the picture, not in a strip under it: the picture then gets the whole box
+   (the 3D rule is that it takes at least 45% of the screen's height), and the corner of a round globe is empty sky. */
+.map--globe .map__controls { position: absolute; right: 8px; bottom: 8px; z-index: 1; padding: 4px; background: rgba(255, 255, 255, 0.92); border: 3px solid var(--ink); border-radius: 16px; }
+.loading { display: grid; place-items: center; flex: 1; text-align: center; }
+.loading__text { margin: 0; font-size: 1.4rem; font-weight: 800; }
+
+/* The hub: the globe is at least 45% of the screen's height, with the controls below it. */
+.hub--globe .hub__map { aspect-ratio: auto; height: clamp(300px, 56dvh, 560px); max-height: none; }
+
+/* A trip on a phone held upright: the question, then the globe (at least 45% of the height), then the answers, which scroll if
+   they have to so the page itself never does. A flag is smaller here, to leave the globe its room. */
+@media (max-width: 899px) and (orientation: portrait) {
+  .trip--globe { flex: 1 1 auto; min-height: 0; width: 100%; padding-bottom: 8px; display: flex; flex-direction: column; gap: 8px; }
+  .trip--globe .trip__ask { flex: none; gap: 6px; }
+  .trip--globe .trip__prompt { font-size: 1.15rem; }
+  .trip--globe .trip__flag, .trip--globe .flag--missing { width: min(100%, 150px); }
+  .trip--globe .trip__map { flex: 0 0 max(46dvh, 240px); height: auto; min-height: 0; }
+  .trip--globe .trip__answer { flex: 1 1 0; min-height: 0; overflow-y: auto; justify-content: flex-start; gap: 6px; }
+  .trip--globe .trip__options { gap: 8px; }
+  .trip--globe .option { min-height: 52px; }
+  .trip--globe .trip__status p { margin-bottom: 2px; }
+}
+/* On a short phone the answers matter more than the last bit of globe: they always keep room, so the globe is smaller there. */
+@media (max-width: 899px) and (orientation: portrait) and (max-height: 760px) {
+  .trip--globe .trip__map { flex-basis: max(34dvh, 200px); }
+  .trip--globe .trip__answer { min-height: 200px; }
+}
+/* A phone on its side: the globe fills the left half, the question and the answers share the right. */
+@media (max-width: 899px) and (orientation: landscape) {
+  .trip--globe { flex: 1 1 auto; min-height: 0; width: 100%; padding: 6px 12px; gap: 6px 12px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); grid-template-areas: 'map ask' 'map answer'; }
+  .trip--globe .trip__map { grid-area: map; height: auto; min-height: 0; align-self: stretch; }
+  .trip--globe .trip__ask { grid-area: ask; gap: 4px; }
+  .trip--globe .trip__answer { grid-area: answer; min-height: 0; overflow-y: auto; justify-content: flex-start; gap: 6px; }
+  .trip--globe .trip__prompt { font-size: 1.05rem; }
+  .trip--globe .trip__flag, .trip--globe .flag--missing { width: min(100%, 110px); }
+  .trip--globe .trip__options { gap: 6px; }
+  .trip--globe .option { min-height: 48px; }
+}
