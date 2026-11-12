@@ -4,6 +4,7 @@ import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
 import { createButton } from '../../../engine/ui/Button.js';
 import { ICONS } from '../../../engine/ui/icons.js';
+import { createViewToggle } from '../../../engine/three/ViewToggle.js';
 import { LEVELS, LEVEL_IDS, CUSTOMERS_PER_ROUND } from '../logic/levels.js';
 import { generateRound } from '../logic/orderGenerator.js';
 
@@ -29,11 +30,18 @@ export class MenuScene extends PizzaScene {
         el('span', { class: 'menu__stars', html: ICONS.star.repeat(earned) + ICONS.starEmpty.repeat(3 - earned) }));
     }));
 
+    // Only offered where the device can do 3D. The choice is remembered for next time (see `createViewChoice`).
+    const { view } = this.routes;
+    const viewEl = view.supported ? el('div', { class: 'menu__view' },
+      createViewToggle({ mode: view.mode(), onChange: (next) => { view.choose(next); this.routes.menu(); } }),
+      el('p', { class: 'menu__viewnote', text: view.mode() === '3d' ? 'In 3D view the pizza is round on a plate: turn it, and tapped slices lift up.' : 'In 2D view the pizza is a flat picture.' })) : null;
+
     this.ui.append(hud.el, el('main', { class: 'menu' },
       el('h1', { class: 'menu__title', text: 'Pizza Fractions' }),
       el('p', { class: 'menu__intro', text: 'Customers order a fraction of a pizza, like 3/8 pepperoni. Pick a topping and tap slices to cover exactly that much!' }),
       picker.el,
       el('p', { class: 'menu__note', text: `${CUSTOMERS_PER_ROUND} customers per round. Get it right the first time to earn the most coins.` }),
+      viewEl,
       createButton({ label: 'Open the shop', icon: '🍕', variant: 'primary', big: true, onClick: () => {
         services.audio.play('click');
         this.routes.play({ levelId, orders: generateRound(levelId, CUSTOMERS_PER_ROUND, services.rng), index: 0, results: [] });

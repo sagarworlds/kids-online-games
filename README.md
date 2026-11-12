@@ -87,7 +87,8 @@ Done so far: **Planet Hop** (Line them up and Weigh-in; see [its README](src/gam
 **Flag & Capital Quest** (a globe to spin, with a plane that flies to each country; see [its README](src/games/flag-capital-quest/README.md#3d-view)) and
 **Times-Table Racing** (the track seen from behind your car, with a see-through ghost; see [its README](src/games/times-table-racing/README.md#3d-view)) and
 **Table Tower** (a tower that grows with each table cleared, and sums built from slabs; see [its README](src/games/table-tower/README.md#3d-view)) and
-**Plant Grower** (a plant in a pot you can turn, with a sun that crosses the sky and rain you can see; see [its README](src/games/plant-grower/README.md#3d-view)).
+**Plant Grower** (a plant in a pot you can turn, with a sun that crosses the sky and rain you can see; see [its README](src/games/plant-grower/README.md#3d-view)) and
+**Pizza Fractions** (a round pizza whose topped slices lift, with toppings that sit on them; see [its README](src/games/pizza-fractions/README.md#3d-view)).
 
 ## State machines
 

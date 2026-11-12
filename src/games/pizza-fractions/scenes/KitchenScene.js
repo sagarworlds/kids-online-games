@@ -65,23 +65,55 @@ export class KitchenScene extends PizzaScene {
     this.#statusEl = el('p', { class: 'kitchen__status', attrs: { role: 'status' } });
     this.#afterEl = el('div', { class: 'kitchen__after' });
 
-    this.#pizzaView = createPizzaView({ slices: this.#order.slices, onToggle: (i) => this.#onSlice(i) });
+    this.#pizzaView = this.makePizzaView({ slices: this.#order.slices, onToggle: (i) => this.#onSlice(i) });
     this.#serveButton = createButton({ label: 'Serve', icon: '🍽', variant: 'primary', big: true, onClick: () => this.#serve() });
 
     const tray = el('div', { class: 'tray', attrs: { role: 'group', 'aria-label': 'Toppings' } },
       ...this.level.toppings.map((id) => this.#toppingButton(id)));
     this.#syncTray();
 
-    this.ui.append(this.#hud.el, el('main', { class: 'kitchen' },
-      el('section', { class: 'kitchen__customer' },
-        el('div', { class: 'customer' }, this.#faceEl, el('div', { class: 'customer__talk' },
-          el('p', { class: 'customer__name', text: this.#order.customer }), this.#speechEl)),
-        createOrderTicket(this.#order), this.#thoughtEl),
-      el('section', { class: 'kitchen__work' },
-        this.#pizzaView.el, tray,
-        el('div', { class: 'kitchen__actions' }, this.#serveButton),
-        this.#statusEl, this.#afterEl)));
+    const customer = el('section', { class: 'kitchen__customer' },
+      el('div', { class: 'customer' }, this.#faceEl, el('div', { class: 'customer__talk' },
+        el('p', { class: 'customer__name', text: this.#order.customer }), this.#speechEl)),
+      createOrderTicket(this.#order), this.#thoughtEl);
+    const actions = el('div', { class: 'kitchen__actions' }, this.#serveButton);
+    this.ui.append(this.#hud.el, this.layout({ customer, pizzaView: this.#pizzaView, tray, actions, status: this.#statusEl, after: this.#afterEl }));
     this.#render();
+  }
+
+  /**
+   * Makes the pizza the child decorates. The 3D kitchen overrides this; whatever it makes has to offer what `PizzaView` offers (`el`, `render`
+   * and `focusSlice`), and may also offer `tick`, `draw` and `dispose` (the 3D pizza animates and holds graphics memory).
+   * @param {{ slices: number, onToggle: (index: number) => void }} options
+   */
+  makePizzaView(options) {
+    return createPizzaView(options);
+  }
+
+  /**
+   * Puts the screen's parts together. The default is the flat kitchen: the customer and their order, then the pizza, the toppings and the
+   * Serve button. The 3D kitchen overrides this to put the picture on top and everything else in a panel under (or beside) it.
+   * @param {{
+   *   customer: HTMLElement, pizzaView: { el: HTMLElement }, tray: HTMLElement, actions: HTMLElement, status: HTMLElement, after: HTMLElement
+   * }} parts
+   * @returns {HTMLElement} The `main` element.
+   */
+  layout({ customer, pizzaView, tray, actions, status, after }) {
+    return el('main', { class: 'kitchen' }, customer, el('section', { class: 'kitchen__work' }, pizzaView.el, tray, actions, status, after));
+  }
+
+  /** Frees what the pizza holds (the 3D pizza holds graphics memory). */
+  exit() {
+    this.#pizzaView?.dispose?.();
+  }
+
+  /** @param {number} dt Seconds since the last frame. */
+  update(dt) {
+    this.#pizzaView?.tick?.(dt);
+  }
+
+  render() {
+    this.#pizzaView?.draw?.();
   }
 
   #coinsSoFar() {
@@ -93,7 +125,7 @@ export class KitchenScene extends PizzaScene {
     const button = el('button', {
       class: 'topping', attrs: { type: 'button', 'aria-pressed': 'false' },
       on: { click: () => { this.#topping = id; this.#syncTray(); this.services.audio.play('click'); } },
-    }, el('span', { class: 'topping__icon', text: topping.icon, attrs: { 'aria-hidden': 'true' } }), el('span', { text: topping.label }));
+    }, el('span', { class: 'topping__icon', text: topping.icon, attrs: { 'aria-hidden': 'true' } }), el('span', { class: 'topping__label', text: topping.label }));
     this.#trayButtons.set(id, button);
     return button;
   }
