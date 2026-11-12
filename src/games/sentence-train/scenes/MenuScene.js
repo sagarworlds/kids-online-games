@@ -3,6 +3,7 @@ import { el } from '../../../engine/utils/dom.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
 import { createButton } from '../../../engine/ui/Button.js';
+import { createViewToggle } from '../../../engine/three/ViewToggle.js';
 import { ICONS } from '../../../engine/ui/icons.js';
 import { LEVELS, LEVEL_IDS, SENTENCES_PER_ROUND, HINTS_PER_ROUND } from '../logic/levels.js';
 import { sentencesFor, pickSentences } from '../logic/sentences.js';
@@ -29,11 +30,18 @@ export class MenuScene extends TrainScene {
         el('span', { class: 'menu__stars', html: ICONS.star.repeat(earned) + ICONS.starEmpty.repeat(3 - earned) }));
     }));
 
+    // Only offered where the device can do 3D. The choice is remembered for next time (see `createViewChoice`).
+    const { view } = this.routes;
+    const viewEl = view.supported ? el('div', { class: 'menu__view' },
+      createViewToggle({ mode: view.mode(), onChange: (next) => { view.choose(next); this.routes.menu(); } }),
+      el('p', { class: 'menu__viewnote', text: view.mode() === '3d' ? 'In 3D view the carriages are on a toy train that rolls away when the sentence is right.' : 'In 2D view the train is a flat picture.' })) : null;
+
     this.ui.append(hud.el, el('main', { class: 'menu' },
       el('h1', { class: 'menu__title', text: 'Sentence Train' }),
       el('p', { class: 'menu__intro', text: 'The word carriages are all mixed up! Drag them behind the engine in the right order, then blow the whistle.' }),
       picker.el,
       el('p', { class: 'menu__note', text: `${SENTENCES_PER_ROUND} sentences per round, ${HINTS_PER_ROUND} hints. The first word has a capital letter and the last one has the full stop or question mark.` }),
+      viewEl,
       createButton({ label: 'All aboard', icon: '🚂', variant: 'primary', big: true, onClick: () => {
         services.audio.play('click');
         const entries = pickSentences(sentencesFor(data, levelId), services.rng);

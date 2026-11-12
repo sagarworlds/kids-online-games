@@ -47,6 +47,7 @@ export class StationScene extends TrainScene {
   #noteEl = null;
   #afterEl = null;
   #announcer = null;
+  #view = null;
 
   /** @param {import('./TrainScene.js').Round} round */
   enter(round) {
@@ -72,6 +73,40 @@ export class StationScene extends TrainScene {
     this.#handles.forEach((h) => h.destroy());
     this.#handles = [];
     this.services.speech.cancel();
+    this.#view?.dispose?.();
+  }
+
+  /**
+   * Makes the picture of the track that goes with the slots, or nothing. The 3D station overrides this. It is given the page's slot elements (which stay in the
+   * page: the carriages are dragged, tapped and moved with the keys there) and their container. What it makes may offer `show({ words, locked, wrong })` (told what
+   * is in each slot), `leave()` (told the train is leaving), `tick(dt)`, `draw()` and `dispose()`.
+   * @param {{ slots: HTMLElement[], train: HTMLElement }} options
+   * @returns {object|null}
+   */
+  createView(options) {
+    return null;
+  }
+
+  /**
+   * Puts the screen's parts together. The default is the flat station: the picture hint and help, the yard with the train, the siding, the buttons and the notes.
+   * The 3D station overrides this to put its picture of the track on top and the rest in a panel.
+   * @param {{
+   *   top: HTMLElement, yard: HTMLElement, train: HTMLElement, siding: HTMLElement, actions: HTMLElement, note: HTMLElement, status: HTMLElement,
+   *   after: HTMLElement, announcer: HTMLElement, view: object|null
+   * }} parts
+   * @returns {HTMLElement} The `main` element.
+   */
+  layout({ top, yard, siding, actions, note, status, after, announcer }) {
+    return el('main', { class: 'station' }, top, yard, siding, actions, note, status, after, announcer);
+  }
+
+  /** @param {number} dt Seconds since the last frame. */
+  update(dt) {
+    this.#view?.tick?.(dt);
+  }
+
+  render() {
+    this.#view?.draw?.();
   }
 
   // ------------------------------------------------------------------ DOM
@@ -101,12 +136,16 @@ export class StationScene extends TrainScene {
     const picture = this.#entry.emoji
       ? el('div', { class: 'station__picture', attrs: { role: 'img', 'aria-label': 'Picture hint' } }, el('span', { text: this.#entry.emoji, attrs: { 'aria-hidden': 'true' } }))
       : null;
-    this.ui.append(this.#hud.el, el('main', { class: 'station' },
-      el('div', { class: 'station__top' }, picture, el('p', { class: 'station__help', text: 'Drag the carriages behind the engine to make the sentence. You can also press Enter on a carriage.' })),
-      el('div', { class: 'station__yard' }, this.#trainEl),
-      el('section', { class: 'siding-wrap', attrs: { 'aria-label': 'Siding' } }, el('h2', { class: 'station__heading', text: 'Siding' }), this.#sidingEl),
-      el('div', { class: 'station__actions' }, this.#whistleButton, this.#hintButton),
-      this.#noteEl, this.#statusEl, this.#afterEl, this.#announcer));
+    // The yard holds the train in the flat station; a 3D picture takes the train (the slots over its track) out of it, and gives it back if 3D stops.
+    const yard = el('div', { class: 'station__yard' }, this.#trainEl);
+    this.#view = this.createView({ slots: this.#slotEls, train: this.#trainEl });
+    this.ui.append(this.#hud.el, this.layout({
+      top: el('div', { class: 'station__top' }, picture, el('p', { class: 'station__help', text: 'Drag the carriages behind the engine to make the sentence. You can also press Enter on a carriage.' })),
+      yard, train: this.#trainEl,
+      siding: el('section', { class: 'siding-wrap', attrs: { 'aria-label': 'Siding' } }, el('h2', { class: 'station__heading', text: 'Siding' }), this.#sidingEl),
+      actions: el('div', { class: 'station__actions' }, this.#whistleButton, this.#hintButton),
+      note: this.#noteEl, status: this.#statusEl, after: this.#afterEl, announcer: this.#announcer, view: this.#view,
+    }));
   }
 
   #announce(text) {
@@ -136,6 +175,7 @@ export class StationScene extends TrainScene {
       return node;
     }));
 
+    this.#view?.show?.({ words: slotWords(this.#board), locked: this.#board.locked, wrong: this.#wrongIndex });
     const full = isFull(this.#board);
     setDisabled(this.#whistleButton, !full || this.#finished);
     setDisabled(this.#hintButton, this.#hintsLeft === 0 || this.#finished);
@@ -259,6 +299,7 @@ export class StationScene extends TrainScene {
       afterLeave();
       return;
     }
+    this.#view?.leave?.();
     this.#trainEl.classList.add('is-leaving');
     this.#trainEl.addEventListener('animationend', afterLeave, { once: true });
     setTimeout(afterLeave, LEAVE_FALLBACK_MS);

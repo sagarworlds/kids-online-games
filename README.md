@@ -92,7 +92,11 @@ Done so far: **Planet Hop** (Line them up and Weigh-in; see [its README](src/gam
 **Lights Out** (jars with fireflies on a table at night, which fly away when you win; see [its README](src/games/lights-out/README.md#3d-view)) and
 **Pattern Detective** (the case file as solids on pedestals that turn, with a tap to hear each name; see [its README](src/games/pattern-detective/README.md#3d-view)) and
 **Number Ninja** (falling stars that spin and split in two when you answer; see [its README](src/games/number-ninja/README.md#3d-view)) and
-**Simon Says** (pads on a console that press down and glow, in the game and in Music Maker; see [its README](src/games/simon-says/README.md#3d-view)).
+**Simon Says** (pads on a console that press down and glow, in the game and in Music Maker; see [its README](src/games/simon-says/README.md#3d-view)) and
+**Sentence Train** (a toy train yard where the carriages roll away when the sentence is right; see [its README](src/games/sentence-train/README.md#3d-view)).
+
+That is **all twelve** of the 3D versions in the plan. Where one differs from the plan's table (no cube on Lights Out's Hard level, no cylinder in Pattern Detective, a fixed camera in
+Number Ninja and Sentence Train), its README says why.
 
 ## State machines
 
