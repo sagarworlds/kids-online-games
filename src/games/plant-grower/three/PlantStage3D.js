@@ -1,8 +1,9 @@
 import {
   Mesh, CircleGeometry, SphereGeometry, BoxGeometry, MeshLambertMaterial, MeshBasicMaterial, AmbientLight, DirectionalLight, Fog, Color,
-  InstancedMesh, Object3D, Sprite, SpriteMaterial, CanvasTexture, AdditiveBlending, Group,
+  InstancedMesh, Object3D, Group,
 } from '../../../engine/three/three.js';
 import { OrbitStage } from '../../../engine/three/OrbitStage.js';
+import { createGlowSprite } from '../../../engine/three/glow.js';
 import { approach } from '../../../engine/three/motionMath.js';
 import { el } from '../../../engine/utils/dom.js';
 import { logError } from '../../../engine/utils/errors.js';
@@ -42,20 +43,6 @@ const LIMITS = Object.freeze({ minPolar: 0.55, maxPolar: 1.5, minDistance: 5, ma
 const START_VIEW = Object.freeze({ azimuth: 0.4, polar: 1.36, distance: 9.5 });
 const TARGET = Object.freeze({ x: 0, y: 2.3, z: 0 });
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
-
-/** A soft round glow, drawn once, for the sun. @returns {Sprite} */
-function glowSprite() {
-  const canvas = document.createElement('canvas');
-  canvas.width = canvas.height = 128;
-  const ctx = canvas.getContext('2d');
-  const fade = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
-  fade.addColorStop(0.2, 'rgba(255, 230, 120, 0.95)');
-  fade.addColorStop(0.55, 'rgba(255, 190, 60, 0.35)');
-  fade.addColorStop(1, 'rgba(255, 160, 0, 0)');
-  ctx.fillStyle = fade;
-  ctx.fillRect(0, 0, 128, 128);
-  return new Sprite(new SpriteMaterial({ map: new CanvasTexture(canvas), blending: AdditiveBlending, transparent: true, depthWrite: false }));
-}
 
 /**
  * @param {{ plant: { id: string }, createFlat: () => { el: Element, update: Function }, onFallBack: () => void }} options `createFlat` makes the flat
@@ -121,7 +108,7 @@ export function createPlantStage3D({ plant, createFlat, onFallBack }) {
 
     // The sun: a ball with a glow, which crosses the sky when a day is lived.
     const sun = new Group();
-    sun.add(new Mesh(new SphereGeometry(1, 16, 12), new MeshBasicMaterial({ color: '#ffd23f' })), glowSprite());
+    sun.add(new Mesh(new SphereGeometry(1, 16, 12), new MeshBasicMaterial({ color: '#ffd23f' })), createGlowSprite());
     sun.children[1].scale.setScalar(4);
     sun.scale.setScalar(1.1);
     scene.add(sun);

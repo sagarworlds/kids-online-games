@@ -37,7 +37,7 @@ export class PuzzleScene extends LightsScene {
     this.#hud.setStat('puzzle', `${round.index + 1}/${PUZZLES_PER_ROUND}`);
     this.#hud.setStat('par', this.#state.par);
 
-    this.#board = createBoardView({ size: level.size, onTap: (r, c) => this.#onTap(r, c) });
+    this.#board = this.createBoard({ size: level.size, onTap: (r, c) => this.#onTap(r, c) });
     this.#status = el('p', { class: 'lo-status', attrs: { role: 'status' } });
     this.#buttons.undo = createButton({ label: 'Undo', icon: '↶', onClick: () => this.#apply(undo(this.#state), 'click') });
     this.#buttons.restart = createButton({ label: 'Restart', icon: '↺', onClick: () => this.#apply(restart(this.#state), 'click') });
@@ -49,11 +49,45 @@ export class PuzzleScene extends LightsScene {
     this.#overlay = el('div', { class: 'lo-solved', attrs: { role: 'dialog', 'aria-label': 'Puzzle solved' } });
     this.#overlay.hidden = true;
 
-    this.ui.append(this.#hud.el, el('main', { class: 'lo' },
-      el('div', { class: 'lo-board' }, this.#board.el, this.#overlay),
-      this.#status, controls, el('p', { class: 'lo-note', text: `Fewer taps earn more stars. ${costNote}` })));
+    this.ui.append(this.#hud.el, this.layout({
+      board: this.#board, overlay: this.#overlay, status: this.#status, controls,
+      note: el('p', { class: 'lo-note', text: `Fewer taps earn more stars. ${costNote}` }),
+    }));
     this.#render();
     this.#board.focusCell(0, 0);
+  }
+
+  /**
+   * Makes the board the child taps. The 3D puzzle overrides this; whatever it makes has to offer what `createBoardView` offers (`el`, `render`,
+   * `focusCell`), and may also offer `tick`, `draw` and `dispose` (the 3D board animates and holds graphics memory).
+   * @param {{ size: number, onTap: (r: number, c: number) => void }} options
+   */
+  createBoard(options) {
+    return createBoardView(options);
+  }
+
+  /**
+   * Puts the screen's parts together. The default is the flat puzzle: the grid of jars (with the "solved" card over it), the status line, the
+   * buttons and a note. The 3D puzzle overrides this to put the picture on top and everything else in a panel.
+   * @param {{ board: { el: HTMLElement }, overlay: HTMLElement, status: HTMLElement, controls: HTMLElement, note: HTMLElement }} parts
+   * @returns {HTMLElement} The `main` element.
+   */
+  layout({ board, overlay, status, controls, note }) {
+    return el('main', { class: 'lo' }, el('div', { class: 'lo-board' }, board.el, overlay), status, controls, note);
+  }
+
+  /** Frees what the board holds (the 3D board holds graphics memory). */
+  exit() {
+    this.#board?.dispose?.();
+  }
+
+  /** @param {number} dt Seconds since the last frame. */
+  update(dt) {
+    this.#board?.tick?.(dt);
+  }
+
+  render() {
+    this.#board?.draw?.();
   }
 
   #onTap(r, c) {
