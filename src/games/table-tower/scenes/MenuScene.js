@@ -4,6 +4,7 @@ import { createButton } from '../../../engine/ui/Button.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
 import { ICONS } from '../../../engine/ui/icons.js';
+import { createViewToggle } from '../../../engine/three/ViewToggle.js';
 import { LEVELS, LEVEL_IDS, floorsOf, floorKey, isFloorOpen, CLEAR_STARS } from '../logic/levels.js';
 import { trickFor } from '../logic/splits.js';
 import { dueKeys } from '../logic/memory.js';
@@ -41,6 +42,7 @@ export class MenuScene extends TowerBase {
         return el('li', {}, button);
       }));
       this.#drawRevision(revisionEl, levelId);
+      this.levelDrawn(levelId, cleared);
     };
 
     const picker = createLevelPicker({
@@ -50,12 +52,36 @@ export class MenuScene extends TowerBase {
     });
     draw();
 
-    this.ui.append(hud.el, el('main', { class: 'menu' },
-      el('h1', { class: 'menu__title', text: 'Table Tower' }),
-      el('p', { class: 'menu__intro', text: `Climb the tower: every floor is one times table. Get ${CLEAR_STARS} stars in a floor's Challenge to open the next floor.` }),
-      picker.el, revisionEl,
-      el('h2', { class: 'menu__heading', text: 'Choose a floor' }), towerEl));
+    // Only offered where the device can do 3D. Choosing is remembered for next time (see `createViewChoice`).
+    const { view } = this.routes;
+    const viewEl = view.supported ? el('div', { class: 'menu__view' },
+      createViewToggle({ mode: view.mode(), onChange: (next) => { view.choose(next); this.routes.menu(); } }),
+      el('p', { class: 'menu__viewnote', text: view.mode() === '3d' ? 'In 3D view you can turn the tower and see the sums as blocks.' : 'In 2D view everything is flat.' })) : null;
+
+    this.ui.append(hud.el, this.layout({
+      title: el('h1', { class: 'menu__title', text: 'Table Tower' }),
+      intro: el('p', { class: 'menu__intro', text: `Climb the tower: every floor is one times table. Get ${CLEAR_STARS} stars in a floor's Challenge to open the next floor.` }),
+      picker: picker.el, view: viewEl, revision: revisionEl,
+      heading: el('h2', { class: 'menu__heading', text: 'Choose a floor' }), tower: towerEl,
+    }));
   }
+
+  /**
+   * Arranges the screen's parts. The 3D version overrides this to put a 3D tower beside (or above) them.
+   * @param {{ title: HTMLElement, intro: HTMLElement, picker: HTMLElement, view: HTMLElement|null, revision: HTMLElement, heading: HTMLElement, tower: HTMLElement }} parts
+   * @returns {HTMLElement}
+   */
+  layout({ title, intro, picker, view, revision, heading, tower }) {
+    return el('main', { class: 'menu' }, title, intro, picker, view, revision, heading, tower);
+  }
+
+  /**
+   * Called each time the tower's floors are drawn (and when the level is changed): the 3D version updates its picture from this.
+   * @param {'easy'|'medium'|'hard'} levelId
+   * @param {ReadonlySet<number>} cleared The floors cleared so far.
+   */
+  levelDrawn(levelId, cleared) {}
+
 
   /** The level to show first: the one with the highest floor cleared so far, so a returning child lands where they were. */
   #startLevel() {

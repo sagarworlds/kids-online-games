@@ -41,6 +41,35 @@ for review, and much less than one just missed (11 against 4 against 1). Days ar
 
 Damaged saved data never stops the game: a bad entry is dropped by itself and named in the console.
 
+## 3D view
+
+On a device that can do WebGL 2 the menu and the "split the sum" lesson are 3D. A **3D view / 2D view** button on the menu
+switches and remembers the choice. The floors, the rules for which are open, the lessons, the Ladder, the Challenge, the stars and
+the revision memory are the same code as 2D (the 3D scenes extend `MenuScene` and `LearnScene` through small hooks), so the same
+play opens the same floors and earns the same stars.
+
+- **The tower** has one floor for each times table of the chosen level. A floor you have cleared is built (green, with
+  windows and a ✓ by its number); the floor you are working on is gold with a flag; the floors still to come are empty frames, so
+  you can see how tall the tower will be. **The camera climbs** up to the floor being worked on when the menu opens or the level
+  changes. Turn it with a finger, the mouse or the arrow keys; "Current floor" and "Whole tower" move the camera for you. **Tap a
+  floor** in the picture to open it (a locked one says why). The list of floors below the picture still works and is the way for
+  keyboard and screen-reader players.
+- **The slabs** (Learn, "Split the sum into easy parts") draw each part of the table as a slab of squares as wide as the part and
+  as deep as the number of rows: 17 × 6 is a 10 × 6 slab beside a 7 × 6 slab, with the sum written on each and the working written
+  under the picture. Choose the rows with the numbers as before; turn the picture to look at the slabs from any side.
+- **If 3D cannot run**: no WebGL 2 means the menu offers no 3D toggle; if a 3D file will not load, the 2D screen opens; if the menu's
+  3D fails to start or the graphics are lost, the 2D menu opens; if the slabs cannot start or the graphics are lost *in the middle of
+  a lesson*, that card is simply drawn flat again, from the same place, and stays flat for the rest of the visit. That only lasts for
+  the visit; it does not change the saved choice.
+- **On a phone** the tower (and the slabs) take at least 45% of the screen's height; the list of floors scrolls under the tower, the
+  page does not; on its side the list sits beside the tower. With "less motion" the camera cuts instead of climbing or gliding, the
+  current floor does not breathe, and the slabs appear without rising. three.js is loaded with `import()` only when a 3D screen
+  opens, so the 2D game and the home page never download it.
+
+Files: `logic/tower3d.js` (floor positions, which floors are built, the climbing camera) and `logic/slabs3d.js` (the slab layout and
+camera), both unit-tested in `tests/table-tower/tower3d.test.js`; and `three/` (`TowerView3D`, `SlabView3D`, `Menu3DScene`,
+`Learn3DScene`). The slab pictures are drawn on a canvas (the grid of squares), at most 480 pixels wide.
+
 ## How it is built
 
 - `logic/` is pure (no DOM, storage, timers or `Math.random`; a seeded `rng` and today's day number are passed in):
