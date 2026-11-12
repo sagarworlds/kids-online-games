@@ -19,6 +19,37 @@ Stars for a trip: 3 stars for 9 or 10 right, 2 stars for 7 or 8, 1 star otherwis
 Keys **1–4** pick an answer. On the map, drag to move, use the mouse wheel, pinch or the **＋ / －** buttons to zoom,
 and the arrow keys to pan. Every map question has a **Choose from a list instead** button for keyboard and screen-reader players.
 
+## 3D view
+
+On a device that can do WebGL 2 the world map and every trip use a **globe**. A **3D view / 2D view** button on the hub
+switches and remembers the choice. The questions, answers, progress, stamps and stars are the same code as 2D (the 3D
+scenes extend the 2D `WorldScene` and `TripScene`, replacing only the map), so the same play earns the same stars.
+
+- **Spin and zoom:** one finger or the mouse spins the globe (it turns slowly when zoomed in, so the surface follows the
+  finger), two fingers or the wheel zoom, the arrow keys and + / − do both while the picture has focus, and the **＋ − ⤢**
+  buttons (in the corner of the picture) zoom and go back to the whole area. A trip starts turned to its continent.
+- **After an answer** the globe turns to the country, which turns orange with its name beside it, and on a right answer a
+  **plane flies the shortest route over the surface** (a great circle: why routes look curved on a flat map) and parks over it.
+- **Explored countries** are coloured green as in 2D **and** get a gold pin, so "visited" is not told by colour alone.
+- **Tap a country** on a map question: a tap on the globe is turned into a point on the flat map and tested against the real
+  outline of each country, with the same enlarged tap circle for tiny countries as in 2D. "Choose from a list instead" is
+  still there for keyboard and screen-reader players.
+- **On a phone** the globe is at least 45% of the screen's height (the hub, and a trip held upright); on its side the
+  globe fills the left half. On a very short phone (under 760 px tall) the answers keep their room and the globe is a bit
+  smaller, so the answers are never pushed out of reach. Every button is at least 48 px. With "less motion" the globe
+  turns without gliding and the plane is simply there.
+- **If 3D cannot run** (no WebGL 2, a 3D file failing to load, the scene failing to start, or the graphics being lost) the
+  2D screen opens with no error screen; a trip carries on from the same question. A slow connection shows "Getting the
+  globe ready" instead of a blank page. That only lasts for the visit; it does not change the saved choice.
+- The world picture on the globe is drawn in code from `assets/world.svg` on a canvas, 2048 px wide (1024 px on a weak
+  device). That is larger than the 512 px the other 3D versions keep to, on purpose (see `docs/SPEC.md`). three.js is loaded
+  with `import()` only when a 3D screen opens, so the 2D game and the home page never download it.
+
+Files: `logic/globe.js` (where a place on the flat map is on the sphere, which way the camera faces it, how far back it
+stands to see a continent, the plane's route; unit-tested in `tests/flag-capital-quest/globe.test.js`), and `three/`
+(`GlobeMap` is the globe with the same interface as the 2D `WorldMap`, `globeSkin` draws its picture and finds the country
+at a point, `globeParts` builds the plane and pins, `Trip3DScene` and `World3DScene` are the two screens).
+
 ## How it works
 
 - `logic/` holds the rules and has no DOM, storage, timers or `Math.random` (an injected `rng` is used): projection, pan and

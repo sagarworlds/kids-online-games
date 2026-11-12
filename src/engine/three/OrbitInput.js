@@ -20,6 +20,7 @@ export class OrbitInput {
 
   #element;
   #limits;
+  #speed;
   #onChange;
   #onTap;
   #pointers = new Map();
@@ -33,13 +34,16 @@ export class OrbitInput {
    *   orbit: import('./orbitMath.js').Orbit,
    *   limits: import('./orbitMath.js').OrbitLimits,
    *   target?: { x: number, y: number, z: number },
+   *   speed?: number | ((orbit: import('./orbitMath.js').Orbit) => number),
    *   onChange?: () => void,
    *   onTap?: (point: { clientX: number, clientY: number }) => void
-   * }} options `element` is usually `stage.canvas`.
+   * }} options `element` is usually `stage.canvas`. `speed` is how far a drag as tall as the view turns the camera, in
+   *   radians (default PI); a function lets a globe turn slowly when zoomed in, so the surface follows the finger.
    */
-  constructor({ element, orbit, limits, target, onChange, onTap }) {
+  constructor({ element, orbit, limits, target, speed = Math.PI, onChange, onTap }) {
     this.#element = element;
     this.#limits = limits;
+    this.#speed = speed;
     this.orbit = clampOrbit(orbit, limits);
     if (target) this.target = { ...target };
     this.#onChange = onChange ?? (() => {});
@@ -119,7 +123,8 @@ export class OrbitInput {
     this.#moved += Math.abs(dx) + Math.abs(dy);
     if (this.#moved <= TAP_SLOP) return;
     const viewHeight = this.#element.getBoundingClientRect().height;
-    this.orbit = rotateOrbit(this.orbit, dx, dy, { viewHeight, limits: this.#limits });
+    const speed = typeof this.#speed === 'function' ? this.#speed(this.orbit) : this.#speed;
+    this.orbit = rotateOrbit(this.orbit, dx, dy, { viewHeight, limits: this.#limits, speed });
     this.#onChange();
   }
 

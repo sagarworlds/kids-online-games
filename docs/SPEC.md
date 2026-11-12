@@ -248,7 +248,7 @@ Twelve games have a 3D version drawn with three.js. The 2D version of every game
 
 - Touch first: one finger turns, two fingers zoom, a tap selects. Nothing depends on a mouse, hover or keyboard. Every game action also has a visible button at least 48 x 48 px.
 - Layout: on a narrow portrait screen the 3D view goes on top (at least 45% of the height) with the controls below; in landscape the controls go beside it. No page scrolling during play.
-- Light scenes: low-poly shapes built in code (no model files), `MeshLambertMaterial` or `MeshBasicMaterial`, at most 3 lights, no shadow maps (use a flat "blob" under objects if needed), textures drawn on a canvas at most 512 px.
+- Light scenes: low-poly shapes built in code (no model files), `MeshLambertMaterial` or `MeshBasicMaterial`, at most 3 lights, no shadow maps (use a flat "blob" under objects if needed), textures drawn on a canvas at most 512 px. The one exception is a world-map texture (Flag & Capital Quest): a map with hundreds of countries needs 1024 px (weak devices) or 2048 px (capable ones), drawn once.
 - `pickQuality()` decides pixel ratio and antialiasing; use `stage.quality.detail` to halve segment and object counts on weak devices.
 - Free what you create: `stage.dispose()` on exit, and `disposeObject()` for anything removed during play.
 - Respect `prefers-reduced-motion`: no camera shake, fly-throughs become cuts, spinning stops.

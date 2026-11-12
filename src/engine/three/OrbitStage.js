@@ -35,13 +35,14 @@ export class OrbitStage {
    *   orbit: import('./orbitMath.js').Orbit | ((stage: Stage3D) => import('./orbitMath.js').Orbit),
    *   limits: import('./orbitMath.js').OrbitLimits,
    *   target?: Point,
+   *   speed?: number | ((orbit: import('./orbitMath.js').Orbit) => number),
    *   onContextLost: () => void,
    *   onTap?: (point: { clientX: number, clientY: number }) => void
    * }} options `container` is an element with a size from CSS. `label` is what a screen reader says about the picture.
    *   `orbit` may be a function of the new stage, for a starting distance that depends on the view's shape.
    * @throws {import('../utils/errors.js').GameError} 'WEBGL_UNAVAILABLE' (from `Stage3D`).
    */
-  constructor({ container, label, background = null, fov = 50, near = 0.05, far = 400, orbit, limits, target = { x: 0, y: 0, z: 0 }, onContextLost, onTap }) {
+  constructor({ container, label, background = null, fov = 50, near = 0.05, far = 400, orbit, limits, target = { x: 0, y: 0, z: 0 }, speed, onContextLost, onTap }) {
     this.stage = new Stage3D({ container, background, fov, near, far, label, onContextLost });
     try {
       this.input = new OrbitInput({
@@ -49,6 +50,7 @@ export class OrbitStage {
         orbit: typeof orbit === 'function' ? orbit(this.stage) : orbit,
         limits,
         target,
+        speed,
         // The child took the camera: whatever view it was gliding to is no longer wanted.
         onChange: () => { this.#goal = null; },
         onTap,
@@ -79,6 +81,18 @@ export class OrbitStage {
    */
   glideTo(goal) {
     this.#goal = goal;
+  }
+
+  /**
+   * Puts the camera at a view at once, with no glide (the first view of a screen, or a child who asked for less motion).
+   * Angles left out keep the current ones.
+   * @param {CameraGoal} goal
+   */
+  snapTo(goal) {
+    this.#goal = null;
+    const { orbit } = this.input;
+    this.input.orbit = { azimuth: goal.azimuth ?? orbit.azimuth, polar: goal.polar ?? orbit.polar, distance: goal.distance };
+    this.input.target = { ...goal.target };
   }
 
   /**
