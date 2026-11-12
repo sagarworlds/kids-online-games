@@ -185,7 +185,76 @@
 .rank__next { color: var(--ink-soft); font-weight: 700; }
 .result__actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
 
+/* ---------- 3D view (three.js) ---------- */
+
+/* The picture on top and the controls below on a phone held upright; side by side on a wide screen. The picture is
+   always at least 45% of the screen's height, and only the controls scroll (never the page). */
+.scene3d { flex: 1 1 auto; min-height: 0; width: 100%; display: flex; flex-direction: column; }
+.scene3d__stage { flex: 0 0 max(50%, 46dvh); min-height: 220px; background: #070b24; border-bottom: 4px solid var(--ink); }
+.scene3d__panel { flex: 1 1 0; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 8px 12px 20px; text-align: center; }
+/* Controls keep their own height and the panel scrolls: left to shrink, they would slide over one another. */
+.scene3d__panel > * { flex: none; }
+@media (orientation: landscape) and (min-width: 700px) {
+  .scene3d { flex-direction: row; }
+  .scene3d__stage { flex: 1 1 0; min-height: 0; border-bottom: 0; border-right: 4px solid var(--ink); }
+  .scene3d__panel { flex: 0 0 min(44%, 440px); }
+}
+.menu__view { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.menu__viewnote { margin: 0; color: var(--ink-soft); font-size: 0.95rem; }
+
+/* Line them up, 3D: smaller tiles and a 4 x 2 block of orbit buttons, so the controls fit under the picture. */
+.scene3d .lineup__status { min-height: 2.4em; font-size: 0.95rem; }
+.scene3d .pool { min-height: 0; padding: 0; gap: 6px; }
+.scene3d .tile { flex: 0 0 calc(25% - 5px); min-height: 60px; padding: 2px; font-size: 0.75rem; }
+.scene3d .tile__art { width: 38px; height: 38px; overflow: hidden; }
+/* On a narrow phone the planet in hand stays and the rest wait out of sight, so the orbit buttons are in view. */
+@media (max-width: 600px) { .scene3d__panel.has-pick .tile:not(.is-selected) { display: none; } .scene3d__panel.has-pick .pool { justify-content: flex-start; } }
+.orbits3d { width: 100%; padding: 6px; color: #fff; background: #111a45; border: 3px solid var(--ink); border-radius: 16px; }
+.orbits3d__sun { margin: 0 0 4px; font-size: 0.85rem; font-weight: 800; }
+.orbits3d .slots { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+.orbits3d .slot { min-height: 56px; padding: 2px; border-width: 2px; border-radius: 12px; }
+.orbits3d .slot__orbit { width: 36px; height: 36px; margin-top: 2px; border-width: 1px; overflow: hidden; }
+.orbits3d .slot__number { top: 2px; left: 2px; width: 20px; height: 20px; font-size: 0.75rem; }
+.orbits3d .slot__name { font-size: 0.7rem; }
+
+/* Weigh-in, 3D: a compact card, a scale bar and a grid of places. */
+.weigh3d .weigh__who p { font-size: 1rem; }
+.weigh3d__card { width: 100%; max-width: 520px; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 12px; background: #fff; border: 3px solid var(--ink); border-radius: 16px; box-shadow: var(--shadow); }
+.weigh3d__card p { margin: 0; }
+.weigh3d__headline { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; gap: 0 12px; }
+.weigh3d__card .weigh__name { margin: 0; font-size: 1.3rem; }
+.weigh3d__card .weigh__felt { font-size: 1.15rem; }
+.weigh3d__jumprow { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; }
+.weigh3d__more { display: flex; flex-direction: column; gap: 4px; max-width: 36rem; }
+.weigh3d__more p { margin: 0; }
+.weigh3d__more .weigh__fact { font-size: 0.9rem; }
+.meter { width: 100%; height: 16px; background: #fffdf3; border: 3px solid var(--ink); border-radius: 999px; overflow: hidden; }
+.meter__fill { display: block; height: 100%; background: var(--primary); transition: width 0.7s cubic-bezier(0.34, 1.2, 0.64, 1); }
+.weigh3d__jump { margin: 0; min-height: 2.6em; max-width: 30rem; font-weight: 800; }
+.stops3d { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 6px; width: 100%; }
+.stop3d {
+  position: relative; display: flex; align-items: center; gap: 6px; min-height: 48px; padding: 4px 8px; font: inherit; font-weight: 700; color: var(--ink);
+  background: #fff; border: 3px solid var(--ink); border-radius: 14px; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+}
+.stop3d:active { transform: translateY(2px); }
+.stop3d:focus-visible { outline: 4px solid var(--primary); outline-offset: 2px; }
+.stop3d.is-visited { background: var(--good-bg); }
+/* The place the rocket is at gets a rocket and a thick outline, so it is not marked by colour alone. */
+.stop3d.is-here { border-width: 5px; padding: 2px 6px; }
+.stop3d.is-here::after { content: '🚀'; content: '🚀' / ''; position: absolute; top: -12px; right: -4px; font-size: 1.1rem; }
+.stop3d .planet { flex: none; margin: 0 6px 0 5px; } /* leaves room for Saturn's ring, which sticks out past its picture */
+.stop3d__name { text-align: left; }
+.stop3d__done { margin-left: auto; color: var(--good); }
+/* On a phone three places fit across, so the picture goes above the name and the names are never cut off. */
+@media (max-width: 600px) {
+  .stops3d { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .stop3d { flex-direction: column; justify-content: center; gap: 0; min-height: 56px; padding: 2px 4px; font-size: 0.8rem; line-height: 1.1; }
+  .stop3d .planet { margin: 0; }
+  .stop3d__name { text-align: center; }
+  .stop3d__done { position: absolute; top: 2px; right: 6px; margin: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .orbiter, .slot.is-wrong, .weigh__card.is-hopping { animation: none; }
-  .scale__needle { transition: none; }
+  .scale__needle, .meter__fill { transition: none; }
 }

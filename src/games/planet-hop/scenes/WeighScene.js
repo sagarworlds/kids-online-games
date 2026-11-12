@@ -5,15 +5,15 @@ import { prefersReducedMotion } from '../../../engine/utils/motion.js';
 import { createButton } from '../../../engine/ui/Button.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { ICONS } from '../../../engine/ui/icons.js';
-import { LEVELS, MYSTERY_QUESTIONS, MIN_STOPS_BEFORE_MYSTERY } from '../logic/levels.js';
-import { parseWeight, feltWeight, explainWeight, formatKg, MIN_KG, MAX_KG } from '../logic/weight.js';
-import { buildMystery, sameGravity } from '../logic/mystery.js';
+import { LEVELS, MIN_STOPS_BEFORE_MYSTERY } from '../logic/levels.js';
+import { parseWeight, feltWeight, explainWeight, formatKg } from '../logic/weight.js';
 import { createSizer, dialMax } from '../logic/scale.js';
 import { questionStars, questionScore } from '../logic/scoring.js';
 import { createPlanetArt } from '../ui/PlanetArt.js';
-import { createQuestionPanel } from '../ui/QuestionPanel.js';
 import { createScaleView } from '../ui/ScaleView.js';
 import { createSizeToggle } from '../ui/SizeToggle.js';
+import { createWeightSetup } from '../ui/WeightSetup.js';
+import { createMissionCheck } from '../ui/MissionCheck.js';
 
 /** The rocket starts at home, which is the place in the data with this id. */
 const HOME_ID = 'earth';
@@ -44,14 +44,11 @@ export class WeighScene extends HopScene {
   #checkSlot = null;
   #stopButtons = new Map();
   #hopTimer = 0;
-  #questions = [];
-  #index = 0;
-  #correct = 0;
   #panel = null;
   #off = null;
 
-  /** @param {{ levelId: 'easy'|'medium'|'hard' }} params */
-  enter({ levelId }) {
+  /** @param {{ levelId: 'easy'|'medium'|'hard', resume?: { kg: number, who: string } }} params `resume` skips the weight question (see `PlayChoice`). */
+  enter({ levelId, resume }) {
     const { services, data } = this;
     if (!LEVELS[levelId]) throw new GameError('BAD_LEVEL', `Unknown level "${levelId}"`, { levelId });
     this.#levelId = levelId;
@@ -67,7 +64,8 @@ export class WeighScene extends HopScene {
     this.#host = el('main', { class: 'weigh' });
     this.ui.append(this.#hud.el, this.#host);
     this.#off = services.input.on('key', (event) => this.#panel?.handleKey(event));
-    this.#showSetup();
+    if (resume) this.#start(parseWeight(resume.kg), String(resume.who));
+    else this.#showSetup();
   }
 
   exit() {
@@ -79,51 +77,11 @@ export class WeighScene extends HopScene {
 
   #showSetup() {
     this.#panel = null;
-    const presets = el('div', { class: 'presets', attrs: { role: 'group', 'aria-label': 'Things to weigh' } },
-      ...this.data.presets.map((preset) => el('button', {
-        class: 'preset', attrs: { type: 'button', 'aria-label': preset.label }, on: { click: () => this.#start(preset.kg, preset.label) },
-      }, el('span', { class: 'preset__icon', text: preset.icon, attrs: { 'aria-hidden': 'true' } }), el('span', { text: preset.label }))));
-    const privacy = el('p', { class: 'setup__privacy', text: 'Your weight is only used while you play. It is never saved.' });
-
-    if (!this.#config.ownWeight) {
-      this.#host.replaceChildren(el('section', { class: 'setup' },
-        el('h1', { text: 'What shall we weigh?' }),
-        el('p', { text: 'Pick something, then hop from planet to planet to see how heavy it would feel.' }), presets, privacy));
-      return;
-    }
-
-    const error = el('p', { class: 'setup__error', attrs: { role: 'alert' } });
-    error.hidden = true;
-    const input = el('input', {
-      class: 'setup__input',
-      attrs: { id: 'weight', type: 'text', inputmode: 'decimal', autocomplete: 'off', 'aria-describedby': 'weight-help weight-error', maxlength: 6 },
+    const setup = createWeightSetup({
+      ownWeight: this.#config.ownWeight, presets: this.data.presets, onStart: (kg, who) => this.#start(kg, who),
     });
-    error.id = 'weight-error';
-    const form = el('form', { class: 'setup__form', attrs: { novalidate: true }, on: { submit: (event) => {
-      event.preventDefault();
-      this.#submitWeight(input, error);
-    } } },
-    el('label', { class: 'setup__label', attrs: { for: 'weight' }, text: 'Your weight in kilograms' }),
-    el('p', { class: 'setup__help', attrs: { id: 'weight-help' }, text: `A number from ${MIN_KG} to ${MAX_KG}` }),
-    el('div', { class: 'setup__row' }, input, createButton({ label: 'Start hopping', icon: '🚀', variant: 'primary', big: true, onClick: () => this.#submitWeight(input, error) })),
-    error);
-    this.#host.replaceChildren(el('section', { class: 'setup' },
-      el('h1', { text: 'How heavy are you?' }), form, el('p', { class: 'setup__or', text: 'Or try something else:' }), presets, privacy));
-    input.focus();
-  }
-
-  /** Reads the box. A weight that cannot be used is explained on the spot; anything unexpected is not hidden. */
-  #submitWeight(input, errorEl) {
-    try {
-      const kg = parseWeight(input.value);
-      this.#start(kg, 'You');
-    } catch (error) {
-      if (!(error instanceof GameError) || error.code !== 'BAD_WEIGHT') throw error;
-      errorEl.textContent = error.message;
-      errorEl.hidden = false;
-      input.setAttribute('aria-invalid', 'true');
-      input.focus();
-    }
+    this.#host.replaceChildren(setup.el);
+    setup.focus();
   }
 
   #start(kg, who) {
@@ -253,45 +211,18 @@ export class WeighScene extends HopScene {
 
   #startMystery() {
     const { services, data } = this;
-    this.#questions = buildMystery({ bodies: data.stops, kg: this.#kg, count: MYSTERY_QUESTIONS, optionCount: this.#config.options, rng: services.rng });
-    this.#index = 0;
-    this.#correct = 0;
-    this.#showQuestion();
-  }
-
-  #showQuestion() {
-    const { services, data } = this;
-    const question = this.#questions[this.#index];
-    const lookup = new Map(data.stops.map((b) => [b.id, b]));
-    const last = this.#index + 1 >= this.#questions.length;
-    this.#hud.setStat('mission', `${this.#index + 1}/${this.#questions.length}`);
-
-    this.#panel = createQuestionPanel({
-      prompt: `You would weigh ${formatKg(question.felt)} on a mystery place. Which place is it?`,
-      options: question.optionIds.map((id) => ({ id, label: lookup.get(id).name, art: createPlanetArt(lookup.get(id), { diameter: 56 }) })),
-      judge: (chosenId) => {
-        const answer = lookup.get(question.answerId);
-        const correct = chosenId === question.answerId;
-        if (correct) this.#correct += 1;
-        services.audio.play(correct ? 'ding' : 'boop');
-        const twins = sameGravity(data.stops, answer).map((b) => b.name);
-        const sum = `${formatKg(this.#kg)} × ${answer.gravity} = ${formatKg(question.felt)}`;
-        const message = `${correct ? 'Yes!' : 'Not quite.'} ${correct ? `It is ${answer.name}` : `The answer is ${answer.name}`}: ${sum}.${twins.length ? ` ${twins.join(' and ')} pulls just the same.` : ''}`;
-        services.speech.speak(message);
-        return { correct, answerId: question.answerId, message };
-      },
-      nextLabel: last ? 'See my results' : 'Next question',
-      onNext: () => (last ? this.#finish() : (this.#index += 1, this.#showQuestion())),
+    this.#panel = createMissionCheck({
+      services, stops: data.stops, kg: this.#kg, who: this.#who, optionCount: this.#config.options,
+      onProgress: (done, total) => this.#hud.setStat('mission', `${done}/${total}`),
+      onFinish: (result) => this.#finish(result),
     });
-    this.#host.replaceChildren(el('section', { class: 'mission' },
-      el('p', { class: 'mission__who', text: `Mission check: ${this.#who === 'You' ? 'your' : `${this.#who}'s`} weight on Earth is ${formatKg(this.#kg)}.` }),
-      this.#panel.el));
+    this.#host.replaceChildren(this.#panel.el);
   }
 
-  #finish() {
+  #finish({ correct, total }) {
     this.routes.results({
-      mode: 'weigh', levelId: this.#levelId, stars: questionStars(this.#correct, this.#questions.length), score: questionScore(this.#correct),
-      lines: [`${this.#correct} of ${this.#questions.length} mystery places found.`, `You hopped to ${this.#visited.size} ${this.#visited.size === 1 ? 'place' : 'places'}.`],
+      mode: 'weigh', levelId: this.#levelId, stars: questionStars(correct, total), score: questionScore(correct),
+      lines: [`${correct} of ${total} mystery places found.`, `You hopped to ${this.#visited.size} ${this.#visited.size === 1 ? 'place' : 'places'}.`],
     });
   }
 }

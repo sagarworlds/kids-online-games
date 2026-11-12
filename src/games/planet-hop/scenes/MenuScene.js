@@ -2,6 +2,7 @@ import { HopScene } from './HopScene.js';
 import { el } from '../../../engine/utils/dom.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
+import { createViewToggle } from '../../../engine/three/ViewToggle.js';
 import { ICONS } from '../../../engine/ui/icons.js';
 import { LEVELS, LEVEL_IDS, MODES, MODE_IDS, levelKey } from '../logic/levels.js';
 import { rankFor } from '../logic/scoring.js';
@@ -36,12 +37,18 @@ export class MenuScene extends HopScene {
     });
     drawModes();
 
+    // Only offered where the device can do 3D. Choosing is remembered for next time (see `createViewChoice`).
+    const { view } = this.routes;
+    const viewEl = view.supported ? el('div', { class: 'menu__view' },
+      createViewToggle({ mode: view.mode(), onChange: (next) => { view.choose(next); this.routes.menu(); } }),
+      el('p', { class: 'menu__viewnote', text: view.mode() === '3d' ? 'In 3D view: Line them up and Weigh-in. The quiz stays flat.' : 'In 2D view: everything is flat.' })) : null;
+
     const total = services.rewards.starsFor(services.game.slug);
     const { rank, next, starsToNext } = rankFor(total);
     this.ui.append(hud.el, el('main', { class: 'menu' },
       el('h1', { class: 'menu__title', text: 'Planet Hop' }),
       el('p', { class: 'menu__intro', text: 'Put the planets in order, find out how heavy you would feel on each one, and test what you know!' }),
       el('p', { class: 'menu__rank' }, el('strong', { text: `Rank: ${rank.label}` }), next ? ` (${starsToNext} more ${starsToNext === 1 ? 'star' : 'stars'} to ${next.label})` : ' (the top rank!)'),
-      picker.el, modesEl));
+      picker.el, modesEl, viewEl));
   }
 }
