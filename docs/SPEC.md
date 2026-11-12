@@ -279,6 +279,8 @@ Twelve games have a 3D version drawn with three.js. The 2D version of every game
 
 Each game's README describes its 3D view, its controls and anything that differs from this table.
 
+**Status:** all twelve are built. The differences from this table, each explained in the game's README: **Lights Out** has no cube on Hard (it would change the puzzle's rules, so 2D and 3D would no longer earn the same stars); **Pattern Detective** has no cylinder (no case uses a shape that would become one); **Number Ninja** and **Sentence Train** have a fixed camera (a falling game, and a game of dragging onto slots, must not be turned).
+
 **Definition of done (3D version)**
 
 - [ ] The 2D version still works unchanged and is reachable with the view toggle

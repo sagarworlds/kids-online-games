@@ -10,9 +10,11 @@ import { Scene } from '../../../engine/Scene.js';
  * @typedef {{
  *   menu: () => void,
  *   play: (round: Round) => void,
- *   results: (round: Round) => void
+ *   results: (round: Round) => void,
+ *   view: { supported: boolean, mode: () => '3d'|'2d', choose: (mode: '3d'|'2d') => void, fallBack: () => void }
  * }} Routes
- * Navigation between this game's scenes, built in `main.js` so scenes never import each other.
+ * Navigation between this game's scenes, built in `main.js` so scenes never import each other. `view` is the child's choice of 3D or 2D
+ * (see `engine/three/view.js`).
  */
 
 /** Base for Sentence Train's scenes: a Scene that can navigate and knows the sentences. */
