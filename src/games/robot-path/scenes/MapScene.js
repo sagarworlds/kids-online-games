@@ -2,6 +2,7 @@ import { RobotScene } from './RobotScene.js';
 import { el } from '../../../engine/utils/dom.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { ICONS } from '../../../engine/ui/icons.js';
+import { createViewToggle } from '../../../engine/three/ViewToggle.js';
 import { levelKey } from '../logic/levels.js';
 import { levelStatus, summarise, worldForLock } from '../logic/progress.js';
 
@@ -52,10 +53,17 @@ export class MapScene extends RobotScene {
           el('ul', { class: 'levels' }, ...buttons));
       });
 
+    // Only offered where the device can do 3D. Choosing is remembered for next time (see `createViewChoice`).
+    const { view } = this.routes;
+    const viewEl = view.supported ? el('div', { class: 'map__view' },
+      createViewToggle({ mode: view.mode(), onChange: (next) => { view.choose(next); this.routes.map(); } }),
+      el('p', { class: 'map__viewnote', text: view.mode() === '3d' ? 'In 3D view you can turn the board and ride behind the robot.' : 'In 2D view the board is flat.' })) : null;
+
     const main = el('main', { class: 'map' },
       el('h1', { text: 'Robot Path' }),
       el('p', { class: 'map__summary', text: `${totals.stars} of ${totals.maxStars} stars · ${totals.completed} of ${data.levels.length} levels done` }),
       lockedWorld !== null ? el('p', { class: 'lock-note', text: `🔒 A grown-up has set this to World ${lockedWorld}.` }) : null,
+      viewEl,
       message,
       ...sections);
     this.ui.append(hud.el, main);
