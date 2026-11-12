@@ -60,6 +60,32 @@ different whole numbers above zero, shuffled. The test checks every fact from 2 
 - The "vroom" and tyre "squeak" are synthesised like the game's other sounds, so there are no audio files.
 - The clock includes the second spent looking at a wrong answer: that is the cost of a mistake.
 
+## 3D view
+
+On a device that can do WebGL 2 the race track is 3D by default. A **3D view / 2D view** button on the menu switches and
+remembers the choice. The questions, answers, clock, ghost, stars and saved best run are the same code as 2D (the 3D race is the
+2D `RaceScene` with only its track drawing swapped, through three small hooks), so the same race earns the same stars.
+
+- **Seen from behind your car** on a two-lane road: you are the red car in the right lane. The **ghost** is the same car drawn
+  see-through, in the left lane, with a "Ghost" tag over it (so it is told apart by more than its grey colour). One post stands
+  for each of the 20 questions and a chequered gate marks the finish.
+- **A right answer** gives a rush of speed: the view widens for a moment, a flame shows at the back and white streaks rush past.
+- **A wrong answer** sways your car and puts a ✖ over it while the fact is shown, as in 2D.
+- **The camera keeps both cars in view**: it backs away and climbs a little when the ghost is far ahead or far behind, and stands
+  farther back on a narrow phone so both lanes fit across the picture.
+- Everything the picture shows is also in the page (the question, "Done n/20", the time), so nothing depends on seeing it. With
+  "less motion" the car does not sway, there is no flame, streaks or widening, and the wheels do not turn.
+- **If 3D cannot run**: no WebGL 2 means the menu offers no 3D toggle; if the 3D file will not load the 2D race opens; if 3D fails
+  to start, or the graphics are lost *in the middle of a race*, the race is not restarted: it carries on with the 2D track from
+  the same place. That only lasts for the visit; it does not change the saved choice.
+- **On a phone** the track is at least 45% of the height on a 390 × 844 screen (on a 360 × 640 screen the three-row header
+  leaves it about 31%). The page does not scroll and every button is at least 48 px. three.js is loaded with `import()` only when
+  a 3D race starts, so the 2D game and the home page never download it.
+
+Files: `logic/track3d.js` (road geometry, the camera that watches from behind and keeps the ghost in view, the wobble;
+unit-tested in `tests/times-table-racing/track3d.test.js`) and `three/` (`TrackView3D` is the picture, drawn from the same state
+object as the 2D `drawTrack`; `trackModels` builds the road, scenery and cars; `Race3DScene` is the race with the 3D track).
+
 ## File map
 
 ```

@@ -84,7 +84,8 @@ the "3D versions (Three.js)" section of [`docs/SPEC.md`](docs/SPEC.md).
 
 Done so far: **Planet Hop** (Line them up and Weigh-in; see [its README](src/games/planet-hop/README.md#3d-view)) and
 **Robot Path** (the whole puzzle, with a robot's-eye camera; see [its README](src/games/robot-path/README.md#3d-view)) and
-**Flag & Capital Quest** (a globe to spin, with a plane that flies to each country; see [its README](src/games/flag-capital-quest/README.md#3d-view)).
+**Flag & Capital Quest** (a globe to spin, with a plane that flies to each country; see [its README](src/games/flag-capital-quest/README.md#3d-view)) and
+**Times-Table Racing** (the track seen from behind your car, with a see-through ghost; see [its README](src/games/times-table-racing/README.md#3d-view)).
 
 ## State machines
 
