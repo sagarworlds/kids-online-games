@@ -90,7 +90,8 @@ Done so far: **Planet Hop** (Line them up and Weigh-in; see [its README](src/gam
 **Plant Grower** (a plant in a pot you can turn, with a sun that crosses the sky and rain you can see; see [its README](src/games/plant-grower/README.md#3d-view)) and
 **Pizza Fractions** (a round pizza whose topped slices lift, with toppings that sit on them; see [its README](src/games/pizza-fractions/README.md#3d-view)) and
 **Lights Out** (jars with fireflies on a table at night, which fly away when you win; see [its README](src/games/lights-out/README.md#3d-view)) and
-**Pattern Detective** (the case file as solids on pedestals that turn, with a tap to hear each name; see [its README](src/games/pattern-detective/README.md#3d-view)).
+**Pattern Detective** (the case file as solids on pedestals that turn, with a tap to hear each name; see [its README](src/games/pattern-detective/README.md#3d-view)) and
+**Number Ninja** (falling stars that spin and split in two when you answer; see [its README](src/games/number-ninja/README.md#3d-view)).
 
 ## State machines
 
