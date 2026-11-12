@@ -4,6 +4,7 @@ import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
 import { createButton } from '../../../engine/ui/Button.js';
 import { ICONS } from '../../../engine/ui/icons.js';
+import { createViewToggle } from '../../../engine/three/ViewToggle.js';
 import { LEVELS, LEVEL_IDS, RACE_LENGTH } from '../logic/levels.js';
 import { loadGhost, tablesKey } from '../logic/saveData.js';
 import { ghostFinishMs } from '../logic/ghost.js';
@@ -48,6 +49,12 @@ export class MenuScene extends RacingScene {
         el('span', { class: 'menu__stars', html: ICONS.star.repeat(earned) + ICONS.starEmpty.repeat(3 - earned) }));
     }));
 
+    // Only offered where the device can do 3D. Choosing is remembered for next time (see `createViewChoice`).
+    const { view } = this.routes;
+    const viewEl = view.supported ? el('div', { class: 'menu__view' },
+      createViewToggle({ mode: view.mode(), onChange: (next) => { view.choose(next); this.routes.menu(); } }),
+      el('p', { class: 'menu__viewnote', text: view.mode() === '3d' ? 'In 3D view you race down the road, seen from behind your car.' : 'In 2D view the race is a side-on picture.' })) : null;
+
     this.ui.append(hud.el, el('main', { class: 'menu' },
       el('h1', { class: 'menu__title', text: 'Times-Table Racing' }),
       el('p', { class: 'menu__intro', text: `Answer ${RACE_LENGTH} multiplication questions to drive across the finish line. Race the ghost of your own best run!` }),
@@ -55,6 +62,7 @@ export class MenuScene extends RacingScene {
       el('div', { class: 'menu__tables-wrap' }, el('p', { class: 'field__label', text: 'Practise these tables' }), this.#tablesBox, this.#note),
       this.#bestEl,
       createButton({ label: 'Start race', icon: '🏁', variant: 'primary', big: true, onClick: () => this.#start() }),
+      viewEl,
       el('section', { class: 'menu__best', attrs: { 'aria-label': 'Your best stars' } }, el('h2', { text: 'Your best' }), best)));
   }
 
