@@ -29,8 +29,9 @@ const JAR_OFF = `<svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
  * @returns {{
  *   el: HTMLElement,
  *   render: (board: boolean[][], options?: { hint?: [number, number]|null, locked?: boolean }) => void,
- *   focusCell: (r: number, c: number) => void
- * }}
+ *   focusCell: (r: number, c: number) => void,
+ *   cell: (r: number, c: number) => HTMLButtonElement
+ * }} `cell` gives the button of a jar (the 3D board places these over its picture).
  */
 export function createBoardView({ size, onTap }) {
   /** @type {HTMLButtonElement[][]} */
@@ -70,6 +71,7 @@ export function createBoardView({ size, onTap }) {
   return {
     el: root,
     focusCell,
+    cell: (r, c) => buttons[r][c],
     render(board, { hint = null, locked = false } = {}) {
       for (let r = 0; r < size; r++) {
         for (let c = 0; c < size; c++) {

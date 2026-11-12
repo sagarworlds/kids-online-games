@@ -66,3 +66,33 @@
 .results__stars { font-size: 1.2rem; white-space: nowrap; }
 .results__stars svg, .menu__stars svg, .lo-solved__stars svg, .result__stars svg { width: 1em; height: 1em; }
 .hud__value svg { width: 1.3em; height: 1.3em; }
+
+/* ---------- 3D puzzle ---------- */
+/* The shared layout of the picture and the controls (`.scene3d*`) is in src/engine/ui/ui.css. */
+.menu__view { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.menu__viewnote { margin: 0; color: var(--ink-soft); font-size: 0.95rem; }
+
+.board3d { position: relative; --stage-bg: #0e1233; }
+/* The jar buttons lie over the picture, one on each jar: invisible except for the focus ring and the hint outline (the picture shows the jar).
+   They do not take pointer events: a tap or a drag on the picture is the picture's (it works out which jar was tapped); the keyboard and screen
+   readers use the buttons. `left`, `top`, `width` and `height` of each are set from the jar's place in the picture. */
+.jars--overlay { position: absolute; inset: 0; display: block; pointer-events: none; }
+.jars--overlay .jar {
+  position: absolute; transform: translate(-50%, -50%); aspect-ratio: auto; min-width: 0; min-height: 0; padding: 0;
+  background: transparent; border-color: transparent; border-radius: 50%; box-shadow: none;
+}
+.jars--overlay .jar svg { display: none; }
+.jars--overlay .jar.is-lit { background: transparent; border-color: transparent; box-shadow: none; }
+.jars--overlay .jar:active:not(:disabled) { transform: translate(-50%, -50%); }
+.jars--overlay .jar.is-hint { outline: 5px dashed #ffffff; outline-offset: 2px; animation: jar-hint 0.9s ease infinite; }
+@keyframes jar-hint { 50% { outline-offset: 7px; } }
+
+.lights3d .scene3d__panel { align-items: stretch; gap: 8px; padding-top: 8px; }
+/* The "solved" card sits in the panel, under the picture, so the fireflies can be seen flying away above it. */
+.lights3d .lo-solved { position: static; inset: auto; padding: 10px 12px; background: #fff; border: 4px solid var(--ink); border-radius: 16px; gap: 4px; }
+.lights3d .lo-solved h2 { font-size: 1.25rem; }
+.lights3d .lo-solved__stars { font-size: 2.2rem; }
+
+/* If 3D stops working in the middle of a puzzle the grid becomes the board again, in the same place. */
+.board3d--flat { display: flex; align-items: center; justify-content: center; background: #1b1f4b; }
+.board3d--flat .jars { width: min(88%, 480px, 92dvh); }
