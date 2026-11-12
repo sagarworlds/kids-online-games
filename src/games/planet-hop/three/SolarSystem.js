@@ -1,8 +1,8 @@
 import {
   Group, Mesh, SphereGeometry, TorusGeometry, RingGeometry, MeshBasicMaterial, MeshLambertMaterial, AmbientLight, PointLight,
-  BufferGeometry, Float32BufferAttribute, Points, PointsMaterial, DoubleSide, AdditiveBlending, Sprite, SpriteMaterial, CanvasTexture,
+  DoubleSide, AdditiveBlending, Sprite, SpriteMaterial, CanvasTexture,
 } from '../../../engine/three/three.js';
-import { createRng } from '../../../engine/utils/random.js';
+import { createStarfield } from '../../../engine/three/starfield.js';
 import { approach } from '../../../engine/three/motionMath.js';
 import { SUN_RADIUS, PICK_MIN_RADIUS, bodyRadius, moonPoint, orbitPoint, orbitRadius } from '../logic/space3d.js';
 import { createPlanetTexture } from './planetTextures.js';
@@ -101,19 +101,7 @@ export class SolarSystem {
 
   #addStars() {
     // A fixed seed: the sky is the same every visit, so it never looks like something changed on the child.
-    const rng = createRng(20240601);
-    const count = this.#quality.detail === 'high' ? 500 : 250;
-    const positions = [];
-    for (let i = 0; i < count; i++) {
-      const turn = rng() * Math.PI * 2;
-      const lift = rng() * 2 - 1;
-      const ring = Math.sqrt(1 - lift * lift);
-      const distance = 110 + rng() * 25;
-      positions.push(Math.cos(turn) * ring * distance, lift * distance, Math.sin(turn) * ring * distance);
-    }
-    const geometry = new BufferGeometry();
-    geometry.setAttribute('position', new Float32BufferAttribute(positions, 3));
-    this.group.add(new Points(geometry, new PointsMaterial({ color: '#ffffff', size: 0.8, sizeAttenuation: true })));
+    this.group.add(createStarfield({ count: this.#quality.detail === 'high' ? 500 : 250, seed: 20240601 }));
   }
 
   /**
