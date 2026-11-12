@@ -4,6 +4,7 @@ import { createButton } from '../../../engine/ui/Button.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
 import { ICONS } from '../../../engine/ui/icons.js';
+import { createViewToggle } from '../../../engine/three/ViewToggle.js';
 import { LEVELS, LEVEL_IDS, MODES } from '../logic/levels.js';
 
 /** Menu: pick a level and a mode (Classic, Reverse on Hard, or Music Maker). */
@@ -46,10 +47,16 @@ export class MenuScene extends SimonScene {
         el('small', { text: `longest ${bestLength[id] ?? 0}` }));
     }));
 
+    // Only offered where the device can do 3D. The choice is remembered for next time (see `createViewChoice`).
+    const { view } = this.routes;
+    const viewEl = view.supported ? el('div', { class: 'menu__view' },
+      createViewToggle({ mode: view.mode(), onChange: (next) => { view.choose(next); this.routes.menu(); } }),
+      el('p', { class: 'menu__viewnote', text: view.mode() === '3d' ? 'In 3D view the pads are big buttons on a console: they press down and glow, and you can turn the console.' : 'In 2D view the pads are flat buttons.' })) : null;
+
     this.ui.append(hud.el, el('main', { class: 'menu' },
       el('h1', { class: 'menu__title', text: 'Simon Says' }),
       el('p', { class: 'menu__intro', text: 'Watch the pads light up, listen to the notes, then play them back. Every round adds one more!' }),
-      picker.el, modesBox,
+      picker.el, modesBox, viewEl,
       createButton({ label: 'Start', icon: '▶', variant: 'primary', big: true, onClick: () => {
         services.audio.unlock(); // browsers only start audio after a tap
         services.audio.play('click');

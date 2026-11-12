@@ -7,7 +7,6 @@ import { getLevel } from '../logic/levels.js';
 import { padsFor, PADS } from '../logic/pads.js';
 import { playSequence } from '../logic/sequencePlayer.js';
 import { Recorder, MAX_NOTES } from '../logic/recorder.js';
-import { createPadBoard } from '../ui/PadBoard.js';
 
 const NOTE_MS = 350;
 const GAP_MS = 120;
@@ -31,7 +30,7 @@ export class MusicScene extends SimonScene {
     const { services } = this;
     this.#level = getLevel(levelId);
     const hud = createHud({ homeHref: services.game.homeHref, title: `${services.game.title}: Music Maker`, onSettings: () => services.openSettings() });
-    this.#pads = createPadBoard({ pads: padsFor(this.#level.pads), onPress: (id) => this.#tap(id) });
+    this.#pads = this.createPads({ pads: padsFor(this.#level.pads), onPress: (id) => this.#tap(id) });
     this.#pads.setEnabled(true);
     this.#slots = el('ol', { class: 'music__slots', attrs: { 'aria-label': 'Recorded notes' } });
     this.#statusEl = el('p', { class: 'simon__status', attrs: { role: 'status' } });
@@ -39,11 +38,12 @@ export class MusicScene extends SimonScene {
     this.#buttons.clear = createButton({ label: 'Clear', icon: '🗑', onClick: () => { this.#recorder.clear(); this.#render(); } });
     this.#buttons.menu = createButton({ label: 'Menu', onClick: () => this.routes.menu() });
 
-    this.ui.append(hud.el, el('main', { class: 'simon' },
-      el('div', { class: 'simon__display' }, el('p', { class: 'simon__length', text: 'Make some music' }), this.#statusEl),
-      this.#pads.el, this.#slots,
-      el('div', { class: 'simon__controls' }, this.#buttons.play, this.#buttons.clear, this.#buttons.menu),
-      el('p', { class: 'simon__note', text: `Tap the pads (or keys 1-${this.#level.pads}). Up to ${MAX_NOTES} notes are saved. No score here: just play.` })));
+    this.ui.append(hud.el, this.layout({
+      display: el('div', { class: 'simon__display' }, el('p', { class: 'simon__length', text: 'Make some music' }), this.#statusEl),
+      pads: this.#pads, slots: this.#slots,
+      controls: el('div', { class: 'simon__controls' }, this.#buttons.play, this.#buttons.clear, this.#buttons.menu),
+      note: el('p', { class: 'simon__note', text: `Tap the pads (or keys 1-${this.#level.pads}). Up to ${MAX_NOTES} notes are saved. No score here: just play.` }),
+    }));
 
     this.#offs.push(services.input.on('key', (event) => {
       const pad = padsFor(this.#level.pads).find((p) => p.key === event.key);
@@ -56,6 +56,17 @@ export class MusicScene extends SimonScene {
     this.#abort.abort();
     for (const off of this.#offs) off();
     this.#offs = [];
+    this.#pads?.dispose?.();
+  }
+
+  /**
+   * Puts the screen's parts together. The default is the flat game; the 3D game overrides this to put the picture of the pads on top and everything
+   * else in a panel.
+   * @param {{ display: HTMLElement, pads: { el: HTMLElement }, slots: HTMLElement, controls: HTMLElement, note: HTMLElement }} parts
+   * @returns {HTMLElement} The `main` element.
+   */
+  layout({ display, pads, slots, controls, note }) {
+    return el('main', { class: 'simon' }, display, pads.el, slots, controls, note);
   }
 
   #tap(padId) {
@@ -90,9 +101,14 @@ export class MusicScene extends SimonScene {
   }
 
   update(dt) {
+    this.#pads.tick?.(dt);
     for (const [padId, left] of this.#flash) {
       if (left - dt <= 0) { this.#flash.delete(padId); this.#pads.light(padId, false); } else this.#flash.set(padId, left - dt);
     }
+  }
+
+  render() {
+    this.#pads?.draw?.();
   }
 
   #render() {

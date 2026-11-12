@@ -91,7 +91,8 @@ Done so far: **Planet Hop** (Line them up and Weigh-in; see [its README](src/gam
 **Pizza Fractions** (a round pizza whose topped slices lift, with toppings that sit on them; see [its README](src/games/pizza-fractions/README.md#3d-view)) and
 **Lights Out** (jars with fireflies on a table at night, which fly away when you win; see [its README](src/games/lights-out/README.md#3d-view)) and
 **Pattern Detective** (the case file as solids on pedestals that turn, with a tap to hear each name; see [its README](src/games/pattern-detective/README.md#3d-view)) and
-**Number Ninja** (falling stars that spin and split in two when you answer; see [its README](src/games/number-ninja/README.md#3d-view)).
+**Number Ninja** (falling stars that spin and split in two when you answer; see [its README](src/games/number-ninja/README.md#3d-view)) and
+**Simon Says** (pads on a console that press down and glow, in the game and in Music Maker; see [its README](src/games/simon-says/README.md#3d-view)).
 
 ## State machines
 
