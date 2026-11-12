@@ -19,6 +19,20 @@ const NEEDS = Object.freeze(['water', 'sun', 'food']);
 const SCORE_MARKS = Object.freeze({ 1: { icon: ICONS.check, text: 'just right' }, 0.5: { icon: '◐', text: 'close' }, 0: { icon: ICONS.cross, text: 'off' } });
 
 /**
+ * What the garden needs from the picture of the plant. The flat `createPlantArt` has the first two; the 3D garden has all of them
+ * (the rest are optional, so the flat picture does not have to pretend to have a sky).
+ * @typedef {{
+ *   el: Element,
+ *   update: (look: { stage: number, mood: 'happy'|'ok'|'wilting', problem: string|null }, options?: { animate?: boolean }) => void,
+ *   setWeather?: (kind: string) => void,
+ *   playDay?: () => void,
+ *   tick?: (dt: number) => void,
+ *   render?: () => void,
+ *   dispose?: () => void
+ * }} PlantPicture
+ */
+
+/**
  * The garden: one day at a time. In the morning the weather is shown and the child sets three sliders (they start where
  * yesterday's were left, so the child adjusts instead of starting again); "Next day" lives the day with the simulation,
  * grows the plant and shows a day card. How much the game says depends on the level: Easy marks the ideal ranges and
@@ -58,14 +72,12 @@ export class GardenScene extends PlantScene {
     this.#weather = createWeather(createRng(this.#seed), levelId);
 
     this.#hud = createHud({ homeHref: services.game.homeHref, title: this.#plant.name, stats: [{ id: 'day', label: 'Day' }], onSettings: () => services.openSettings() });
-    this.#art = createPlantArt(this.#plant, { size: 210 });
+    this.#art = this.createArt(this.#plant);
     this.#meter = createProgressBar({ label: 'Plant health', max: 100, value: this.#state.health });
     this.#bannerEl = el('div', { class: 'weatherbar', attrs: { role: 'status' } });
     this.#bubbleEl = el('div', { class: 'bubble', attrs: { role: 'status' } });
     this.#bubbleEl.hidden = true;
     this.#healthEl = el('p', { class: 'garden__health' });
-    // The plant and its health sit side by side on a phone (so the sliders still fit on the screen) and one above the other on a wide one.
-    this.#stageEl = el('section', { class: 'garden__stage', attrs: { 'aria-label': 'Your plant' } }, this.#bubbleEl, el('div', { class: 'garden__plant' }, this.#art.el), el('div', { class: 'garden__vitals' }, this.#healthEl, this.#meter.el));
     this.#effectEl = el('p', { class: 'garden__effect', attrs: { 'aria-live': 'polite' } });
 
     for (const need of NEEDS) {
@@ -81,10 +93,54 @@ export class GardenScene extends PlantScene {
     this.#summaryEl.hidden = true;
     this.#nextButton = createButton({ label: 'Next day', icon: '🌙', variant: 'primary', big: true, onClick: () => this.#liveDay() });
 
-    this.ui.append(this.#hud.el, el('main', { class: 'garden' },
-      this.#bannerEl,
-      el('div', { class: 'garden__body' }, this.#stageEl, el('div', { class: 'garden__side' }, this.#controlsEl, this.#summaryEl, el('div', { class: 'garden__actions' }, this.#nextButton)))));
+    const { main, stageEl } = this.layout({
+      hud: this.#hud, banner: this.#bannerEl, bubble: this.#bubbleEl, art: this.#art, health: this.#healthEl, meter: this.#meter,
+      controls: this.#controlsEl, summary: this.#summaryEl, nextButton: this.#nextButton,
+    });
+    this.#stageEl = stageEl;
+    this.ui.append(this.#hud.el, main);
     this.#morning();
+  }
+
+  /**
+   * Makes the picture of the plant. The 3D garden overrides this; the picture only has to offer what `PlantPicture` says.
+   * @param {import('../logic/plants.js').PlantType} plant
+   * @returns {PlantPicture}
+   */
+  createArt(plant) {
+    return createPlantArt(plant, { size: 210 });
+  }
+
+  /**
+   * Puts the screen's parts together. The default is the flat garden: the plant, its health and the thought bubble in a framed
+   * box (beside the controls on a wide screen). The 3D garden overrides this to put the picture on top and the rest in a panel.
+   * @param {{
+   *   hud: { el: HTMLElement }, banner: HTMLElement, bubble: HTMLElement, art: PlantPicture, health: HTMLElement,
+   *   meter: { el: HTMLElement }, controls: HTMLElement, summary: HTMLElement, nextButton: HTMLElement
+   * }} parts
+   * @returns {{ main: HTMLElement, stageEl: HTMLElement|null }} `stageEl` is the element that takes the weather's sky colour, or null
+   *   when the picture draws its own sky.
+   */
+  layout({ banner, bubble, art, health, meter, controls, summary, nextButton }) {
+    // The plant and its health sit side by side on a phone (so the sliders still fit on the screen) and one above the other on a wide one.
+    const stageEl = el('section', { class: 'garden__stage', attrs: { 'aria-label': 'Your plant' } }, bubble, el('div', { class: 'garden__plant' }, art.el), el('div', { class: 'garden__vitals' }, health, meter.el));
+    const main = el('main', { class: 'garden' }, banner,
+      el('div', { class: 'garden__body' }, stageEl, el('div', { class: 'garden__side' }, controls, summary, el('div', { class: 'garden__actions' }, nextButton))));
+    return { main, stageEl };
+  }
+
+  /** Frees whatever the picture holds (the 3D picture holds graphics memory). */
+  exit() {
+    this.#art?.dispose?.();
+  }
+
+  /** @param {number} dt Seconds since the last frame. */
+  update(dt) {
+    this.#art?.tick?.(dt);
+  }
+
+  render() {
+    this.#art?.render?.();
   }
 
   /** The state of the plant as the picture should show it: how it feels, and (if the level allows) what bothers it. */
@@ -111,7 +167,9 @@ export class GardenScene extends PlantScene {
     this.#bannerEl.replaceChildren(
       el('span', { class: 'weatherbar__icon', text: weather.icon, attrs: { 'aria-hidden': 'true' } }),
       el('span', {}, el('strong', { text: `Day ${day} of ${DAYS}: ${weather.label}.` }), ` ${weather.effect}`));
-    this.#stageEl.className = `garden__stage weather--${this.#weather[day - 1]}`;
+    // A flat picture sits in a box that takes the sky's colour; a 3D picture draws its own sky and is told the weather instead.
+    if (this.#stageEl) this.#stageEl.className = `garden__stage weather--${this.#weather[day - 1]}`;
+    this.#art.setWeather?.(this.#weather[day - 1]);
     this.#summaryEl.hidden = true;
     this.#controlsEl.hidden = false;
     for (const need of NEEDS) { this.#sliders[need].setValue(this.#inputs[need]); this.#sliders[need].setDisabled(false); }
@@ -142,6 +200,7 @@ export class GardenScene extends PlantScene {
     const showProblem = this.#config.hints !== 'none';
     const problem = problemFor(worstNeed(diagnose(log.effective, this.#plant, log.scores)));
     this.#art.update(this.#look(log, showProblem));
+    this.#art.playDay?.();
     this.#showHealth();
     if (this.#config.hints !== 'none') {
       this.#bubbleEl.hidden = false;
