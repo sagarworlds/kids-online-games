@@ -2,6 +2,7 @@ import { createApp } from '../../app/createApp.js';
 import { renderErrorScreen } from '../../engine/ui/ErrorScreen.js';
 import { logError } from '../../engine/utils/errors.js';
 import { createViewChoice } from '../../engine/three/view.js';
+import { openScreen } from '../../engine/three/openView.js';
 import { MenuScene } from './scenes/MenuScene.js';
 import { KitchenScene } from './scenes/KitchenScene.js';
 import { ResultScene } from './scenes/ResultScene.js';
@@ -15,25 +16,15 @@ function boot() {
     const view = createViewChoice({ storage: services.storage, slug: services.game.slug });
 
     /**
-     * Opens a customer in the child's chosen view. three.js is about 2 MB, so the 3D kitchen is loaded with `import()` only when it is needed:
-     * the 2D game and the home page never download it. If anything goes wrong on the way into 3D (the file will not load, the scene fails to
-     * start) it is logged and the flat kitchen opens instead, so a child never sees a blank screen for a view they did not need. (If 3D cannot
-     * start inside the kitchen, the pizza falls back in place; see `PizzaView3D`.)
+     * Opens a customer in the child's chosen view (see `openScreen`). (If 3D cannot start inside the kitchen, the pizza falls back in place; see `PizzaView3D`.)
      * @param {import('./scenes/PizzaScene.js').Round} round
      */
-    const play = async (round) => {
-      if (view.mode() === '3d') {
-        try {
-          const { Kitchen3DScene } = await import('./three/Kitchen3DScene.js');
-          scenes.replace(new Kitchen3DScene(services, routes), round);
-          return;
-        } catch (error) {
-          logError(error, 'pizza-fractions:3d');
-          view.fallBack();
-        }
-      }
-      scenes.replace(new KitchenScene(services, routes), round);
-    };
+    const play = (round) => openScreen({
+      view, scenes, where: 'pizza-fractions:3d', params: round,
+      load: () => import('./three/Kitchen3DScene.js'),
+      make: ({ Kitchen3DScene }) => new Kitchen3DScene(services, routes),
+      open2d: () => scenes.replace(new KitchenScene(services, routes), round),
+    });
 
     /** @type {import('./scenes/PizzaScene.js').Routes} */
     const routes = {

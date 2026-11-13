@@ -8,6 +8,7 @@ import { markDeviceSlow, readDevice } from '../../src/engine/three/deviceVerdict
 import { clampOrbit, orbitPosition, pinchGap, rotateOrbit, zoomOrbit } from '../../src/engine/three/orbitMath.js';
 import { readViewPreference, saveViewPreference } from '../../src/engine/three/viewPreference.js';
 import { createViewChoice } from '../../src/engine/three/view.js';
+import { openScreen } from '../../src/engine/three/openView.js';
 import { StorageService, createMemoryBackend } from '../../src/engine/services/StorageService.js';
 import { DEVICE_KEY, deviceSchema, gameKey, saveSchema } from '../../src/engine/services/schemas.js';
 import { createLogger } from './helpers.js';
@@ -169,4 +170,80 @@ test('a damaged device record is reset instead of being trusted', () => {
   backend.setItem(DEVICE_KEY, JSON.stringify({ version: 1, slow3d: 'yes', frameWatch: 'sometimes' }));
   const storage = new StorageService({ backend, logger: createLogger() });
   assert.deepEqual(readDevice(storage), deviceSchema.defaults());
+});
+
+// ---- opening a screen in the chosen view --------------------------------------
+
+
+/** A fake game: a view choice, a scene manager that records what is opened, and a list of what happened. */
+function fakeGame({ mode = '3d' } = {}) {
+  const events = [];
+  const view = { mode: () => mode, fallBack: () => events.push('fallBack') };
+  const scenes = { replace: (scene, params) => events.push(['replace', scene, params]) };
+  return { events, view, scenes, base: { view, scenes, where: 'game:3d', open2d: () => events.push('open2d') } };
+}
+
+/** Runs `body` with console.error captured, so the expected error logs do not clutter the test output. */
+async function capturingErrors(body) {
+  const logged = [];
+  const original = console.error;
+  console.error = (...args) => logged.push(args.map(String).join(' '));
+  try {
+    await body();
+  } finally {
+    console.error = original;
+  }
+  return logged;
+}
+
+test('openScreen opens the flat screen in 2D mode and never loads the 3D file', async () => {
+  const g = fakeGame({ mode: '2d' });
+  let loaded = false;
+  await openScreen({ ...g.base, params: 1, load: async () => { loaded = true; return {}; }, make: () => 'scene3d' });
+  assert.equal(loaded, false, 'the 3D library is not downloaded for a child in the flat view');
+  assert.deepEqual(g.events, ['open2d']);
+});
+
+test('openScreen loads the 3D module, builds the scene from it and opens it with the given params', async () => {
+  const g = fakeGame();
+  await openScreen({ ...g.base, params: { level: 'easy' }, load: async () => ({ Scene3D: 'the class' }), make: (module) => `made from ${module.Scene3D}` });
+  assert.deepEqual(g.events, [['replace', 'made from the class', { level: 'easy' }]], 'opened once, and no flat screen or fallback');
+});
+
+test('openScreen falls back to the flat screen, logs why, and does not touch the child\'s choice when the 3D file will not load', async () => {
+  const g = fakeGame();
+  const logged = await capturingErrors(() => openScreen({ ...g.base, load: async () => { throw new TypeError('Failed to fetch dynamically imported module'); }, make: () => 'unused' }));
+  assert.deepEqual(g.events, ['fallBack', 'open2d']);
+  assert.equal(logged.length, 1);
+  assert.match(logged[0], /game:3d/);
+  assert.match(logged[0], /Failed to fetch dynamically imported module/);
+});
+
+test('openScreen falls back when building the scene, or opening it, fails (a device that cannot start 3D)', async () => {
+  const building = fakeGame();
+  await capturingErrors(() => openScreen({ ...building.base, load: async () => ({}), make: () => { throw new Error('could not build'); } }));
+  assert.deepEqual(building.events, ['fallBack', 'open2d']);
+
+  const opening = fakeGame();
+  opening.scenes.replace = () => { throw new Error('the scene failed to start'); };
+  await capturingErrors(() => openScreen({ ...opening.base, scenes: opening.scenes, load: async () => ({}), make: () => 'scene3d' }));
+  assert.deepEqual(opening.events, ['fallBack', 'open2d']);
+});
+
+test('openScreen starts the "getting ready" hook for a 3D load and always stops it, whether the load worked or not', async () => {
+  for (const succeeds of [true, false]) {
+    const g = fakeGame();
+    const calls = [];
+    await capturingErrors(() => openScreen({
+      ...g.base,
+      whileLoading: () => { calls.push('start'); return () => calls.push('stop'); },
+      load: async () => { calls.push('load'); if (!succeeds) throw new Error('slow and then broken'); return {}; },
+      make: () => 'scene3d',
+    }));
+    assert.deepEqual(calls.slice(0, 3), ['start', 'load', 'stop'], `the hook is stopped as soon as the load ends (${succeeds ? 'worked' : 'failed'})`);
+  }
+  const flat = fakeGame({ mode: '2d' });
+  let started = false;
+  await openScreen({ ...flat.base, whileLoading: () => { started = true; return () => {}; }, load: async () => ({}), make: () => 'x' });
+  assert.equal(started, false, 'nothing to wait for in the flat view');
 });

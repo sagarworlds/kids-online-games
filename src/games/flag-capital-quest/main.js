@@ -3,6 +3,7 @@ import { loadJson } from '../../engine/utils/data.js';
 import { renderErrorScreen } from '../../engine/ui/ErrorScreen.js';
 import { logError } from '../../engine/utils/errors.js';
 import { createViewChoice } from '../../engine/three/view.js';
+import { openScreen } from '../../engine/three/openView.js';
 import { validateCountries } from './logic/countries.js';
 import { loadWorld } from './ui/worldData.js';
 import { ProgressStore } from './scenes/ProgressStore.js';
@@ -35,32 +36,20 @@ async function boot() {
     const trip2d = (params) => scenes.replace(new TripScene(services, routes, data), params);
 
     /**
-     * Opens a screen in the child's chosen view. three.js is about 2 MB, so the 3D scene is loaded with `import()` only when
-     * it is needed: the 2D game and the home page never download it. Anything that goes wrong on the way into 3D (the file
-     * will not load, the device has no WebGL 2, the scene fails to start) is logged and the 2D screen opens instead, so a
-     * child never sees a blank screen or an error for a view they did not need.
+     * Opens a screen in the child's chosen view (see `openScreen`).
      * @param {() => Promise<object>} load Imports the 3D scene's module.
      * @param {(module: object) => import('../../engine/Scene.js').Scene} make Builds the 3D scene from the module.
      * @param {Record<string, unknown>|undefined} params What the scene is opened with.
-     * @param {() => void} fallBack Opens the 2D version.
+     * @param {() => void} open2d Opens the 2D version.
      */
-    const open = async (load, make, params, fallBack) => {
-      if (view.mode() === '3d') {
-        // On a slow connection the 3D file takes a while: show a short "getting ready" screen rather than nothing.
+    const open = (load, make, params, open2d) => openScreen({
+      view, scenes, where: 'flag-capital-quest:3d', load, make, params, open2d,
+      // On a slow connection the 3D file takes a while: show a short "getting ready" screen rather than nothing.
+      whileLoading: () => {
         const waiting = setTimeout(() => scenes.replace(new LoadingScene(services, routes, data)), LOADING_SCREEN_AFTER_MS);
-        try {
-          const module = await load();
-          clearTimeout(waiting);
-          scenes.replace(make(module), params);
-          return;
-        } catch (error) {
-          clearTimeout(waiting);
-          logError(error, 'flag-capital-quest:3d');
-          view.fallBack();
-        }
-      }
-      fallBack();
-    };
+        return () => clearTimeout(waiting);
+      },
+    });
     const hub = () => open(() => import('./three/World3DScene.js'), (m) => new m.World3DScene(services, routes, data), undefined, hub2d);
     const trip = (params) => open(() => import('./three/Trip3DScene.js'), (m) => new m.Trip3DScene(services, routes, data), params, () => trip2d(params));
 

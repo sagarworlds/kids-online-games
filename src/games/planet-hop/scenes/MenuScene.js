@@ -2,7 +2,7 @@ import { HopScene } from './HopScene.js';
 import { el } from '../../../engine/utils/dom.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
-import { createViewToggle } from '../../../engine/three/ViewToggle.js';
+import { createViewSwitch } from '../../../engine/three/ViewToggle.js';
 import { ICONS } from '../../../engine/ui/icons.js';
 import { LEVELS, LEVEL_IDS, MODES, MODE_IDS, levelKey } from '../logic/levels.js';
 import { rankFor } from '../logic/scoring.js';
@@ -39,9 +39,7 @@ export class MenuScene extends HopScene {
 
     // Only offered where the device can do 3D. Choosing is remembered for next time (see `createViewChoice`).
     const { view } = this.routes;
-    const viewEl = view.supported ? el('div', { class: 'menu__view' },
-      createViewToggle({ mode: view.mode(), onChange: (next) => { view.choose(next); this.routes.menu(); } }),
-      el('p', { class: 'menu__viewnote', text: view.mode() === '3d' ? 'In 3D view: Line them up and Weigh-in. The quiz stays flat.' : 'In 2D view: everything is flat.' })) : null;
+    const viewEl = createViewSwitch({ view, onChange: () => this.routes.menu(), notes: { '3d': 'In 3D view: Line them up and Weigh-in. The quiz stays flat.', '2d': 'In 2D view: everything is flat.' } });
 
     const total = services.rewards.starsFor(services.game.slug);
     const { rank, next, starsToNext } = rankFor(total);

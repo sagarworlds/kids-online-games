@@ -4,7 +4,7 @@ import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
 import { ICONS } from '../../../engine/ui/icons.js';
 import { createButton } from '../../../engine/ui/Button.js';
-import { createViewToggle } from '../../../engine/three/ViewToggle.js';
+import { createViewSwitch } from '../../../engine/three/ViewToggle.js';
 import { LEVELS, LEVEL_IDS, PUZZLES_PER_ROUND } from '../logic/levels.js';
 
 /** Menu: choose the grid size (the level), see your best stars, start a round of five puzzles. */
@@ -31,9 +31,7 @@ export class MenuScene extends LightsScene {
 
     // Only offered where the device can do 3D. The choice is remembered for next time (see `createViewChoice`).
     const { view } = this.routes;
-    const viewEl = view.supported ? el('div', { class: 'menu__view' },
-      createViewToggle({ mode: view.mode(), onChange: (next) => { view.choose(next); this.routes.menu(); } }),
-      el('p', { class: 'menu__viewnote', text: view.mode() === '3d' ? 'In 3D view the jars stand on a table at night: turn it, and the fireflies fly away when you win.' : 'In 2D view the jars are a flat grid.' })) : null;
+    const viewEl = createViewSwitch({ view, onChange: () => this.routes.menu(), notes: { '3d': 'In 3D view the jars stand on a table at night: turn it, and the fireflies fly away when you win.', '2d': 'In 2D view the jars are a flat grid.' } });
 
     this.ui.append(hud.el, el('main', { class: 'menu' },
       el('h1', { class: 'menu__title', text: 'Lights Out' }),

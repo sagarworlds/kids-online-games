@@ -4,7 +4,7 @@ import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
 import { createButton } from '../../../engine/ui/Button.js';
 import { ICONS } from '../../../engine/ui/icons.js';
-import { createViewToggle } from '../../../engine/three/ViewToggle.js';
+import { createViewSwitch } from '../../../engine/three/ViewToggle.js';
 import { LEVELS, LEVEL_IDS, CASES_PER_ROUND } from '../logic/levels.js';
 import { generateRound } from '../logic/generatorRegistry.js';
 
@@ -32,9 +32,7 @@ export class MenuScene extends DetectiveScene {
 
     // Only offered where the device can do 3D. The choice is remembered for next time (see `createViewChoice`).
     const { view } = this.routes;
-    const viewEl = view.supported ? el('div', { class: 'menu__view' },
-      createViewToggle({ mode: view.mode(), onChange: (next) => { view.choose(next); this.routes.menu(); } }),
-      el('p', { class: 'menu__viewnote', text: view.mode() === '3d' ? 'In 3D view the pattern is a row of solids on pedestals: turn them, and tap one to hear its name.' : 'In 2D view the pattern is a flat picture.' })) : null;
+    const viewEl = createViewSwitch({ view, onChange: () => this.routes.menu(), notes: { '3d': 'In 3D view the pattern is a row of solids on pedestals: turn them, and tap one to hear its name.', '2d': 'In 2D view the pattern is a flat picture.' } });
 
     this.ui.append(hud.el, el('main', { class: 'menu' },
       el('h1', { class: 'menu__title', text: 'Pattern Detective' }),
