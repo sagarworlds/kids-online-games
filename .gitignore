@@ -2,3 +2,5 @@ node_modules/
 dist/
 .DS_Store
 *.log
+# Screenshots and logs the browser tests keep when a check fails
+e2e/artifacts/

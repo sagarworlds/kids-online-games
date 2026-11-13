@@ -38,3 +38,50 @@ jobs:
           test -d dist/src
           test ! -e dist/tests
           test ! -e dist/docs
+
+  # Real-browser checks (see e2e/README.md). The site has no dependencies; only this job installs Playwright.
+  browser:
+    name: Browser tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: e2e/package-lock.json
+
+      # The browser download is the slow part, so keep it between runs. The key changes with the pinned Playwright version.
+      - name: Remember the downloaded browser
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('e2e/package-lock.json') }}
+
+      # No browser download here: the next step does it, and skips it when the cache above already holds the browser.
+      - name: Install the test package
+        working-directory: e2e
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+        run: npm ci
+
+      - name: Install the browser
+        working-directory: e2e
+        run: npx playwright install --with-deps chromium
+
+      # One retry with fresh state: a real bug fails twice, a rare stall in the software renderer does not fail the run.
+      - name: Browser tests
+        working-directory: e2e
+        env:
+          E2E_RETRIES: 1
+        run: npm test
+
+      - name: Keep the screenshots and logs of failed checks
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-test-failures
+          path: e2e/artifacts/
+          if-no-files-found: ignore

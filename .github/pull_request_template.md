@@ -10,6 +10,7 @@
 
 - [ ] All acceptance criteria in the game's section of `docs/SPEC.md` pass
 - [ ] `npm test` passes (including the game's `logic/` tests)
+- [ ] Browser checks pass (`cd e2e && npm test`; CI runs them) and the game has an entry in `e2e/support/games.mjs`
 - [ ] Playable with mouse, touch and keyboard
 - [ ] No console errors during a full round
 - [ ] Listed in the hub (`available: true` in `src/hub/gamesRegistry.js`) with icon, name and learning tag
