@@ -35,10 +35,17 @@ cd e2e && npm ci && npx playwright install chromium && npm test
 
 ## Offline
 
-After the first visit the whole site works without a network. `npm run build` generates `dist/sw.js`, a service
-worker that precaches every shipped file under a version derived from a hash of the site, so each deploy gets a fresh
-cache and old ones are deleted. Opened from `npm start` the worker stays inert (version `dev`), so local development
-never sees stale files. To try it: `npm run build`, `npm run start:dist`, open the site, then switch the network off.
+The home page works without a network after the first visit, and so does every game that has been opened once.
+`npm run build` generates `dist/sw.js`, a service worker that knows every shipped file, under a version derived from a hash
+of the site, so each deploy gets a fresh cache and old ones are deleted. It stores very little up front: when it installs it
+keeps the *core* (the home page, the shared engine and the icons, about 190 KB), and it saves each game, whole, the first
+time that game is opened while online (the page loads from the network as usual, the rest of the game's files follow in
+the background, and the page is stored last, so a stored page always means a complete game). A first visit therefore costs a
+few hundred kilobytes instead of the whole site (about 8 MB), and a new deploy only re-downloads the games the child had
+saved. A game that was never opened sends the child back to the home page with a note when they try it offline. With the
+browser's data saver on, games are stored only as they are played. Opened from `npm start` the worker stays inert (version
+`dev`), so local development never sees stale files. To try it: `npm run build`, `npm run start:dist`, open the site and a
+game, then switch the network off.
 
 ## Install as an app
 

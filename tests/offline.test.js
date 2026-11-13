@@ -16,10 +16,10 @@ const template = readFileSync(join(ROOT, 'sw.js'), 'utf8');
 // ---- a tiny fake browser around the real sw.js source ----------------------
 
 /** Runs the actual worker script in a sandbox with fake `caches`, `fetch` and `self`. */
-function loadWorker({ version = 'v2', precache = ['./', 'index.html'], network = async () => ({ ok: true, clone() { return this; }, body: 'from network' }), existing = {} } = {}) {
+function loadWorker({ version = 'v2', files = ['./', 'index.html'], saveData = false, network = async () => ({ ok: true, clone() { return this; }, body: 'from network' }), existing = {} } = {}) {
   const source = template
     .replace(/^const VERSION = .*\/\/ __VERSION__$/m, `const VERSION = ${JSON.stringify(version)};`)
-    .replace(/^const PRECACHE = .*\/\/ __PRECACHE__$/m, `const PRECACHE = ${JSON.stringify(precache)};`);
+    .replace(/^const FILES = .*\/\/ __FILES__$/m, `const FILES = ${JSON.stringify(files)};`);
 
   const stores = new Map(Object.entries(existing).map(([name, urls]) => [name, new Map(urls.map((u) => [new URL(u, ORIGIN).href, { ok: true, body: `cached ${u}` }]))]));
   const keyOf = (req, ignoreSearch) => {
@@ -48,11 +48,17 @@ function loadWorker({ version = 'v2', precache = ['./', 'index.html'], network =
   const calls = { skipWaiting: 0, claim: 0, fetches: [] };
   const self = {
     location: { origin: ORIGIN, href: `${ORIGIN}/sw.js` },
+    navigator: { connection: { saveData } },
     addEventListener: (type, fn) => { listeners[type] = fn; },
     skipWaiting: () => { calls.skipWaiting += 1; return Promise.resolve(); },
     clients: { claim: () => { calls.claim += 1; return Promise.resolve(); } },
   };
-  const fetchSpy = async (req) => { calls.fetches.push(req.url); return network(req); };
+  // The worker fetches its own files by relative path (a string) and the page's files as requests.
+  const fetchSpy = async (req) => {
+    const request = typeof req === 'string' ? { url: new URL(req, `${ORIGIN}/sw.js`).href } : req;
+    calls.fetches.push(request.url);
+    return network(request);
+  };
   const Response = { redirect: (url, status) => ({ redirectTo: url, status }) };
   vm.runInNewContext(source, { self, caches, fetch: fetchSpy, URL, Promise, Response });
 
@@ -63,7 +69,9 @@ function loadWorker({ version = 'v2', precache = ['./', 'index.html'], network =
     return event;
   };
   const request = (path, over = {}) => ({ url: new URL(path, ORIGIN).href, method: 'GET', mode: 'cors', ...over });
-  return { listeners, stores, calls, dispatch, request };
+  /** The paths stored in a cache, in the order they were stored. */
+  const stored = (name) => [...(stores.get(name)?.keys() ?? [])].map((u) => new URL(u).pathname.slice(1) || './');
+  return { listeners, stores, calls, dispatch, request, stored };
 }
 
 // ---- the worker ------------------------------------------------------------
@@ -73,12 +81,16 @@ test('served straight from the repo (VERSION "dev") the worker does nothing at a
   assert.deepEqual(Object.keys(dev.listeners), [], 'no install, activate or fetch handlers');
 });
 
-test('install stores every listed file in a versioned cache before the worker takes over', async () => {
-  const w = loadWorker({ version: 'abc', precache: ['./', 'index.html', 'src/a.js'] });
-  const event = w.dispatch('install');
-  await event.waited;
-  assert.deepEqual([...w.stores.get('kidsgames-abc').keys()].map((u) => new URL(u).pathname), ['/', '/index.html', '/src/a.js']);
+const SITE = ['./', 'index.html', 'src/hub/main.js', 'src/engine/a.js', 'src/games/lights-out/index.html', 'src/games/lights-out/main.js', 'src/games/lights-out/data/levels.json', 'src/games/lights-out/three/Scene.js', 'src/games/robot-path/index.html', 'src/games/robot-path/main.js', 'src/vendor/three/three.module.js', 'src/vendor/three/three.core.js'];
+const CORE_OF_SITE = ['./', 'index.html', 'src/hub/main.js', 'src/engine/a.js'];
+const LIGHTS_OUT = SITE.filter((f) => f.startsWith('src/games/lights-out/'));
+
+test('install stores only the core (the home page and the shared engine) in a versioned cache before the worker takes over', async () => {
+  const w = loadWorker({ version: 'abc', files: SITE });
+  await w.dispatch('install').waited;
+  assert.deepEqual(w.stored('kidsgames-abc'), CORE_OF_SITE, 'no game and no 3D library until they are used');
   assert.equal(w.calls.skipWaiting, 1);
+  assert.deepEqual(w.calls.fetches, [], 'the core goes in with addAll, and nothing else is downloaded');
 });
 
 test('activate deletes caches from older deploys, keeps other sites\' caches, and claims open pages', async () => {
@@ -136,6 +148,134 @@ test('the worker ignores non-GET requests and other origins', () => {
   assert.equal(w.dispatch('fetch', { request: { url: 'https://cdn.example/x.js', method: 'GET', mode: 'cors' } }).responded, undefined);
 });
 
+// ---- saving a game the first time it is opened ----------------------------
+
+const gamePageRequest = (w, slug = 'lights-out') => w.request(`/src/games/${slug}/index.html`, { mode: 'navigate' });
+
+test('opening a game online loads its page from the network, then saves the whole game, its page last', async () => {
+  const w = loadWorker({ files: SITE });
+  const event = w.dispatch('fetch', { request: gamePageRequest(w) });
+  assert.equal((await event.responded).body, 'from network', 'the child waits for nothing: the page comes straight from the network');
+  assert.deepEqual(w.stored('kidsgames-v2'), [], 'and the page is not stored as it goes by');
+  await event.waited;
+  const saved = w.stored('kidsgames-v2');
+  assert.deepEqual([...saved].sort(), [...LIGHTS_OUT].sort(), 'every file of that game, including its data and 3D files, and nothing of another game or the 3D library');
+  assert.equal(saved[saved.length - 1], 'src/games/lights-out/index.html', 'the page is stored last, so a stored page means a complete game');
+});
+
+test('a saved game then comes from the cache, with no network at all', async () => {
+  const w = loadWorker({ files: SITE });
+  const first = w.dispatch('fetch', { request: gamePageRequest(w) });
+  await first.responded;
+  await first.waited;
+  const fetchesBefore = w.calls.fetches.length;
+  const again = await w.dispatch('fetch', { request: gamePageRequest(w) }).responded;
+  assert.equal(again.body, 'from network', 'it is the stored copy (the fake network and the fake store hold the same body)');
+  assert.equal(w.calls.fetches.length, fetchesBefore, 'nothing was fetched');
+});
+
+test('opening two games saves each one, and opening the same game twice at once downloads it once', async () => {
+  const w = loadWorker({ files: SITE });
+  const a = w.dispatch('fetch', { request: gamePageRequest(w) });
+  const b = w.dispatch('fetch', { request: gamePageRequest(w) });
+  const c = w.dispatch('fetch', { request: gamePageRequest(w, 'robot-path') });
+  await Promise.all([a.responded, b.responded, c.responded]);
+  await Promise.all([a.waited, b.waited, c.waited]);
+  const downloads = w.calls.fetches.filter((u) => /\/src\/games\/lights-out\/(?!index)/.test(u));
+  assert.equal(downloads.length, 3, 'the three other files of Lights Out were each fetched once');
+  assert.ok(w.stored('kidsgames-v2').includes('src/games/robot-path/main.js'), 'and the other game was saved too');
+});
+
+test('if a file cannot be fetched the game is not marked saved (no page), nothing breaks, and the next open tries again', async () => {
+  let failing = true;
+  const w = loadWorker({
+    files: SITE,
+    network: async (req) => {
+      if (failing && /levels\.json$/.test(req.url)) return { ok: false, status: 503, clone() { return this; } };
+      return { ok: true, clone() { return this; }, body: 'from network' };
+    },
+  });
+  const quiet = console.error;
+  console.error = () => {};
+  try {
+    const first = w.dispatch('fetch', { request: gamePageRequest(w) });
+    assert.equal((await first.responded).body, 'from network', 'the game opens as normal');
+    await first.waited;
+    assert.ok(!w.stored('kidsgames-v2').includes('src/games/lights-out/index.html'), 'its page is not stored, so the game is not claimed to work offline');
+    failing = false;
+    const second = w.dispatch('fetch', { request: gamePageRequest(w) });
+    await second.responded;
+    await second.waited;
+    assert.ok(w.stored('kidsgames-v2').includes('src/games/lights-out/index.html'), 'the next time it is opened online it is saved');
+  } finally {
+    console.error = quiet;
+  }
+});
+
+test('with the browser\'s data saver on, a game is only stored as it is played, not downloaded in the background', async () => {
+  const w = loadWorker({ files: SITE, saveData: true });
+  const event = w.dispatch('fetch', { request: gamePageRequest(w) });
+  await event.responded;
+  await event.waited;
+  assert.deepEqual(w.calls.fetches.filter((u) => !u.endsWith('index.html')), [], 'nothing was fetched in the background');
+  const file = await w.dispatch('fetch', { request: w.request('/src/games/lights-out/main.js') }).responded;
+  assert.equal(file.body, 'from network');
+  assert.deepEqual(w.stored('kidsgames-v2'), ['src/games/lights-out/main.js'], 'a file the game actually asks for is still kept');
+});
+
+test('offline, a game that was never saved sends the child home and says which game', async () => {
+  const w = loadWorker({ files: SITE, existing: { 'kidsgames-v2': ['/'] }, network: async () => { throw new TypeError('offline'); } });
+  const page = await w.dispatch('fetch', { request: gamePageRequest(w, 'robot-path') }).responded;
+  assert.deepEqual(page, { redirectTo: `${ORIGIN}/?offline=robot-path`, status: 302 });
+});
+
+test('offline, a game that was saved opens from the cache', async () => {
+  const w = loadWorker({ files: SITE, existing: { 'kidsgames-v2': ['/', '/src/games/lights-out/index.html'] }, network: async () => { throw new TypeError('offline'); } });
+  const page = await w.dispatch('fetch', { request: gamePageRequest(w) }).responded;
+  assert.equal(page.body, 'cached /src/games/lights-out/index.html');
+});
+
+test('the directory form of a game address starts the saving too', async () => {
+  const w = loadWorker({ files: SITE });
+  const event = w.dispatch('fetch', { request: w.request('/src/games/lights-out/', { mode: 'navigate' }) });
+  await event.responded;
+  await event.waited;
+  assert.ok(w.stored('kidsgames-v2').includes('src/games/lights-out/index.html'));
+});
+
+// ---- a new deploy ----------------------------------------------------------
+
+test('a new deploy saves again only the games (and the 3D library) the child had saved, from the new files', async () => {
+  const w = loadWorker({
+    version: 'new', files: SITE,
+    existing: { 'kidsgames-old': ['/', '/src/games/lights-out/index.html', '/src/vendor/three/three.module.js'] },
+  });
+  await w.dispatch('install').waited;
+  const stored = w.stored('kidsgames-new');
+  assert.deepEqual(stored.filter((f) => CORE_OF_SITE.includes(f)), CORE_OF_SITE, 'the core is stored');
+  for (const file of LIGHTS_OUT) assert.ok(stored.includes(file), `${file} was saved again`);
+  assert.ok(stored.includes('src/vendor/three/three.core.js'), 'so was the 3D library, which the child had used');
+  assert.ok(!stored.some((f) => f.startsWith('src/games/robot-path/')), 'a game the child never opened is not downloaded');
+  assert.equal(w.calls.skipWaiting, 1);
+});
+
+test('a deploy that cannot re-save a game still installs, and the game is saved when it is next opened online', async () => {
+  const w = loadWorker({
+    version: 'new', files: SITE,
+    existing: { 'kidsgames-old': ['/', '/src/games/lights-out/index.html'] },
+    network: async () => { throw new TypeError('offline'); },
+  });
+  const quiet = console.error;
+  console.error = () => {};
+  try {
+    await w.dispatch('install').waited;
+  } finally {
+    console.error = quiet;
+  }
+  assert.deepEqual(w.stored('kidsgames-new'), CORE_OF_SITE, 'only the core, and the install did not fail');
+  assert.equal(w.calls.skipWaiting, 1);
+});
+
 // ---- the build -------------------------------------------------------------
 
 /** A throwaway site root with the real sw.js template, so builds can be compared. */
@@ -151,10 +291,10 @@ function fakeRoot(files = {}) {
 }
 const workerFields = (code) => ({
   version: JSON.parse(code.match(/^const VERSION = (.*);$/m)[1]),
-  precache: JSON.parse(code.match(/^const PRECACHE = (.*);$/m)[1]),
+  precache: JSON.parse(code.match(/^const FILES = (.*);$/m)[1]),
 });
 
-test('the real build produces a worker that precaches the whole site and nothing else', async () => {
+test('the real build lists the whole site for the worker, and nothing else', async () => {
   const out = mkdtempSync(join(tmpdir(), 'kg-out-'));
   try {
     const { files, version } = await build({ out });
@@ -162,7 +302,7 @@ test('the real build produces a worker that precaches the whole site and nothing
     assert.equal(stamped, version);
     assert.match(version, /^[0-9a-f]{12}$/);
     for (const must of ['./', 'index.html', 'favicon.svg', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png', 'icons/apple-touch-icon.png', 'src/hub/main.js', 'src/engine/ui/ui.css', 'src/games/number-ninja/index.html', 'src/games/robot-path/data/levels.json']) {
-      assert.ok(precache.includes(must), `${must} is precached`);
+      assert.ok(precache.includes(must), `${must} is in the worker's list`);
     }
     assert.ok(!precache.includes('sw.js'), 'the worker does not cache itself');
     assert.ok(!precache.includes('404.html'));
@@ -196,8 +336,8 @@ test('the cache version changes exactly when shipped content changes', async () 
 test('the build fails loudly when the worker template lost its marker lines, or a shipped file is missing', async () => {
   const root = fakeRoot();
   try {
-    writeFileSync(join(root, 'sw.js'), 'const VERSION = "x";\nconst PRECACHE = [];\n');
-    await assert.rejects(build({ root, out: join(root, '_o') }), /VERSION \/ PRECACHE/);
+    writeFileSync(join(root, 'sw.js'), 'const VERSION = "x";\nconst FILES = [];\n');
+    await assert.rejects(build({ root, out: join(root, '_o') }), /VERSION \/ FILES/);
     writeFileSync(join(root, 'sw.js'), template);
     rmSync(join(root, 'favicon.svg'));
     await assert.rejects(build({ root, out: join(root, '_o') }), /favicon\.svg/);

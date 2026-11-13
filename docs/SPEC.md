@@ -38,7 +38,7 @@ All 16 games run on one tiny engine: a scene manager, a game loop, and injected 
 
 - Vanilla JavaScript (ES2022 modules), HTML5, CSS3. No frameworks, no bundler, no external CDNs.
 - One exception: the 3D versions use three.js, copied into `src/vendor/three/` and loaded only by 3D scenes (see "3D versions (Three.js)").
-- Runs by opening `index.html` through any static server (`npx serve .`). Works offline, and can be installed as an app (`manifest.webmanifest` plus the icons in `icons/`, linked from every page).
+- Runs by opening `index.html` through any static server (`npx serve .`). Works offline (the home page after one visit, each game after it has been opened once; see "Offline" in the README), and can be installed as an app (`manifest.webmanifest` plus the icons in `icons/`, linked from every page).
 - Target: Chrome, Edge, Safari, Firefox (latest 2 versions); tablets 768px+ and desktops. Portrait and landscape. The 3D versions also target phones from 360px wide.
 - Canvas for action games; DOM + CSS for card, drag-and-drop and quiz games.
 - Unit tests with Node's built-in runner (`node --test`), so no test dependencies either. Real-browser checks (Playwright) live in their own package, `e2e/`, so the site itself still has none.
