@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 import { build } from '../scripts/build.mjs';
 import { registerServiceWorker } from '../src/app/registerServiceWorker.js';
+import { OfflineService, savedPercent, savedSentence } from '../src/engine/services/OfflineService.js';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const ORIGIN = 'https://site.test';
@@ -45,13 +46,15 @@ function loadWorker({ version = 'v2', files = ['./', 'index.html'], saveData = f
   };
 
   const listeners = {};
+  /** What the worker told the open pages. */
+  const messages = [];
   const calls = { skipWaiting: 0, claim: 0, fetches: [] };
   const self = {
     location: { origin: ORIGIN, href: `${ORIGIN}/sw.js` },
     navigator: { connection: { saveData } },
     addEventListener: (type, fn) => { listeners[type] = fn; },
     skipWaiting: () => { calls.skipWaiting += 1; return Promise.resolve(); },
-    clients: { claim: () => { calls.claim += 1; return Promise.resolve(); } },
+    clients: { claim: () => { calls.claim += 1; return Promise.resolve(); }, matchAll: async () => [{ postMessage: (message) => messages.push(message) }] },
   };
   // The worker fetches its own files by relative path (a string) and the page's files as requests.
   const fetchSpy = async (req) => {
@@ -71,7 +74,7 @@ function loadWorker({ version = 'v2', files = ['./', 'index.html'], saveData = f
   const request = (path, over = {}) => ({ url: new URL(path, ORIGIN).href, method: 'GET', mode: 'cors', ...over });
   /** The paths stored in a cache, in the order they were stored. */
   const stored = (name) => [...(stores.get(name)?.keys() ?? [])].map((u) => new URL(u).pathname.slice(1) || './');
-  return { listeners, stores, calls, dispatch, request, stored };
+  return { listeners, stores, calls, dispatch, request, stored, messages };
 }
 
 // ---- the worker ------------------------------------------------------------
@@ -243,6 +246,87 @@ test('the directory form of a game address starts the saving too', async () => {
   assert.ok(w.stored('kidsgames-v2').includes('src/games/lights-out/index.html'));
 });
 
+// ---- the grown-ups' "save all games for offline play" ----------------------
+
+const ALL_SAVED = ['/', '/src/games/lights-out/index.html', '/src/games/robot-path/index.html'];
+/** Messages built inside the worker's sandbox have the sandbox's own Object, so compare them as plain data. */
+const plain = (value) => JSON.parse(JSON.stringify(value));
+
+test('asked for its status, the worker says how many games are saved', async () => {
+  const w = loadWorker({ files: SITE, existing: { 'kidsgames-v2': ALL_SAVED.slice(0, 2) } });
+  const replies = [];
+  await w.dispatch('message', { data: { type: 'STATUS' }, source: { postMessage: (m) => replies.push(m) } }).waited;
+  assert.deepEqual(plain(replies), [{ type: 'STATUS', saved: 1, total: 2 }]);
+});
+
+test('asked to save everything, the worker stores every file, each game\'s page last, and reports progress to the open pages', async () => {
+  const w = loadWorker({ files: SITE });
+  await w.dispatch('message', { data: { type: 'SAVE_ALL' } }).waited;
+  const stored = w.stored('kidsgames-v2');
+  assert.deepEqual([...stored].sort(), [...SITE].sort(), 'every file of the site, including the 3D library');
+  for (const slug of ['lights-out', 'robot-path']) {
+    const page = stored.indexOf(`src/games/${slug}/index.html`);
+    const others = stored.filter((f) => f.startsWith(`src/games/${slug}/`) && !f.endsWith('index.html'));
+    assert.ok(others.every((f) => stored.indexOf(f) < page), `${slug}'s page comes after the rest of that game`);
+  }
+  const progress = w.messages.filter((m) => m.type === 'SAVE_PROGRESS').map((m) => m.done);
+  assert.ok(progress.length >= 2, 'progress was reported');
+  assert.deepEqual(progress, [...progress].sort((a, b) => a - b), 'and it only goes up');
+  assert.deepEqual(plain(w.messages.at(-1)), { type: 'SAVE_DONE', done: SITE.length, total: SITE.length, failed: 0 });
+});
+
+test('saving everything fetches only what is missing, and nothing at all when everything is saved', async () => {
+  const w = loadWorker({ files: SITE, existing: { 'kidsgames-v2': SITE.map((f) => (f === './' ? '/' : `/${f}`)) } });
+  await w.dispatch('message', { data: { type: 'SAVE_ALL' } }).waited;
+  assert.deepEqual(w.calls.fetches, []);
+  assert.deepEqual(plain(w.messages.at(-1)), { type: 'SAVE_DONE', done: SITE.length, total: SITE.length, failed: 0 });
+  const partly = loadWorker({ files: SITE, existing: { 'kidsgames-v2': ['/', '/index.html', '/src/hub/main.js', '/src/engine/a.js', '/src/games/lights-out/main.js'] } });
+  await partly.dispatch('message', { data: { type: 'SAVE_ALL' } }).waited;
+  assert.ok(!partly.calls.fetches.some((u) => u.endsWith('/src/games/lights-out/main.js')), 'a file that was stored is not fetched again');
+  assert.equal(partly.calls.fetches.length, SITE.length - 5);
+});
+
+test('saving everything ignores the data saver, because a grown-up asked for it', async () => {
+  const w = loadWorker({ files: SITE, saveData: true });
+  await w.dispatch('message', { data: { type: 'SAVE_ALL' } }).waited;
+  assert.ok(w.stored('kidsgames-v2').includes('src/games/robot-path/index.html'));
+});
+
+test('a game with a file that cannot be fetched is not claimed saved; the others are, and the failure is counted', async () => {
+  const w = loadWorker({
+    files: SITE,
+    network: async (req) => (/robot-path\/data|robot-path\/main/.test(req.url) && req.url.endsWith('main.js') ? { ok: false, status: 503, clone() { return this; } } : { ok: true, clone() { return this; }, body: 'from network' }),
+  });
+  const quiet = console.error;
+  console.error = () => {};
+  try {
+    await w.dispatch('message', { data: { type: 'SAVE_ALL' } }).waited;
+  } finally {
+    console.error = quiet;
+  }
+  const stored = w.stored('kidsgames-v2');
+  assert.ok(stored.includes('src/games/lights-out/index.html'), 'the game that arrived whole is saved');
+  assert.ok(!stored.includes('src/games/robot-path/index.html'), 'the game with a missing file is not');
+  const done = plain(w.messages.at(-1));
+  assert.equal(done.type, 'SAVE_DONE');
+  assert.equal(done.failed, 2, 'the file that failed, and the page that was therefore not stored');
+});
+
+test('asking twice at once downloads once', async () => {
+  const w = loadWorker({ files: SITE });
+  const a = w.dispatch('message', { data: { type: 'SAVE_ALL' } });
+  const b = w.dispatch('message', { data: { type: 'SAVE_ALL' } });
+  await Promise.all([a.waited, b.waited]);
+  assert.equal(w.calls.fetches.length, SITE.length, 'every file (nothing was stored, since install is skipped here) was fetched exactly once, not twice');
+});
+
+test('messages the worker does not know are ignored', async () => {
+  const w = loadWorker({ files: SITE });
+  assert.equal(w.dispatch('message', { data: { type: 'DANCE' } }).waited, undefined);
+  assert.equal(w.dispatch('message', { data: null }).waited, undefined);
+  assert.equal(w.dispatch('message', {}).waited, undefined);
+});
+
 // ---- a new deploy ----------------------------------------------------------
 
 test('a new deploy saves again only the games (and the 3D library) the child had saved, from the new files', async () => {
@@ -364,4 +448,79 @@ test('without service worker support, or when registration fails, the game carri
   const nav = { serviceWorker: { register: async () => { throw new Error('blocked in private mode'); } } };
   assert.equal(await registerServiceWorker({ nav, logger: { error: (...a) => logged.push(a) } }), null);
   assert.equal(logged.length, 1);
+});
+
+// ---- the page's side of "save all games for offline play" -------------------
+
+/** A fake `navigator` whose service worker answers the way sw.js does (or says nothing, or is not there). */
+function fakeNav({ reply = null, ready = true } = {}) {
+  const listeners = new Set();
+  const posted = [];
+  const send = (data) => { for (const fn of [...listeners]) fn({ data }); };
+  const worker = { postMessage: (message) => { posted.push(message); reply?.(message, send); } };
+  const serviceWorker = {
+    ready: ready ? Promise.resolve({ active: worker }) : new Promise(() => {}),
+    addEventListener: (type, fn) => { assert.equal(type, 'message'); listeners.add(fn); },
+    removeEventListener: (type, fn) => listeners.delete(fn),
+  };
+  return { nav: { serviceWorker }, posted, listeners, send };
+}
+
+test('the saver asks the worker for its status and hands back the counts, then stops listening', async () => {
+  const f = fakeNav({ reply: (m, send) => m.type === 'STATUS' && send({ type: 'STATUS', saved: 3, total: 19 }) });
+  const saver = new OfflineService({ nav: f.nav, timeoutMs: 500 });
+  assert.equal(saver.supported, true);
+  assert.deepEqual(await saver.status(), { saved: 3, total: 19 });
+  assert.deepEqual(f.posted, [{ type: 'STATUS' }]);
+  assert.equal(f.listeners.size, 0, 'no listener is left behind');
+});
+
+test('saveAll passes the progress on and finishes when the worker says it is done', async () => {
+  const f = fakeNav({
+    reply: (m, send) => {
+      if (m.type !== 'SAVE_ALL') return;
+      send({ type: 'STATUS', saved: 1, total: 2 }); // an unrelated reply is ignored
+      send({ type: 'SAVE_PROGRESS', done: 10, total: 40 });
+      send({ type: 'SAVE_PROGRESS', done: 30, total: 40 });
+      send({ type: 'SAVE_DONE', done: 40, total: 40, failed: 2 });
+    },
+  });
+  const seen = [];
+  const result = await new OfflineService({ nav: f.nav, timeoutMs: 500 }).saveAll({ onProgress: (p) => seen.push(p) });
+  assert.deepEqual(seen, [{ done: 10, total: 40 }, { done: 30, total: 40 }]);
+  assert.deepEqual(result, { done: 40, total: 40, failed: 2 });
+  assert.equal(f.listeners.size, 0);
+});
+
+test('with no service worker support the saver says so and rejects with a clear code', async () => {
+  const saver = new OfflineService({ nav: {}, timeoutMs: 50 });
+  assert.equal(saver.supported, false);
+  await assert.rejects(saver.status(), (error) => error.code === 'OFFLINE_UNAVAILABLE');
+  await assert.rejects(saver.saveAll(), (error) => error.code === 'OFFLINE_UNAVAILABLE');
+});
+
+test('a worker that never answers (the development one does nothing) is reported as unavailable, not waited for forever', async () => {
+  const f = fakeNav({ reply: null });
+  const saver = new OfflineService({ nav: f.nav, timeoutMs: 30 });
+  await assert.rejects(saver.status(), (error) => error.code === 'OFFLINE_UNAVAILABLE');
+  assert.equal(f.listeners.size, 0, 'and it stopped listening');
+  await assert.rejects(fakeNavSaver(false).status(), (error) => error.code === 'OFFLINE_UNAVAILABLE');
+  function fakeNavSaver(ready) { return new OfflineService({ nav: fakeNav({ ready }).nav, timeoutMs: 30 }); }
+});
+
+test('savedPercent is a whole percentage that never leaves 0 to 100', () => {
+  assert.equal(savedPercent({ done: 0, total: 40 }), 0);
+  assert.equal(savedPercent({ done: 10, total: 40 }), 25);
+  assert.equal(savedPercent({ done: 39, total: 40 }), 97, 'rounded down, so it is never 100 before it is done');
+  assert.equal(savedPercent({ done: 40, total: 40 }), 100);
+  assert.equal(savedPercent({ done: 50, total: 40 }), 100);
+  assert.equal(savedPercent({ done: -1, total: 40 }), 0);
+  assert.equal(savedPercent({ done: 5, total: 0 }), 0);
+  assert.equal(savedPercent({ done: Number.NaN, total: 40 }), 0);
+});
+
+test('savedSentence says how many games are saved, and that opening a game saves it too', () => {
+  assert.match(savedSentence({ saved: 3, total: 19 }), /^3 of 19 games are saved for offline play\./);
+  assert.match(savedSentence({ saved: 3, total: 19 }), /saved the first time it is opened/);
+  assert.equal(savedSentence({ saved: 19, total: 19 }), 'All 19 games are saved for offline play.');
 });

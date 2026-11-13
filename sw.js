@@ -11,6 +11,8 @@
      rest of the game's files in the background. A game that has been opened once works offline, complete (all its flags, words,
      levels and 3D files, not just what happened to be on screen).
    - The 3D library (src/vendor/) is stored the first time a 3D view asks for it, like any other file.
+   - A grown-up can ask for everything at once ("Save all games for offline play" in the settings): the page sends this worker a message
+     and gets progress back.
    A first visit therefore costs a few hundred kilobytes, not the whole site, and a deploy only re-downloads what the child had saved. */
 
 const VERSION = 'dev'; // __VERSION__
@@ -27,6 +29,7 @@ const VENDOR_PROBE = 'src/vendor/three/three.module.js';
 const BATCH = 6;
 
 const isCore = (file) => !GAME_FILE.test(file) && !file.startsWith(VENDOR_DIR);
+const GAME_SLUGS = [...new Set(FILES.map((file) => GAME_FILE.exec(file)?.[1]).filter(Boolean))];
 const CORE = FILES.filter(isCore);
 const VENDOR_FILES = FILES.filter((file) => file.startsWith(VENDOR_DIR));
 const gamePage = (slug) => `src/games/${slug}/index.html`;
@@ -58,6 +61,13 @@ if (VERSION !== 'dev') {
     if (request.method !== 'GET') return;
     if (new URL(request.url).origin !== self.location.origin) return; // never touch other origins
     event.respondWith(respond(request, event));
+  });
+
+  // The grown-ups' settings ask what is saved, and ask for everything to be saved.
+  self.addEventListener('message', (event) => {
+    const type = event.data?.type;
+    if (type === 'STATUS') event.waitUntil(reportStatus(event.source));
+    else if (type === 'SAVE_ALL') event.waitUntil(saveEverything());
   });
 }
 
@@ -130,15 +140,18 @@ async function saveGameInto(cache, slug) {
   await fetchInto(cache, [gamePage(slug)]);
 }
 
+/** Fetches a file and stores it, unless it is stored already. Fails if the file cannot be fetched. */
+async function fetchOne(cache, file) {
+  if (await cache.match(file)) return;
+  const response = await fetch(file);
+  if (!response.ok) throw new Error(`${file}: ${response.status}`);
+  await cache.put(file, response);
+}
+
 /** Fetches files that are not stored yet and stores them, a few at a time. Fails if any file cannot be fetched. */
 async function fetchInto(cache, files) {
   for (let i = 0; i < files.length; i += BATCH) {
-    await Promise.all(files.slice(i, i + BATCH).map(async (file) => {
-      if (await cache.match(file)) return;
-      const response = await fetch(file);
-      if (!response.ok) throw new Error(`${file}: ${response.status}`);
-      await cache.put(file, response);
-    }));
+    await Promise.all(files.slice(i, i + BATCH).map((file) => fetchOne(cache, file)));
   }
 }
 
@@ -153,7 +166,7 @@ async function resaveEarlierGames(cache) {
   let usedVendor = false;
   for (const name of earlier) {
     const old = await caches.open(name);
-    for (const slug of new Set(FILES.map((file) => GAME_FILE.exec(file)?.[1]).filter(Boolean))) {
+    for (const slug of GAME_SLUGS) {
       if (await old.match(gamePage(slug))) slugs.add(slug);
     }
     if (await old.match(VENDOR_PROBE)) usedVendor = true;
@@ -162,4 +175,80 @@ async function resaveEarlierGames(cache) {
     await saveGameInto(cache, slug).catch((error) => console.error(`[offline] could not save ${slug} again after an update`, error));
   }
   if (usedVendor) await fetchInto(cache, VENDOR_FILES).catch((error) => console.error('[offline] could not save the 3D library again after an update', error));
+}
+
+// ---- the grown-ups' "save all games for offline play" -----------------------
+
+/** Sends a message to every open page of the site. */
+async function tell(message) {
+  for (const client of await self.clients.matchAll({ type: 'window', includeUncontrolled: true })) client.postMessage(message);
+}
+
+/** Tells the page that asked how many games are saved (a game is saved when its page is stored: see saveGameInto). */
+async function reportStatus(client) {
+  const cache = await caches.open(CACHE);
+  let saved = 0;
+  for (const slug of GAME_SLUGS) if (await cache.match(gamePage(slug))) saved += 1;
+  client?.postMessage({ type: 'STATUS', saved, total: GAME_SLUGS.length });
+}
+
+/** True when every file of a game except its page is stored. */
+async function gameIsWhole(cache, slug) {
+  for (const file of FILES) {
+    if (file.startsWith(`src/games/${slug}/`) && file !== gamePage(slug) && !(await cache.match(file))) return false;
+  }
+  return true;
+}
+
+/** A save-everything already running, so a second request (a second tab) joins it instead of downloading twice. */
+let everything = null;
+
+/**
+ * Stores every file of every game and the 3D library, telling every open page how far it has got. It ignores the data saver (a grown-up
+ * asked), and keeps the rule that a game's page goes in last, and only for a game whose other files all arrived, so a game that failed is
+ * never claimed to work offline.
+ * @returns {Promise<void>}
+ */
+function saveEverything() {
+  everything ??= storeEverything().finally(() => { everything = null; });
+  return everything;
+}
+
+async function storeEverything() {
+  const cache = await caches.open(CACHE);
+  const missing = [];
+  for (const file of FILES) if (!(await cache.match(file))) missing.push(file);
+  const pages = new Set(GAME_SLUGS.map(gamePage));
+  const total = FILES.length;
+  let done = total - missing.length;
+  let failed = 0;
+  await tell({ type: 'SAVE_PROGRESS', done, total });
+
+  const store = async (file) => {
+    try {
+      await fetchOne(cache, file);
+    } catch (error) {
+      failed += 1;
+      console.error(`[offline] could not save ${file}`, error);
+    }
+    done += 1;
+  };
+
+  // Everything except the games' pages first, a few files at a time...
+  const others = missing.filter((file) => !pages.has(file));
+  for (let i = 0; i < others.length; i += BATCH) {
+    await Promise.all(others.slice(i, i + BATCH).map(store));
+    await tell({ type: 'SAVE_PROGRESS', done, total });
+  }
+  // ...then each game's page, but only for a game that is whole.
+  for (const slug of GAME_SLUGS) {
+    if (!missing.includes(gamePage(slug))) continue;
+    if (await gameIsWhole(cache, slug)) {
+      await store(gamePage(slug));
+    } else {
+      failed += 1;
+      done += 1;
+    }
+  }
+  await tell({ type: 'SAVE_DONE', done, total, failed });
 }

@@ -113,7 +113,7 @@ All 16 games run on one tiny engine: a scene manager, a game loop, and injected 
 - Rounds last 1–3 minutes. Instant feedback on every answer (sound + colour + animation in under 150 ms).
 - No "Game Over". Mistakes show "Try again!" plus a hint after 2 wrong tries.
 - Results screen always shows 1–3 stars and one positive message; stars save per level.
-- Every game has three difficulty levels (Easy / Medium / Hard) and a parent settings panel: sound on/off, read-aloud on/off, difficulty lock.
+- Every game has three difficulty levels (Easy / Medium / Hard) and a parent settings panel: sound on/off, read-aloud on/off, difficulty lock, and "Save all games for offline play" (which games are saved for offline use, and a button that saves every one at once).
 - No ads, no external links, no data leaves the device, no personal data collected.
 
 **Accessibility**
