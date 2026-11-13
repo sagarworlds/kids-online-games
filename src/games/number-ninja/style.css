@@ -108,6 +108,8 @@
 }
 
 .hud__value svg { width: 1.3em; height: 1.3em; }
+/* Five shields would take most of the width of a phone's top bar, pushing the other stats onto more lines. */
+@media (max-width: 479px) { .hud__value svg { width: 1.05em; height: 1.05em; } }
 
 /* ---------- 3D sky ---------- */
 .menu__view { display: flex; flex-direction: column; align-items: center; gap: 4px; }
