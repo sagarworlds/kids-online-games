@@ -41,7 +41,7 @@ All 16 games run on one tiny engine: a scene manager, a game loop, and injected 
 - Runs by opening `index.html` through any static server (`npx serve .`). Works offline.
 - Target: Chrome, Edge, Safari, Firefox (latest 2 versions); tablets 768px+ and desktops. Portrait and landscape. The 3D versions also target phones from 360px wide.
 - Canvas for action games; DOM + CSS for card, drag-and-drop and quiz games.
-- Unit tests with Node's built-in runner (`node --test`), so no test dependencies either.
+- Unit tests with Node's built-in runner (`node --test`), so no test dependencies either. Real-browser checks (Playwright) live in their own package, `e2e/`, so the site itself still has none.
 
 **Folder structure**
 
@@ -289,6 +289,7 @@ Each game's README describes its 3D view, its controls and anything that differs
 - [ ] No three.js download on the 2D path (static-import rule passes)
 - [ ] Same stars and saved progress as the 2D version for the same play
 - [ ] `npm test` passes, including tests for any new `logic/`
+- [ ] The browser checks pass (`cd e2e && npm test`), with the game's 3D version listed in `e2e/support/games.mjs`
 
 ## Game 1 — Number Ninja (`number-ninja`)
 
