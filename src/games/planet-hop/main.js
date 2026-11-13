@@ -3,6 +3,7 @@ import { loadJson } from '../../engine/utils/data.js';
 import { renderErrorScreen } from '../../engine/ui/ErrorScreen.js';
 import { logError } from '../../engine/utils/errors.js';
 import { createViewChoice } from '../../engine/three/view.js';
+import { openScreen } from '../../engine/three/openView.js';
 import { validatePlanets, weighStops } from './logic/planets.js';
 import { validateQuiz } from './logic/quiz.js';
 import { validatePresets } from './logic/presets.js';
@@ -43,24 +44,17 @@ async function boot() {
     const view = createViewChoice({ storage: services.storage, slug: services.game.slug });
 
     const play2d = ({ mode, levelId, resume }) => scenes.replace(new MODE_SCENES[mode](services, routes, data), { levelId, resume });
-    /**
-     * Opens a mode in the child's chosen view. Anything that goes wrong on the way into 3D (the file will not load,
-     * the device has no WebGL 2, the scene fails to start) is logged and the 2D version opens instead, so a child never
-     * sees a blank screen or an error for a view they did not need.
-     */
-    const play = async (choice) => {
+    /** Opens a mode in the child's chosen view (see `openScreen`). The quiz has no 3D version, so it is always flat. */
+    const play = (choice) => {
       const load3d = SCENES_3D[choice.mode];
-      if (load3d && view.mode() === '3d') {
-        try {
-          const Scene3D = await load3d();
-          scenes.replace(new Scene3D(services, routes, data), { levelId: choice.levelId, resume: choice.resume });
-          return;
-        } catch (error) {
-          logError(error, `planet-hop:${choice.mode}:3d`);
-          view.fallBack();
-        }
-      }
-      play2d(choice);
+      if (!load3d) return play2d(choice);
+      return openScreen({
+        view, scenes, where: `planet-hop:${choice.mode}:3d`,
+        load: load3d,
+        make: (Scene3D) => new Scene3D(services, routes, data),
+        params: { levelId: choice.levelId, resume: choice.resume },
+        open2d: () => play2d(choice),
+      });
     };
 
     /** @type {import('./scenes/HopScene.js').Routes} */

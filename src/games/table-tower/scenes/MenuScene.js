@@ -4,7 +4,7 @@ import { createButton } from '../../../engine/ui/Button.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
 import { ICONS } from '../../../engine/ui/icons.js';
-import { createViewToggle } from '../../../engine/three/ViewToggle.js';
+import { createViewSwitch } from '../../../engine/three/ViewToggle.js';
 import { LEVELS, LEVEL_IDS, floorsOf, floorKey, isFloorOpen, CLEAR_STARS } from '../logic/levels.js';
 import { trickFor } from '../logic/splits.js';
 import { dueKeys } from '../logic/memory.js';
@@ -54,9 +54,7 @@ export class MenuScene extends TowerBase {
 
     // Only offered where the device can do 3D. Choosing is remembered for next time (see `createViewChoice`).
     const { view } = this.routes;
-    const viewEl = view.supported ? el('div', { class: 'menu__view' },
-      createViewToggle({ mode: view.mode(), onChange: (next) => { view.choose(next); this.routes.menu(); } }),
-      el('p', { class: 'menu__viewnote', text: view.mode() === '3d' ? 'In 3D view you can turn the tower and see the sums as blocks.' : 'In 2D view everything is flat.' })) : null;
+    const viewEl = createViewSwitch({ view, onChange: () => this.routes.menu(), notes: { '3d': 'In 3D view you can turn the tower and see the sums as blocks.', '2d': 'In 2D view everything is flat.' } });
 
     this.ui.append(hud.el, this.layout({
       title: el('h1', { class: 'menu__title', text: 'Table Tower' }),

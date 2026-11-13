@@ -1,7 +1,7 @@
 import { NinjaScene } from './NinjaScene.js';
 import { el, clear } from '../../../engine/utils/dom.js';
 import { createButton } from '../../../engine/ui/Button.js';
-import { createViewToggle } from '../../../engine/three/ViewToggle.js';
+import { createViewSwitch } from '../../../engine/three/ViewToggle.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
 import { ICONS } from '../../../engine/ui/icons.js';
@@ -47,9 +47,7 @@ export class MenuScene extends NinjaScene {
 
     // Only offered where the device can do 3D. The choice is remembered for next time (see `createViewChoice`).
     const { view } = this.routes;
-    const viewEl = view.supported ? el('div', { class: 'menu__view' },
-      createViewToggle({ mode: view.mode(), onChange: (next) => { view.choose(next); this.routes.menu(); } }),
-      el('p', { class: 'menu__viewnote', text: view.mode() === '3d' ? 'In 3D view the stars are spinning solids that split in two when you get the answer right.' : 'In 2D view the stars are flat pictures.' })) : null;
+    const viewEl = createViewSwitch({ view, onChange: () => this.routes.menu(), notes: { '3d': 'In 3D view the stars are spinning solids that split in two when you get the answer right.', '2d': 'In 2D view the stars are flat pictures.' } });
 
     const main = el('main', { class: 'menu' },
       el('h1', { class: 'menu__title', text: 'Number Ninja' }),

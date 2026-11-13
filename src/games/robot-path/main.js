@@ -3,6 +3,7 @@ import { loadJson } from '../../engine/utils/data.js';
 import { logError } from '../../engine/utils/errors.js';
 import { renderErrorScreen } from '../../engine/ui/ErrorScreen.js';
 import { createViewChoice } from '../../engine/three/view.js';
+import { openScreen } from '../../engine/three/openView.js';
 import { parseLevels } from './logic/levels.js';
 import { MapScene } from './scenes/MapScene.js';
 import { PuzzleScene } from './scenes/PuzzleScene.js';
@@ -25,24 +26,14 @@ async function boot() {
     const view = createViewChoice({ storage: services.storage, slug: services.game.slug });
     const puzzle2d = (params) => scenes.replace(new PuzzleScene(services, routes, data), params);
     /**
-     * Opens a level in the child's chosen view. three.js is about 2 MB, so the 3D puzzle is loaded with `import()` only
-     * when it is needed: the 2D game and the home page never download it. Anything that goes wrong on the way into 3D (the
-     * file will not load, the device has no WebGL 2, the scene fails to start) is logged and the 2D puzzle opens instead,
-     * so a child never sees a blank screen or an error for a view they did not need.
+     * Opens a level in the child's chosen view (see `openScreen`).
      */
-    const puzzle = async (params) => {
-      if (view.mode() === '3d') {
-        try {
-          const { Puzzle3DScene } = await import('./three/Puzzle3DScene.js');
-          scenes.replace(new Puzzle3DScene(services, routes, data), params);
-          return;
-        } catch (error) {
-          logError(error, 'robot-path:puzzle:3d');
-          view.fallBack();
-        }
-      }
-      puzzle2d(params);
-    };
+    const puzzle = (params) => openScreen({
+      view, scenes, where: 'robot-path:puzzle:3d', params,
+      load: () => import('./three/Puzzle3DScene.js'),
+      make: ({ Puzzle3DScene }) => new Puzzle3DScene(services, routes, data),
+      open2d: () => puzzle2d(params),
+    });
 
     /** @type {import('./scenes/RobotScene.js').Routes} */
     const routes = {

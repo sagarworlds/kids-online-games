@@ -16,3 +16,21 @@ export function createViewToggle({ mode, onChange }) {
     on: { click: () => onChange(next) },
   }));
 }
+
+/**
+ * The "3D view / 2D view" block of a game's menu: the toggle, and a sentence about what the current view is like.
+ *
+ * @param {{
+ *   view: { supported: boolean, mode: () => '3d'|'2d', choose: (mode: '3d'|'2d') => void },
+ *   notes: { '3d': string, '2d': string },
+ *   onChange: () => void
+ * }} options `view` is the game's view choice. `notes` says what each view looks like in this game. `onChange` redraws the menu; it is
+ *   called after the child's pick is saved.
+ * @returns {HTMLElement|null} Null where the device cannot do 3D, so there is nothing to switch.
+ */
+export function createViewSwitch({ view, notes, onChange }) {
+  if (!view.supported) return null;
+  return el('div', { class: 'menu__view' },
+    createViewToggle({ mode: view.mode(), onChange: (next) => { view.choose(next); onChange(); } }),
+    el('p', { class: 'menu__viewnote', text: notes[view.mode()] }));
+}

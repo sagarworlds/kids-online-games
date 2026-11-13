@@ -3,7 +3,7 @@ import { el } from '../../../engine/utils/dom.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
 import { ICONS } from '../../../engine/ui/icons.js';
-import { createViewToggle } from '../../../engine/three/ViewToggle.js';
+import { createViewSwitch } from '../../../engine/three/ViewToggle.js';
 import { LEVELS, LEVEL_IDS, roundKey } from '../logic/levels.js';
 import { plantsFor } from '../logic/plants.js';
 
@@ -45,9 +45,7 @@ export class MenuScene extends PlantScene {
     // Only offered where the device can do 3D. The choice is remembered for next time (see `createViewChoice`). It is made here, not in
     // the garden, because switching in the middle of a week would start the week again.
     const { view } = this.routes;
-    const viewEl = view.supported ? el('div', { class: 'menu__view' },
-      createViewToggle({ mode: view.mode(), onChange: (next) => { view.choose(next); this.routes.menu(); } }),
-      el('p', { class: 'menu__viewnote', text: view.mode() === '3d' ? 'In 3D view the garden is a pot you can turn, with a sun that crosses the sky.' : 'In 2D view the garden is a flat picture.' })) : null;
+    const viewEl = createViewSwitch({ view, onChange: () => this.routes.menu(), notes: { '3d': 'In 3D view the garden is a pot you can turn, with a sun that crosses the sky.', '2d': 'In 2D view the garden is a flat picture.' } });
 
     this.ui.append(hud.el, el('main', { class: 'menu' },
       el('h1', { class: 'menu__title', text: 'Plant Grower' }),

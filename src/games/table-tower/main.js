@@ -2,6 +2,7 @@ import { createApp } from '../../app/createApp.js';
 import { renderErrorScreen } from '../../engine/ui/ErrorScreen.js';
 import { logError } from '../../engine/utils/errors.js';
 import { createViewChoice } from '../../engine/three/view.js';
+import { openScreen } from '../../engine/three/openView.js';
 import { MenuScene } from './scenes/MenuScene.js';
 import { FloorScene } from './scenes/FloorScene.js';
 import { LearnScene } from './scenes/LearnScene.js';
@@ -23,28 +24,13 @@ function boot() {
     const learn2d = (floor) => scenes.replace(new LearnScene(services, routes), { floor });
 
     /**
-     * Opens a screen in the child's chosen view. three.js is about 2 MB, so a 3D scene is loaded with `import()` only when it is
-     * needed: the 2D game and the home page never download it. Anything that goes wrong on the way into 3D (the file will not
-     * load, the device has no WebGL 2, the scene fails to start) is logged and the 2D screen opens instead, so a child never sees a
-     * blank screen or an error for a view they did not need.
+     * Opens a screen in the child's chosen view (see `openScreen`).
      * @param {() => Promise<object>} load Imports the 3D scene's module.
      * @param {(module: object) => import('../../engine/Scene.js').Scene} make Builds the 3D scene from the module.
      * @param {Record<string, unknown>|undefined} params What the scene is opened with.
-     * @param {() => void} fallBack Opens the 2D version.
+     * @param {() => void} open2d Opens the 2D version.
      */
-    const open = async (load, make, params, fallBack) => {
-      if (view.mode() === '3d') {
-        try {
-          const module = await load();
-          scenes.replace(make(module), params);
-          return;
-        } catch (error) {
-          logError(error, 'table-tower:3d');
-          view.fallBack();
-        }
-      }
-      fallBack();
-    };
+    const open = (load, make, params, open2d) => openScreen({ view, scenes, where: 'table-tower:3d', load, make, params, open2d });
 
     /** @type {import('./scenes/TowerBase.js').Routes} */
     const routes = {

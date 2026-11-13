@@ -236,13 +236,14 @@ Twelve games have a 3D version drawn with three.js. The 2D version of every game
 | `deviceVerdict.js` | The device record (`kidsgames:device`): whether 3D was too slow here, and the developer switch that turns the speed check off |
 | `OrbitInput.js` + `orbitMath.js` | Drag to turn, pinch or wheel to zoom, arrow keys and + / -; reports taps |
 | `labels.js` | `makeLabel(text)`: text inside the scene as a camera-facing sprite |
-| `ViewToggle.js` | The "3D view / 2D view" button |
+| `ViewToggle.js` | `createViewToggle()`, the "3D view / 2D view" button, and `createViewSwitch({ view, notes, onChange })`, the toggle with a sentence about the current view that a game's menu shows |
+| `openView.js` | `openScreen({ view, scenes, where, load, make, params, open2d, whileLoading })`: opens a screen in the chosen view, loading the 3D module on demand and falling back to the flat screen (logged, this visit only) when anything goes wrong; pure and unit-tested |
 
 **How a game adds its 3D version**
 
 1. Put 3D scenes in `src/games/<slug>/three/` (for example `three/Play3DScene.js`). They extend the engine `Scene`, build a `Stage3D` in `enter()`, call `stage.render()` from `render()` and `stage.dispose()` from `exit()`.
-2. In `main.js`, create `const view = createViewChoice({ storage, slug })`. Where the 2D play scene is opened, check `view.mode()`; for `'3d'` load the scene with `await import('./three/Play3DScene.js')`.
-3. Wrap that import and the scene's start in try/catch. On any error, or when `Stage3D` reports a lost context, log it, call `view.fallBack()` and open the 2D scene instead. A child must never see a blank or frozen screen.
+2. In `main.js`, create `const view = createViewChoice({ storage, slug })`. Where the 2D play scene is opened, call `openScreen({ view, scenes, where: '<slug>:3d', params, load: () => import('./three/Play3DScene.js'), make: ({ Play3DScene }) => new Play3DScene(services, routes), open2d: () => scenes.replace(new PlayScene(services, routes), params) })`.
+3. `openScreen` already does what a game must: it loads the 3D module only for the 3D view, and on any error (the file will not load, the scene fails to start) it logs, calls `view.fallBack()` and opens the 2D scene, so a child never sees a blank screen. A scene that is already open handles a lost context or a view that is too slow itself, through `Stage3D`'s `onContextLost`, switching to its flat view in place, so a frozen or blank picture is never left on screen.
 4. Show the view toggle (menu or play header) only when `view.supported` is true. Changing it calls `view.choose(mode)` and reopens the play scene.
 5. Keep all rules in the existing `logic/` files. New pure maths for 3D (layouts, paths, camera positions) goes in `logic/` too, with tests. Menu and results scenes stay as they are.
 
