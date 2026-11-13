@@ -131,7 +131,6 @@ export class PuzzleScene extends LightsScene {
     const results = [...this.round.results, { moves: s.moves, par: s.par, stars }];
     const last = results.length >= PUZZLES_PER_ROUND;
 
-    this.#board.el.classList.add('is-solved');
     services.audio.play(stars === 3 ? 'cheer' : 'chime');
     if (stars === 3) launchConfetti({ rng: services.rng });
     this.#status.textContent = `Solved in ${s.moves} moves. Par is ${s.par}.`;
