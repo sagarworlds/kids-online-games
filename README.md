@@ -42,7 +42,9 @@ keeps the *core* (the home page, the shared engine and the icons, about 190 KB),
 time that game is opened while online (the page loads from the network as usual, the rest of the game's files follow in
 the background, and the page is stored last, so a stored page always means a complete game). A first visit therefore costs a
 few hundred kilobytes instead of the whole site (about 8 MB), and a new deploy only re-downloads the games the child had
-saved. A game that was never opened sends the child back to the home page with a note when they try it offline. With the
+saved. A grown-up can also save everything at once, from the settings (behind the grown-ups' check): "Save all games for offline
+play" shows how many games are saved and downloads the rest with a progress bar (best on wifi). A game that was never opened and
+was not saved this way sends the child back to the home page with a note when they try it offline. With the
 browser's data saver on, games are stored only as they are played. Opened from `npm start` the worker stays inert (version
 `dev`), so local development never sees stale files. To try it: `npm run build`, `npm run start:dist`, open the site and a
 game, then switch the network off.
