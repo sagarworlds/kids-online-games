@@ -12,6 +12,8 @@ export const EXPECTED = Object.freeze({
   graphicsLost: [/the graphics were lost/, /WEBGL_CONTEXT_LOST/, /CONTEXT_LOST_WEBGL/],
   /** The device said yes to 3D, then could not create the real thing. */
   graphicsUnavailable: [/3D could not start/, /WEBGL_UNAVAILABLE/, /Error creating WebGL context/],
+  /** The 3D view ran too slowly. The games' own line says "the graphics were lost" because they handle this like a lost context. */
+  tooSlow: [/STAGE_TOO_SLOW/, /running slowly, so its resolution/, /the graphics were lost/],
   /** A 3D file did not download. */
   filesFailed: [/Failed to fetch dynamically imported module/, /request failed: .*\/three\//],
 });
@@ -53,4 +55,32 @@ export function failGraphicsAfterProbe(context) {
  */
 export function failThreeFiles(context, slug) {
   return context.route(`**/src/games/${slug}/three/**`, (route) => route.abort('failed'));
+}
+
+/**
+ * Lets a check make every animation frame cost a chosen number of milliseconds, like a heavy scene on a weak phone. Unlike throttling the
+ * processor, this does not depend on how fast the test machine is: the cost is burned inside each frame, so frames are at least this slow
+ * on any machine. It costs nothing until `setFrameCost` is called.
+ * @param {import('playwright').BrowserContext} context
+ */
+export function makeFramesSlowable(context) {
+  return context.addInitScript(() => {
+    const original = window.requestAnimationFrame.bind(window);
+    window.__frameCost = 0;
+    window.requestAnimationFrame = (callback) => original((time) => {
+      const until = performance.now() + window.__frameCost;
+      while (performance.now() < until) { /* burn the time */ }
+      callback(time);
+    });
+  });
+}
+
+/**
+ * Sets how many milliseconds every animation callback now burns (0 for none). Several callbacks run in each frame (the game's loop and
+ * the stage's speed check, at least), so a frame costs a few times this.
+ * @param {import('playwright').Page} page
+ * @param {number} milliseconds
+ */
+export function setFrameCost(page, milliseconds) {
+  return page.evaluate((cost) => { window.__frameCost = cost; }, milliseconds);
 }

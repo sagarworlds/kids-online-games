@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { SCREENS } from './browser.mjs';
+import { SCREENS, quietFrameWatch } from './browser.mjs';
 import { watchPage } from './log.mjs';
 
 const ARTIFACTS = resolve(import.meta.dirname, '..', 'artifacts');
@@ -18,10 +18,12 @@ const ARTIFACTS = resolve(import.meta.dirname, '..', 'artifacts');
  *   screen?: keyof typeof SCREENS,
  *   expected?: RegExp[],
  *   serviceWorkers?: 'allow'|'block',
+ *   frameWatch?: 'on',
  *   prepare?: (context: import('playwright').BrowserContext) => Promise<void>,
  *   contextOptions?: import('playwright').BrowserContextOptions,
  *   context?: import('playwright').BrowserContext,
- * }} options `prepare` runs before the page opens (inject failures, set storage); `expected` is passed to `watchPage`.
+ * }} options `prepare` runs before the page opens (inject failures, set storage); `expected` is passed to `watchPage`. The 3D views do
+ *   not judge their own speed unless `frameWatch: 'on'` (see `quietFrameWatch`).
  *   `context` runs the check in a context the caller owns (for state that must carry over, like an installed service
  *   worker); it opens a new page there and leaves the context open.
  * @param {(t: { page: import('playwright').Page, context: import('playwright').BrowserContext, log: ReturnType<typeof watchPage>, site: { url: string }, touch: boolean }) => Promise<void>} body
@@ -40,6 +42,7 @@ export async function scenario(env, name, options, body) {
       serviceWorkers: options.serviceWorkers ?? 'block',
       ...options.contextOptions,
     });
+    if (owned && options.frameWatch !== 'on') await quietFrameWatch(context);
     const page = await context.newPage();
     const close = () => (owned ? context.close() : page.close()).catch(() => {});
     const log = watchPage(page, { expected: options.expected });

@@ -89,7 +89,9 @@ scripts/                   build.mjs (copy to dist/), serve.mjs (local server)
 ## 3D versions
 
 Some games have a 3D version drawn with three.js; every game keeps its 2D version, which is also the fallback when a
-device has no WebGL 2 or 3D fails. The library is loaded only when a 3D scene opens. The rules for adding one are in
+device has no WebGL 2 or 3D fails. The library is loaded only when a 3D scene opens. A 3D view that runs too slowly (a weak
+phone) first lowers its resolution and then gives way to the flat game, and the device remembers, so games open flat there
+from then on; a very weak device starts flat, and the child can always choose 3D. The rules for adding one are in
 the "3D versions (Three.js)" section of [`docs/SPEC.md`](docs/SPEC.md).
 
 Done so far: **Planet Hop** (Line them up and Weigh-in; see [its README](src/games/planet-hop/README.md#3d-view)) and

@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { after, before, describe, it } from 'node:test';
-import { launchBrowser } from '../support/browser.mjs';
+import { launchBrowser, quietFrameWatch } from '../support/browser.mjs';
 import { expectPicture, openGame, startRound } from '../support/flow.mjs';
 import { selectGames } from '../support/games.mjs';
 import { REPO } from '../support/headers.mjs';
@@ -31,6 +31,7 @@ describe('after one visit the whole site works with no network', () => {
     env.site = await startSite();
     env.browser = await launchBrowser();
     context = await env.browser.newContext({ viewport: { width: 1280, height: 800 }, serviceWorkers: 'allow' });
+    await quietFrameWatch(context);
     const page = await context.newPage();
     const log = watchPage(page);
     await page.goto(`${env.site.url}/`);

@@ -228,10 +228,12 @@ Twelve games have a 3D version drawn with three.js. The 2D version of every game
 | Module | Responsibility |
 | --- | --- |
 | `three.js` | Re-exports the vendored library (single import point) |
-| `support.js` | `hasWebGL2()`, `pickQuality(hints)`, `resolveViewMode()`; pure and unit-tested |
-| `view.js` | `createViewChoice({ storage, slug })`: which view to show, saving the child's pick, falling back after an error |
+| `support.js` | `hasWebGL2()`, `pickQuality(hints)`, `isWeakDevice(hints)`, `resolveViewMode()`; pure and unit-tested |
+| `view.js` | `createViewChoice({ storage, slug })`: which view to show (the child's pick wins; with none, flat on a device that is weak or was too slow), saving the pick, falling back after an error |
 | `viewPreference.js` | Reads and writes the pick in the game's own save data (`extra.viewMode`) |
-| `Stage3D.js` | Renderer, scene, camera, resize, `pick()` for taps, lost-context handling, `dispose()` |
+| `Stage3D.js` | Renderer, scene, camera, resize, `pick()` for taps, lost-context handling, the speed check, `dispose()` |
+| `frameWatch.js` | The speed check's decisions (fine, lower the resolution, give up) from the time between frames, and the resolution steps; pure and unit-tested |
+| `deviceVerdict.js` | The device record (`kidsgames:device`): whether 3D was too slow here, and the developer switch that turns the speed check off |
 | `OrbitInput.js` + `orbitMath.js` | Drag to turn, pinch or wheel to zoom, arrow keys and + / -; reports taps |
 | `labels.js` | `makeLabel(text)`: text inside the scene as a camera-facing sprite |
 | `ViewToggle.js` | The "3D view / 2D view" button |
@@ -250,6 +252,7 @@ Twelve games have a 3D version drawn with three.js. The 2D version of every game
 - Layout: on a narrow portrait screen the 3D view goes on top (at least 45% of the height) with the controls below; in landscape the controls go beside it. No page scrolling during play.
 - Light scenes: low-poly shapes built in code (no model files), `MeshLambertMaterial` or `MeshBasicMaterial`, at most 3 lights, no shadow maps (use a flat "blob" under objects if needed), textures drawn on a canvas at most 512 px. The one exception is a world-map texture (Flag & Capital Quest): a map with hundreds of countries needs 1024 px (weak devices) or 2048 px (capable ones), drawn once.
 - `pickQuality()` decides pixel ratio and antialiasing; use `stage.quality.detail` to halve segment and object counts on weak devices.
+- Slow devices are looked after by `Stage3D` itself, so a scene does nothing extra beyond passing `onContextLost`. It times its own animation frames: when the typical frame stays slower than about 22 frames a second it lowers the resolution (twice at most, to three quarters and then half), and when that is not enough, or the picture is under about 8 frames a second, it logs `STAGE_TOO_SLOW`, marks the device slow and calls `onContextLost`, so the game's in-place switch to its flat version runs. A device marked slow, and a very weak one (1 GB of memory or less, or two cores or fewer), opens games flat until the child chooses 3D; the child's own choice always wins. "Reset all progress" forgets the mark. To stop the check while developing on a slow machine, set `frameWatch` to `"off"` in the `kidsgames:device` record (the browser tests do).
 - Free what you create: `stage.dispose()` on exit, and `disposeObject()` for anything removed during play.
 - Respect `prefers-reduced-motion`: no camera shake, fly-throughs become cuts, spinning stops.
 - The frame loop already stops in a hidden tab; do not add timers that keep running.
@@ -284,7 +287,7 @@ Each game's README describes its 3D view, its controls and anything that differs
 **Definition of done (3D version)**
 
 - [ ] The 2D version still works unchanged and is reachable with the view toggle
-- [ ] With WebGL 2 turned off, or after a simulated context loss, the game opens in 2D with no error screen
+- [ ] With WebGL 2 turned off, or after a simulated context loss, the game opens in 2D with no error screen (the same path handles a view that runs too slowly)
 - [ ] Playable by touch on a 390 x 844 phone screen in portrait, and by keyboard on desktop
 - [ ] No three.js download on the 2D path (static-import rule passes)
 - [ ] Same stars and saved progress as the 2D version for the same play
