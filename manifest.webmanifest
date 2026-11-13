@@ -1,0 +1,20 @@
+{
+  "name": "Kids Learning Games",
+  "short_name": "Kids Games",
+  "description": "Free learning games for kids aged 8 to 10: maths, languages, logic, science and memory. No ads, no sign-up.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fff8e7",
+  "theme_color": "#5b3df5",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["education", "games", "kids"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

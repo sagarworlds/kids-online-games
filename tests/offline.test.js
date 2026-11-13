@@ -141,7 +141,7 @@ test('the worker ignores non-GET requests and other origins', () => {
 /** A throwaway site root with the real sw.js template, so builds can be compared. */
 function fakeRoot(files = {}) {
   const root = mkdtempSync(join(tmpdir(), 'kg-root-'));
-  const all = { 'index.html': '<h1>hi</h1>', '404.html': 'nope', 'favicon.svg': '<svg/>', 'src/a.js': 'export const a = 1;', ...files };
+  const all = { 'index.html': '<h1>hi</h1>', '404.html': 'nope', 'favicon.svg': '<svg/>', 'manifest.webmanifest': '{}', 'icons/icon-192.png': 'png', 'src/a.js': 'export const a = 1;', ...files };
   for (const [name, body] of Object.entries(all)) {
     mkdirSync(dirname(join(root, name)), { recursive: true });
     writeFileSync(join(root, name), body);
@@ -161,7 +161,7 @@ test('the real build produces a worker that precaches the whole site and nothing
     const { version: stamped, precache } = workerFields(readFileSync(join(out, 'sw.js'), 'utf8'));
     assert.equal(stamped, version);
     assert.match(version, /^[0-9a-f]{12}$/);
-    for (const must of ['./', 'index.html', 'favicon.svg', 'src/hub/main.js', 'src/engine/ui/ui.css', 'src/games/number-ninja/index.html', 'src/games/robot-path/data/levels.json']) {
+    for (const must of ['./', 'index.html', 'favicon.svg', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png', 'icons/apple-touch-icon.png', 'src/hub/main.js', 'src/engine/ui/ui.css', 'src/games/number-ninja/index.html', 'src/games/robot-path/data/levels.json']) {
       assert.ok(precache.includes(must), `${must} is precached`);
     }
     assert.ok(!precache.includes('sw.js'), 'the worker does not cache itself');
