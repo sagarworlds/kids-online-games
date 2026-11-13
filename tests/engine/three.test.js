@@ -3,12 +3,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { hasWebGL2, pickQuality, resolveViewMode } from '../../src/engine/three/support.js';
+import { hasWebGL2, isWeakDevice, pickQuality, resolveViewMode } from '../../src/engine/three/support.js';
+import { markDeviceSlow, readDevice } from '../../src/engine/three/deviceVerdict.js';
 import { clampOrbit, orbitPosition, pinchGap, rotateOrbit, zoomOrbit } from '../../src/engine/three/orbitMath.js';
 import { readViewPreference, saveViewPreference } from '../../src/engine/three/viewPreference.js';
 import { createViewChoice } from '../../src/engine/three/view.js';
 import { StorageService, createMemoryBackend } from '../../src/engine/services/StorageService.js';
-import { gameKey, saveSchema } from '../../src/engine/services/schemas.js';
+import { DEVICE_KEY, deviceSchema, gameKey, saveSchema } from '../../src/engine/services/schemas.js';
 import { createLogger } from './helpers.js';
 
 const newStorage = () => new StorageService({ backend: createMemoryBackend(), logger: createLogger(), eventTarget: null });
@@ -41,6 +42,25 @@ test('resolveViewMode gives 3D unless the device cannot do it or the child chose
   assert.equal(resolveViewMode({ supported: true, preference: '3d' }), '3d');
   assert.equal(resolveViewMode({ supported: true, preference: '2d' }), '2d');
   assert.equal(resolveViewMode({ supported: false, preference: '3d' }), '2d');
+});
+
+test('resolveViewMode opens flat on a slow device until the child chooses, and the child\'s own choice always wins', () => {
+  assert.equal(resolveViewMode({ supported: true, slowDevice: true }), '2d', 'no choice yet: flat on a slow device');
+  assert.equal(resolveViewMode({ supported: true, slowDevice: true, preference: '3d' }), '3d', 'the child asked for 3D');
+  assert.equal(resolveViewMode({ supported: true, slowDevice: true, preference: '2d' }), '2d');
+  assert.equal(resolveViewMode({ supported: true, slowDevice: false }), '3d');
+  assert.equal(resolveViewMode({ supported: false, slowDevice: false, preference: '3d' }), '2d', 'a device that cannot do 3D never gets it');
+});
+
+test('isWeakDevice is true only for 1 GB or less, or 2 cores or fewer, and treats hidden values as capable', () => {
+  assert.equal(isWeakDevice({ deviceMemory: 1 }), true);
+  assert.equal(isWeakDevice({ deviceMemory: 0.5 }), true);
+  assert.equal(isWeakDevice({ hardwareConcurrency: 2 }), true);
+  assert.equal(isWeakDevice({ deviceMemory: 2, hardwareConcurrency: 4 }), false, 'low detail, but not flat by default');
+  assert.equal(isWeakDevice({ deviceMemory: 4, hardwareConcurrency: 8 }), false);
+  assert.equal(isWeakDevice({}), false, 'Safari and Firefox hide these values');
+  assert.equal(isWeakDevice(), false);
+  assert.equal(isWeakDevice({ deviceMemory: Number.NaN, hardwareConcurrency: 'many' }), false);
 });
 
 // ---- orbit maths -----------------------------------------------------------
@@ -98,19 +118,55 @@ test('the view choice is saved inside the game\'s own save data and keeps the re
   assert.equal(readViewPreference(storage, 'planet-hop'), '2d', 'an unknown mode is ignored');
 });
 
+const CAPABLE = { deviceMemory: 8, hardwareConcurrency: 8 }; // a fixed device, so these tests do not depend on the machine they run on
+
 test('createViewChoice: 3D by default, the child can pick 2D, and a 3D failure falls back without saving', () => {
   const storage = newStorage();
-  const view = createViewChoice({ storage, slug: 'robot-path', supported: true });
+  const view = createViewChoice({ storage, slug: 'robot-path', supported: true, hints: CAPABLE });
   assert.equal(view.mode(), '3d');
   view.fallBack();
   assert.equal(view.mode(), '2d');
   assert.equal(readViewPreference(storage, 'robot-path'), null, 'the fallback is for this visit only');
 
-  const again = createViewChoice({ storage, slug: 'robot-path', supported: true });
+  const again = createViewChoice({ storage, slug: 'robot-path', supported: true, hints: CAPABLE });
   again.choose('2d');
   assert.equal(again.mode(), '2d');
   again.choose('3d');
   assert.equal(again.mode(), '3d');
 
-  assert.equal(createViewChoice({ storage, slug: 'robot-path', supported: false }).mode(), '2d');
+  assert.equal(createViewChoice({ storage, slug: 'robot-path', supported: false, hints: CAPABLE }).mode(), '2d');
+});
+
+test('createViewChoice: a very weak device, or one marked slow, opens flat by default; a saved choice still wins', () => {
+  const weak = createViewChoice({ storage: newStorage(), slug: 'lights-out', supported: true, hints: { deviceMemory: 1, hardwareConcurrency: 4 } });
+  assert.equal(weak.mode(), '2d');
+  weak.choose('3d');
+  assert.equal(weak.mode(), '3d', 'the child asked for 3D');
+
+  const storage = newStorage();
+  const capable = createViewChoice({ storage, slug: 'lights-out', supported: true, hints: CAPABLE });
+  assert.equal(capable.mode(), '3d');
+  markDeviceSlow(storage);
+  assert.equal(capable.mode(), '2d', 'the next time the choice is read, a device marked slow opens flat');
+  const other = createViewChoice({ storage, slug: 'robot-path', supported: true, hints: CAPABLE });
+  assert.equal(other.mode(), '2d', 'and so does every other game, since it is the device that is slow');
+  other.choose('3d');
+  assert.equal(other.mode(), '3d');
+});
+
+// ---- device record -----------------------------------------------------------
+
+test('the device record starts as "not slow, speed check on", and marking it slow keeps the developer switch', () => {
+  const storage = newStorage();
+  assert.deepEqual(readDevice(storage), { version: 1, slow3d: false, frameWatch: 'on' });
+  storage.write(DEVICE_KEY, { version: 1, slow3d: false, frameWatch: 'off' });
+  markDeviceSlow(storage);
+  assert.deepEqual(readDevice(storage), { version: 1, slow3d: true, frameWatch: 'off' });
+});
+
+test('a damaged device record is reset instead of being trusted', () => {
+  const backend = createMemoryBackend();
+  backend.setItem(DEVICE_KEY, JSON.stringify({ version: 1, slow3d: 'yes', frameWatch: 'sometimes' }));
+  const storage = new StorageService({ backend, logger: createLogger() });
+  assert.deepEqual(readDevice(storage), deviceSchema.defaults());
 });

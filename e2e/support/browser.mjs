@@ -30,3 +30,20 @@ export function launchBrowser({ webgl = true } = {}) {
     executablePath: process.env.E2E_CHROMIUM || undefined,
   });
 }
+
+/**
+ * Stops the 3D views from judging their own speed in this context. The software renderer on a test machine is slow on purpose, and a
+ * 3D view that gave way to the flat game because of it would fail every 3D check. The device record is only written when there is none,
+ * so a check that wants the real behaviour (or that lets the page write "slow") is not undone on the next page load.
+ * @param {import('playwright').BrowserContext} context
+ */
+export function quietFrameWatch(context) {
+  return context.addInitScript(() => {
+    try {
+      const key = 'kidsgames:device';
+      if (!localStorage.getItem(key)) localStorage.setItem(key, JSON.stringify({ version: 1, slow3d: false, frameWatch: 'off' }));
+    } catch {
+      // Storage is blocked: the page then judges its own speed, which only matters to the checks about that.
+    }
+  });
+}

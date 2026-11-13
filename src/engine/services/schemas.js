@@ -7,6 +7,7 @@
 export const KEY_PREFIX = 'kidsgames:';
 export const PROFILE_KEY = `${KEY_PREFIX}profile`;
 export const SETTINGS_KEY = `${KEY_PREFIX}settings`;
+export const DEVICE_KEY = `${KEY_PREFIX}device`;
 
 /** @param {string} slug Game folder name, e.g. 'number-ninja'. @returns {string} */
 export const gameKey = (slug) => `${KEY_PREFIX}${slug}`;
@@ -44,6 +45,19 @@ export const settingsSchema = {
     typeof d.sound === 'boolean' &&
     typeof d.readAloud === 'boolean' &&
     (d.difficultyLock === null || LEVELS.includes(d.difficultyLock)),
+};
+
+/**
+ * What this device has shown about itself, as opposed to what the child or a grown-up chose. `slow3d` is set when a 3D view ran too
+ * slowly here, so games open flat by default from then on. `frameWatch` is a developer switch: 'off' stops the 3D views from judging
+ * their own speed (the software renderer on a test machine is slow on purpose).
+ * @typedef {{ version: number, slow3d: boolean, frameWatch: 'on'|'off' }} Device
+ */
+/** @type {Schema} */
+export const deviceSchema = {
+  version: 1,
+  defaults: () => ({ version: 1, slow3d: false, frameWatch: 'on' }),
+  validate: (d) => typeof d.slow3d === 'boolean' && (d.frameWatch === 'on' || d.frameWatch === 'off'),
 };
 
 /**

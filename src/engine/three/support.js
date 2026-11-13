@@ -49,11 +49,25 @@ export function pickQuality({ deviceMemory, hardwareConcurrency, devicePixelRati
 }
 
 /**
- * Which version of a game to show.
- * @param {{ supported: boolean, preference?: ViewMode|null }} options `preference` is the child's saved choice.
- * @returns {ViewMode} '3d' only when the device supports it and the child has not chosen 2D.
+ * True for the very weakest phones: 1 GB of memory or less, or two cores or fewer. They open games flat until the child asks for 3D,
+ * because a first visit that stutters is the worst way to meet it. (`pickQuality` is gentler: it only lowers the detail up to 2 GB or
+ * 4 cores.) Browsers that hide these values are treated as capable.
+ * @param {{ deviceMemory?: number, hardwareConcurrency?: number }} [hints]
+ * @returns {boolean}
  */
-export function resolveViewMode({ supported, preference = null }) {
+export function isWeakDevice({ deviceMemory, hardwareConcurrency } = {}) {
+  return (Number.isFinite(deviceMemory) && deviceMemory <= 1) || (Number.isFinite(hardwareConcurrency) && hardwareConcurrency <= 2);
+}
+
+/**
+ * Which version of a game to show.
+ * @param {{ supported: boolean, preference?: ViewMode|null, slowDevice?: boolean }} options `preference` is the child's saved choice.
+ *   `slowDevice` says 3D has been too slow here (or the device is very weak).
+ * @returns {ViewMode} 2D when the device cannot do 3D. Otherwise the child's own choice always wins; with no choice yet, 3D, unless
+ *   the device is slow.
+ */
+export function resolveViewMode({ supported, preference = null, slowDevice = false }) {
   if (!supported) return '2d';
-  return preference === '2d' ? '2d' : '3d';
+  if (preference === '2d' || preference === '3d') return preference;
+  return slowDevice ? '2d' : '3d';
 }

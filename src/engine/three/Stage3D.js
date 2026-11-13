@@ -1,11 +1,17 @@
 import { WebGLRenderer, Scene as ThreeScene, PerspectiveCamera, Color, Raycaster, Vector2 } from './three.js';
 import { GameError, logError } from '../utils/errors.js';
+import { markDeviceSlow, readDevice } from './deviceVerdict.js';
+import { FRAME_WATCH_DEFAULTS, createFrameWatch, pixelRatioSteps } from './frameWatch.js';
 import { pickQuality } from './support.js';
 
 /**
  * A ready-to-use 3D view inside a DOM element: renderer, scene, camera, sizing, picking and clean-up.
  * Every 3D scene builds on this, so the mobile rules (capped pixel ratio, no shadows, a lost graphics
- * context handled instead of a frozen picture) are written once.
+ * context handled instead of a frozen picture, a view that runs too slowly given up on) are written once.
+ *
+ * It watches how smoothly it runs (see `frameWatch.js`). When frames stay slow it lowers its resolution, and when that is not enough
+ * it tells the game to carry on flat, through the same `onContextLost` hook every game already wires to its flat version, and notes that
+ * this device is slow so games open flat here by default from then on.
  *
  * Typical use inside an engine Scene:
  *   enter()  -> this.stage = new Stage3D({ container, onContextLost: () => routes.play2d() })
@@ -27,9 +33,13 @@ export class Stage3D {
   #raycaster = new Raycaster();
   #pointer = new Vector2();
   #onContextLost;
+  #onTooSlow;
   #handleLost;
   #disposed = false;
   #size = { width: 1, height: 1 };
+  /** The pixel ratios to step down through when frames are slow, starting with the one in use. */
+  #ratios;
+  #frameRequest = null;
 
   /**
    * @param {{
@@ -38,15 +48,20 @@ export class Stage3D {
    *   fov?: number, near?: number, far?: number,
    *   quality?: import('./support.js').Quality,
    *   onContextLost?: () => void,
+   *   onTooSlow?: () => void,
+   *   frameWatch?: boolean,
    *   label?: string
    * }} options `container` must have a size from CSS; the canvas fills it. `label` is read by screen
-   *   readers in place of the picture. `onContextLost` should switch the game to its 2D version.
+   *   readers in place of the picture. `onContextLost` should switch the game to its 2D version. `onTooSlow` is called when the
+   *   view runs too slowly even at a low resolution (it defaults to `onContextLost`, so a game that handles a lost context already
+   *   handles this). `frameWatch: false` turns the speed check off; by default it is on unless the device record says otherwise.
    * @throws {GameError} With code 'WEBGL_UNAVAILABLE' when the renderer cannot be created. Callers
    *   catch it and fall back to 2D.
    */
-  constructor({ container, background = null, fov = 50, near = 0.1, far = 200, quality, onContextLost, label = '3D view' }) {
+  constructor({ container, background = null, fov = 50, near = 0.1, far = 200, quality, onContextLost, onTooSlow, frameWatch, label = '3D view' }) {
     this.#container = container;
     this.#onContextLost = onContextLost ?? (() => {});
+    this.#onTooSlow = onTooSlow ?? this.#onContextLost;
     this.quality = quality ?? pickQuality({
       deviceMemory: globalThis.navigator?.deviceMemory,
       hardwareConcurrency: globalThis.navigator?.hardwareConcurrency,
@@ -92,6 +107,9 @@ export class Stage3D {
       this.#observer = new ResizeObserver(() => this.#fit());
       this.#observer.observe(container);
     }
+
+    this.#ratios = pixelRatioSteps(this.quality.pixelRatio, FRAME_WATCH_DEFAULTS.steps);
+    if (frameWatch ?? readDevice().frameWatch !== 'off') this.#watchFrames();
   }
 
   /** @returns {HTMLCanvasElement} The canvas, for pointer listeners and focus. */
@@ -130,12 +148,55 @@ export class Stage3D {
   dispose() {
     if (this.#disposed) return;
     this.#disposed = true;
+    if (this.#frameRequest !== null) globalThis.cancelAnimationFrame?.(this.#frameRequest);
     this.#observer?.disconnect();
     this.canvas.removeEventListener('webglcontextlost', this.#handleLost);
     disposeObject(this.scene);
     this.renderer.dispose();
     this.canvas.remove();
     this.#container.classList.remove('stage3d');
+  }
+
+  /**
+   * Times the animation frames (with a loop of its own, so a scene that only draws when something moves is not mistaken for a slow
+   * one) and acts on what `createFrameWatch` says.
+   */
+  #watchFrames() {
+    const raf = globalThis.requestAnimationFrame?.bind(globalThis);
+    if (!raf) return;
+    const watch = createFrameWatch({ steps: this.#ratios.length - 1 });
+    let last = null;
+    const tick = (now) => {
+      if (this.#disposed) return;
+      if (last !== null) {
+        const verdict = watch.frame(now - last);
+        if (verdict === 'lower') this.#lowerResolution(this.#ratios[watch.lowered]);
+        else if (verdict === 'giveUp') {
+          this.#giveUpSlow(watch.lowered);
+          return;
+        }
+      }
+      last = now;
+      this.#frameRequest = raf(tick);
+    };
+    this.#frameRequest = raf(tick);
+  }
+
+  /** @param {number} ratio */
+  #lowerResolution(ratio) {
+    console.warn(`[stage3d] the 3D view is running slowly, so its resolution goes down to x${ratio}`);
+    // three.js resizes the drawing buffer itself when the ratio changes.
+    this.renderer.setPixelRatio(ratio);
+  }
+
+  /** @param {number} lowered How many times the resolution was lowered first. */
+  #giveUpSlow(lowered) {
+    logError(
+      new GameError('STAGE_TOO_SLOW', 'the 3D view runs too slowly on this device, so the game carries on with its flat version', { lowered }),
+      'stage3d',
+    );
+    markDeviceSlow();
+    this.#onTooSlow();
   }
 
   #fit() {
