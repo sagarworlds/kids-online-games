@@ -133,8 +133,6 @@
 /* ---------- Phones ---------- */
 
 @media (max-width: 479px) {
-  .run-scene .hud__title { display: none; }
-  .run-scene .hud__stat { margin-left: auto; }
   .run__prompt { font-size: 1.05rem; }
   .build__target { font-size: 2.6rem; }
   .build__preview { min-width: 110px; min-height: 64px; padding: 0 12px; font-size: 2.4rem; }

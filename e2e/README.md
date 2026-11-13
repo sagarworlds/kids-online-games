@@ -34,6 +34,7 @@ E2E_CHROMIUM=/path/to/chrome npm test  # a browser Playwright does not know abou
 | `specs/offline.e2e.mjs` | After one visit with the real service worker, with the network cut, the home page and every game (3D ones too) still open and play. |
 | `specs/hub.e2e.mjs` | The home page has a card for every game, each opens its game, and Home comes back. The list of games these checks know about matches the registry. |
 | `specs/lights-out.e2e.mjs` | Lights Out played to the moment a puzzle is solved (a pattern for deeper checks of one game, in `specs/<slug>.e2e.mjs`): in 2D the freed fireflies fly out over the solved card and are gone afterwards, nothing flies for a child who wants less motion, and in 3D the flat jars under the picture stay quiet. |
+| `specs/phones.e2e.mjs` | The shared top bar stays compact on small and landscape phones (360x640, 667x375, 320x568): one row where it can be, at most two lines of stats, never wider than the screen, with the game's name still there for screen readers. |
 | `specs/harness.e2e.mjs` | The harness itself: it notices console errors, uncaught errors, 404s and Content-Security-Policy violations, tells a blank canvas from a picture, and serves the production headers. |
 
 Every check opens a **fresh browser context** (empty storage, like a first visit). A check fails if the page reports anything it

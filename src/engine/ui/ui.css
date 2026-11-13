@@ -111,14 +111,36 @@ p { margin: 0 0 0.75em; }
   min-height: 40px; padding: 2px 12px;
   background: var(--bg); border: 2px solid var(--line); border-radius: 999px;
 }
-/* From tablet width up, keep the HUD on one row: the title shrinks (with an ellipsis) instead of wrapping. */
-@media (min-width: 640px) {
+/* From tablet width up the HUD is one row: the title shrinks (with an ellipsis) instead of wrapping. */
+@media (min-width: 768px) {
   .hud { flex-wrap: nowrap; }
   .hud__title { flex: 1 1 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .hud__stat { flex: 0 0 auto; }
 }
 .hud__label { font-size: 0.8rem; font-weight: 700; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.04em; }
 .hud__value { font-size: 1.15rem; font-weight: 800; font-variant-numeric: tabular-nums; display: inline-flex; gap: 2px; align-items: center; }
+
+/* The stats come in one group. From tablet width up the group adds no box of its own, so the bar lays out as it always has. */
+.hud__stats { display: contents; }
+
+/* Below tablet width (phones, and landscape phones where height is scarcest) the bar stays on one row so the game keeps the room. It used
+   to wrap to two or three rows, a third of a small screen, and with four stats it ran off the side. Home and settings keep their full 48px
+   at the ends. The stats share what is left between them, label above value, and wrap onto a second line only when there are too many
+   to fit, so the bar can never be wider than the screen. */
+@media (max-width: 767px) {
+  .hud { position: relative; flex-wrap: nowrap; gap: 6px; padding: 6px 8px; }
+  .hud .btn { padding: 0; line-height: 1; } /* Home and settings: the 48px tap size they are meant to have, not the 61px their padding made them */
+  .hud__title { flex: 0 1 auto; min-width: 0; margin-right: auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hud__stats { display: flex; flex: 1 1 0; min-width: 0; flex-wrap: wrap; justify-content: flex-end; gap: 4px; }
+  .hud__stat { flex-direction: column; align-items: center; gap: 0; padding: 1px 8px; border-radius: 14px; }
+  .hud__label { font-size: 0.65rem; line-height: 1.1; }
+  .hud__value { font-size: 1rem; line-height: 1.2; }
+}
+/* On a phone (or a small landscape one) the game's name has no room beside the stats, so with stats it stays for screen readers only (the
+   page title and each screen's own heading still say where the child is). */
+@media (max-width: 599px) {
+  .hud--stats .hud__title { flex: none; position: absolute; width: 1px; height: 1px; margin: -1px; clip: rect(0 0 0 0); }
+}
 
 /* ---------- Progress bar ---------- */
 

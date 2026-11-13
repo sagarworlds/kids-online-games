@@ -152,8 +152,6 @@
   .rung { min-height: 32px; }
 }
 @media (max-width: 479px) {
-  .ladder-scene .hud__title, .quiz-scene .hud__title { display: none; }
-  .ladder-scene .hud__stat:first-of-type, .quiz-scene .hud__stat:first-of-type { margin-left: auto; }
   /* Pictures stand in for the words in the two small boxes, so they stay on one row of a 360 px phone. */
   .ladder-scene .hud__label, .quiz-scene .hud__label { display: none; }
   .ladder-scene .hud__stat:nth-of-type(1) .hud__value::before { content: '🪜 '; }

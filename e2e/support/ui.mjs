@@ -51,3 +51,23 @@ export async function activate(locator, key = 'Enter') {
 
 /** The page does not scroll sideways (a sign a layout overflowed the screen). */
 export const fitsWidth = (page) => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1);
+
+/**
+ * The shared top bar (Home, title, stats, settings): how tall it is, and whether everything in it is inside the screen.
+ * @param {import('playwright').Page} page
+ * @returns {Promise<{ height: number, inside: boolean, hasTitleText: boolean }>}
+ */
+export function topBar(page) {
+  return page.evaluate(() => {
+    const bar = document.querySelector('.hud');
+    if (!bar) throw new Error('this screen has no top bar (.hud)');
+    // A visually hidden title is taken out of the layout on purpose, so only what takes up room counts.
+    const shown = [...bar.children].filter((child) => getComputedStyle(child).position !== 'absolute');
+    const right = Math.max(...shown.map((child) => child.getBoundingClientRect().right));
+    return {
+      height: Math.round(bar.getBoundingClientRect().height),
+      inside: right <= window.innerWidth + 1,
+      hasTitleText: (bar.querySelector('.hud__title')?.textContent ?? '').trim().length > 0,
+    };
+  });
+}
