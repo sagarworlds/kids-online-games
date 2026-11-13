@@ -15,7 +15,7 @@ import { createBoardView3D } from './BoardView3D.js';
 export class Puzzle3DScene extends PuzzleScene {
   createBoard({ size, onTap }) {
     // The flat grid is made first and is always in the page; the 3D board puts its buttons over the picture (or, if 3D stops, gives it back).
-    const controls = createBoardView({ size, onTap });
+    const controls = createBoardView({ size, onTap, flights: false }); // the 3D board flies its own fireflies
     return createBoardView3D({ size, controls, onTap, onFallBack: () => this.routes.view.fallBack() });
   }
 

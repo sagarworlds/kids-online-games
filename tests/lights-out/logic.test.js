@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { createBoard, toggle, isSolved, countLit, boardFromTaps } from '../../src/games/lights-out/logic/board.js';
+import { createBoard, toggle, isSolved, countLit, litCells, boardFromTaps } from '../../src/games/lights-out/logic/board.js';
 import { solve, MAX_SIZE } from '../../src/games/lights-out/logic/solver.js';
 import { generate, generateForLevel } from '../../src/games/lights-out/logic/puzzleGenerator.js';
 import { newPuzzleState, tap, undo, restart } from '../../src/games/lights-out/logic/puzzleState.js';
@@ -11,6 +11,20 @@ import { LEVELS, LEVEL_IDS, getLevel } from '../../src/games/lights-out/logic/le
 import { createRng } from '../../src/engine/utils/random.js';
 
 const lit = (board) => board.flatMap((row, r) => row.map((on, c) => (on ? `${r},${c}` : null)).filter(Boolean));
+
+// ---- litCells --------------------------------------------------------------
+
+test('litCells lists the jars with a firefly in reading order, and none on a dark board', () => {
+  assert.deepEqual(litCells(createBoard(3)), []);
+  assert.deepEqual(litCells(toggle(createBoard(3), 1, 1)), [[0, 1], [1, 0], [1, 1], [1, 2], [2, 1]]);
+});
+
+test('litCells agrees with countLit and does not change the board', () => {
+  const board = boardFromTaps(4, [[0, 0], [2, 3], [3, 1]]);
+  const before = JSON.stringify(board);
+  assert.equal(litCells(board).length, countLit(board));
+  assert.equal(JSON.stringify(board), before);
+});
 
 // ---- toggle ----------------------------------------------------------------
 

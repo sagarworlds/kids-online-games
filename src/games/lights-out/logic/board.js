@@ -42,6 +42,15 @@ export function countLit(board) {
 }
 
 /**
+ * The jars that hold a firefly, in reading order. When the last move solves the puzzle these are the fireflies it set free.
+ * @param {Board} board
+ * @returns {Array<[number, number]>} `[row, column]` pairs.
+ */
+export function litCells(board) {
+  return board.flatMap((row, r) => row.flatMap((lit, c) => (lit ? [[r, c]] : [])));
+}
+
+/**
  * The board you get by tapping the given jars on an all-off board.
  * @param {number} size
  * @param {readonly (readonly [number, number])[]} taps

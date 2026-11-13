@@ -15,6 +15,9 @@ switch every firefly off (free them all) in as few taps as possible.
 Keyboard: arrow keys move between jars, Space or Enter taps. Each jar announces its row, column and whether it holds a
 firefly. A lit jar is brighter *and* shows a firefly, so it never depends on colour alone.
 
+When a move solves the puzzle, the fireflies that were still in jars rise out of them and fade over the "solved" card
+(the 3D board flies its own). Nothing flies when the device asks for less motion.
+
 ## Rules worth knowing
 
 - Puzzles are made by tapping *k* random distinct jars on a dark board, so they are always solvable and *k* is the par
