@@ -143,6 +143,63 @@ test('three.js is only loaded on demand: no page or 2D code path imports it stat
   assert.deepEqual(problems, []);
 });
 
+// ---- installable app -------------------------------------------------------
+
+const MANIFEST_FILE = join(ROOT, 'manifest.webmanifest');
+/** Every page a child can land on and add to the home screen: the home page and each game's page. */
+const frontDoors = htmlFiles.filter((f) => rel(f) === 'index.html' || /^src\/games\/[^/]+\/index\.html$/.test(rel(f)));
+
+/** The width and height written in a PNG file's header (the first chunk always holds them). */
+function pngSize(file) {
+  const bytes = readFileSync(file);
+  assert.equal(bytes.subarray(0, 8).toString('hex'), '89504e470d0a1a0a', `${rel(file)} is a PNG file`);
+  return { width: bytes.readUInt32BE(16), height: bytes.readUInt32BE(20) };
+}
+
+test('the web app manifest is valid, starts at the home page, and every icon is a real file of the size it names', () => {
+  assert.ok(existsSync(MANIFEST_FILE), 'manifest.webmanifest exists at the site root');
+  const manifest = JSON.parse(read(MANIFEST_FILE));
+  assert.ok(manifest.name && manifest.short_name, 'it has a name and a short name');
+  assert.ok(manifest.short_name.length <= 12, 'the short name fits under an icon');
+  assert.equal(manifest.start_url, './', 'it opens the home page');
+  assert.equal(manifest.scope, './', 'and covers the whole site, games included');
+  assert.equal(manifest.display, 'standalone', 'it runs like an app, without the browser bar');
+  assert.match(manifest.theme_color, /^#[0-9a-f]{6}$/i);
+  assert.match(manifest.background_color, /^#[0-9a-f]{6}$/i);
+
+  const home = read(join(ROOT, 'index.html'));
+  assert.equal(manifest.theme_color, /<meta name="theme-color" content="(#[0-9a-f]{6})">/i.exec(home)?.[1], 'the manifest colour is the home page colour');
+
+  const sized = (purpose) => manifest.icons.filter((icon) => (icon.purpose ?? 'any') === purpose && icon.type === 'image/png');
+  for (const [purpose, size] of [['any', 192], ['any', 512], ['maskable', 512]]) {
+    assert.ok(sized(purpose).some((icon) => icon.sizes === `${size}x${size}`), `a ${size}x${size} ${purpose} PNG icon`);
+  }
+  for (const icon of manifest.icons) {
+    const file = join(ROOT, icon.src);
+    assert.ok(existsSync(file), `${icon.src} exists`);
+    if (icon.type === 'image/png') {
+      const { width, height } = pngSize(file);
+      assert.equal(icon.sizes, `${width}x${height}`, `${icon.src} is ${width}x${height} but the manifest says ${icon.sizes}`);
+    }
+  }
+});
+
+test('the iOS home-screen icon is a 180 x 180 PNG', () => {
+  assert.deepEqual(pngSize(join(ROOT, 'icons/apple-touch-icon.png')), { width: 180, height: 180 });
+});
+
+test('the home page and every game page link the manifest and the home-screen icon (their paths are checked to resolve by the test above)', () => {
+  assert.equal(frontDoors.length, GAMES.filter((g) => g.available).length + 1, 'every game page plus the home page');
+  const problems = [];
+  for (const file of frontDoors) {
+    const html = read(file);
+    if (!/<link rel="manifest" href="[^"]*manifest\.webmanifest">/.test(html)) problems.push(`${rel(file)}: no manifest link`);
+    if (!/<link rel="apple-touch-icon" href="[^"]*icons\/apple-touch-icon\.png">/.test(html)) problems.push(`${rel(file)}: no apple-touch-icon link`);
+    if (!/<meta name="apple-mobile-web-app-title" content="[^"]+">/.test(html)) problems.push(`${rel(file)}: no apple-mobile-web-app-title`);
+  }
+  assert.deepEqual(problems, []);
+});
+
 test('HTML pages have no inline scripts or inline event handlers (the CSP only allows script files)', () => {
   const problems = [];
   for (const file of htmlFiles) {

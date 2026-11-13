@@ -40,6 +40,14 @@ worker that precaches every shipped file under a version derived from a hash of 
 cache and old ones are deleted. Opened from `npm start` the worker stays inert (version `dev`), so local development
 never sees stale files. To try it: `npm run build`, `npm run start:dist`, open the site, then switch the network off.
 
+## Install as an app
+
+The site is installable: `manifest.webmanifest` and the icons in `icons/` let a browser offer "Install" or "Add to Home
+Screen", so a tablet gets a Kids Games icon that opens the home page full screen. It works offline once visited (see above),
+and every page of the site links the manifest, so a child can add whichever page they are on. The icons are drawn from
+`favicon.svg`; after changing it, run `cd e2e && node tools/make-icons.mjs`. The browser tests ask Chromium itself whether
+each page is installable (`e2e/specs/install.e2e.mjs`).
+
 ## Deploy to Render (static site)
 
 `render.yaml` is a Render Blueprint, so no manual configuration is needed:

@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url';
 const REPO = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 /** Paths (relative to the repo root) that are part of the public site. */
-export const SHIPPED = ['index.html', '404.html', 'favicon.svg', 'src'];
+export const SHIPPED = ['index.html', '404.html', 'favicon.svg', 'manifest.webmanifest', 'icons', 'src'];
 
 /** All files under a directory, as sorted paths relative to it (with "/" separators). */
 async function listFiles(dir, base = dir) {
