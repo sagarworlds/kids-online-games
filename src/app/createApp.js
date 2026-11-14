@@ -11,6 +11,7 @@ import { ProfileService } from '../hub/ProfileService.js';
 import { renderErrorScreen } from '../engine/ui/ErrorScreen.js';
 import { showToast } from '../engine/ui/Toast.js';
 import { openParentArea } from '../engine/ui/SettingsPanel.js';
+import { focusScreenHeading } from '../engine/ui/focusScreen.js';
 import { createRng, randomSeed } from '../engine/utils/random.js';
 import { logError } from '../engine/utils/errors.js';
 import { registerServiceWorker } from './registerServiceWorker.js';
@@ -50,7 +51,8 @@ export function createApp({ slug, title, root, canvas = false, homeHref = '../..
   }
 
   const input = new InputService({ target: root });
-  const scenes = new SceneManager({ uiRoot: root });
+  // When one screen replaces another the pressed control is gone and the focus is lost: put it on the new screen's heading.
+  const scenes = new SceneManager({ uiRoot: root, onScreenChange: focusScreenHeading });
   const loop = new GameLoop();
 
   const game = new Game({
