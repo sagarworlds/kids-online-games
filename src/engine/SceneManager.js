@@ -1,4 +1,4 @@
-import { GameError } from './utils/errors.js';
+import { GameError, logError } from './utils/errors.js';
 
 /**
  * Holds the scene stack and runs transitions. Only the top scene is updated
@@ -8,14 +8,18 @@ export class SceneManager {
   /** @type {import('./Scene.js').Scene[]} */
   #stack = [];
   #uiRoot;
+  #onScreenChange;
   #size = { width: 0, height: 0 };
 
   /**
-   * @param {{ uiRoot?: HTMLElement|null }} [options] Element that holds scene
-   *   containers. Omit in unit tests that have no DOM.
+   * @param {{ uiRoot?: HTMLElement|null, onScreenChange?: ((screen: HTMLElement) => void)|null }} [options] `uiRoot` is the element that holds
+   *   scene containers (omit it in unit tests that have no DOM). `onScreenChange` is called with a new scene's container once the scene has
+   *   entered, when it opens in place of or on top of another one (not for the first scene of a page): the place to move the keyboard focus
+   *   into the new screen, since the control that was pressed has gone with the old one. A hook that throws is logged and the game carries on.
    */
-  constructor({ uiRoot = null } = {}) {
+  constructor({ uiRoot = null, onScreenChange = null } = {}) {
     this.#uiRoot = uiRoot;
+    this.#onScreenChange = onScreenChange;
   }
 
   /** @returns {import('./Scene.js').Scene|null} The active scene. */
@@ -40,7 +44,7 @@ export class SceneManager {
       if (below.ui) below.ui.hidden = true;
     }
     this.#stack.push(scene);
-    this.#open(scene, params);
+    this.#open(scene, params, below !== null);
   }
 
   /**
@@ -68,7 +72,7 @@ export class SceneManager {
     const top = this.#stack.pop();
     if (top) this.#close(top);
     this.#stack.push(scene);
-    this.#open(scene, params);
+    this.#open(scene, params, Boolean(top));
   }
 
   /** Exits every scene, top first. */
@@ -96,7 +100,8 @@ export class SceneManager {
     this.current?.resize(width, height);
   }
 
-  #open(scene, params) {
+  /** @param {boolean} changed Whether this scene takes the place of (or goes on top of) another one. */
+  #open(scene, params, changed) {
     if (this.#uiRoot) {
       const container = this.#uiRoot.ownerDocument.createElement('div');
       container.className = 'scene';
@@ -105,6 +110,14 @@ export class SceneManager {
     }
     scene.enter(params);
     scene.resize(this.#size.width, this.#size.height);
+    if (changed && scene.ui && this.#onScreenChange) {
+      try {
+        this.#onScreenChange(scene.ui);
+      } catch (error) {
+        // An accessibility nicety must not take the game down; say what happened and carry on.
+        logError(error, 'scene-manager:onScreenChange');
+      }
+    }
   }
 
   #close(scene) {

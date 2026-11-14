@@ -22,7 +22,7 @@ export class WordScene extends RunScene {
     const chips = word.syllables.map(({ consonant, sign }) => {
       const text = composeSyllable(consonant, sign);
       return el('button', {
-        class: 'chip chip--syllable', text, attrs: { type: 'button', 'aria-label': `Hear ${text}` },
+        class: 'chip chip--syllable', text, attrs: { type: 'button', 'aria-label': `Hear ${text}`, lang: this.lang },
         on: { click: () => this.voice.say(syllableParts({ id: `${consonant.id}-${sign.id}`, text })) },
       });
     });

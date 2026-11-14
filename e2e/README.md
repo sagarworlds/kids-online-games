@@ -40,8 +40,11 @@ E2E_CHROMIUM=/path/to/chrome npm test  # a browser Playwright does not know abou
 | `specs/save-all.e2e.mjs` | A grown-up can save every game for offline play from the settings: through the grown-ups' check, the button saves everything (progress, then "All games are saved", the same when reopened), and then every game, 3D ones drawing, plays with the network cut. A game with a file that cannot be downloaded is not claimed saved, the others are, and the grown-up is told. |
 | `specs/install.e2e.mjs` | The site can be installed as an app: Chromium itself finds nothing in the way of installing the home page or any game page (manifest, icons, service worker and page agree), the manifest parses without errors, and the manifest and every icon load with the right types. |
 | `specs/phones.e2e.mjs` | The shared top bar stays compact on small and landscape phones (360x640, 667x375, 320x568): one row where it can be, at most two lines of stats, never wider than the screen, with the game's name still there for screen readers. |
+| `specs/focus.e2e.mjs` | Where the keyboard focus goes when one screen replaces another, on every game (in a browser with no WebGL, so each game opens its flat screens at once). The first screen of a page leaves the focus alone. A round with a visible heading takes the focus onto it (no Tab stop, no ring), a screen that put the focus on a control itself keeps it, and a screen with no heading leaves it on the page. The way back from a round does the same where a game has a button for it. With a keyboard, Enter on the start button lands on the new heading and the next Tab goes on from there. The last block checks the check: each mistake it is there for is shown to it and must be found. |
 | `specs/a11y.e2e.mjs` | Accessibility of what a child reaches first: the home page, every game's first screen and a round in 2D and 3D on a phone, every first screen on a desktop, and the grown-ups' dialogs. Each screen must pass axe (WCAG 2.0 to 2.2 A and AA plus best practices), show the keyboard focus on every control it reaches by Tab, never leave the focused control hidden under a picture or a bar, and have no control under 48px to tap. The dialogs also take the focus and give it back. The last block shows the checks pages with the mistake each is there for. |
+| `specs/matra-mixer.e2e.mjs` | The Matra Mixer chart, with a keyboard: its 400 or so cells are one Tab stop, the arrow keys, Home, End, Ctrl+Home, Ctrl+End and the page keys move through it (stopping at the edges), Enter picks a cell, Tab leaves and Shift+Tab comes back to the same cell, and a click moves the Tab stop. |
 | `specs/harness.e2e.mjs` | The harness itself: it notices console errors, uncaught errors, 404s and Content-Security-Policy violations, tells a blank canvas from a picture, and serves the production headers. |
+| `specs/matra-language.e2e.mjs` | The language of the Hindi and Marathi in Matra Mixer, which shows Devanagari everywhere. In both languages, every screen (the menu with its language panel, the chart and the matra station, and each activity at its first round, after a try and on its results) has all of its Devanagari marked with `lang`, and, outside the language panel, with the language the game is set to. The accessibility checks look for the same thing on every screen they visit. |
 
 Every check except the slow-device ones keeps the 3D views from judging their own speed (`quietFrameWatch` in `support/browser.mjs`): the software renderer on a test machine is slow on purpose, and a view that gave way to the flat game because of it would fail every 3D check.
 
@@ -61,7 +64,7 @@ purpose list the messages they expect (`support/webgl.mjs`) and then check that 
 
 ## How the accessibility checks work
 
-`support/a11y.mjs` looks at a screen three ways, and `problemsOnScreen` runs all three:
+`support/a11y.mjs` looks at a screen four ways, and `problemsOnScreen` runs all four:
 
 - **axe** runs in a window made tall enough to show the whole screen. axe judges only what shows inside the page's frame, so a mistake
   below the fold (the Flag Quest continent buttons were one) passes in a normal window. The window is put back afterwards.
@@ -70,6 +73,8 @@ purpose list the messages they expect (`support/webgl.mjs`) and then check that 
   thing at its centre. Controls laid over a 3D picture let taps through on purpose (`pointer-events: none`), so they are tested as if
   they took the pointer: painted above the picture they pass, painted under it they fail.
 - **Tap sizes**: every control a finger can hit is at least 48px each way. A checkbox or radio button counts as its label.
+- **Language**: Hindi or Marathi text (Devanagari) must say so with `lang="hi"` or `lang="mr"`, on itself or something around it
+  (`unmarkedHindi`). A screen reader reads it with its English voice otherwise (WCAG 3.1.2). Parts that are hidden are not counted.
 
 A failure lists every problem on every screen of that game at once. To see one by hand, open the page, press Tab, and look.
 
@@ -92,6 +97,7 @@ what a first move looks like. The other files are written once for all games. A 
   start: press(/Start/),                 // first screen -> a round in progress
   playing: '.jar',                       // on screen while a round is in progress (2D and 3D)
   async act(page, { touch }) { ... },    // a first move that must have a visible effect
+  back: press(/Back to the menu/),       // optional: from a round to the first screen with the game's own button (most games end a round on a results screen)
 },
 ```
 

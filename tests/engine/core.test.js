@@ -142,6 +142,51 @@ test('SceneManager removes the scene DOM even when exit() throws', () => {
   assert.equal(removed.length, 1);
 });
 
+/** A scene host with just enough DOM for the manager: each container is a plain object the test can inspect. */
+function hostWith(options = {}) {
+  const containers = [];
+  const uiRoot = {
+    ownerDocument: { createElement: () => { const container = { hidden: false, remove() {} }; containers.push(container); return container; } },
+    append() {},
+  };
+  return { containers, manager: new SceneManager({ uiRoot, ...options }) };
+}
+
+test('onScreenChange runs for a scene that replaces or goes over another, after it has entered, and not for the first scene', () => {
+  const calls = [];
+  const log = [];
+  const { containers, manager } = hostWith({ onScreenChange: (screen) => calls.push(screen) });
+
+  manager.replace(new Recorder('First', log));
+  assert.equal(calls.length, 0, 'the first scene of a page is not a screen change (a page that has just loaded starts at its top)');
+
+  manager.replace(new Recorder('Second', log));
+  assert.deepEqual(calls, [containers[1]], 'a scene that replaces another is');
+  assert.ok(log.indexOf('Second:enter:null') >= 0, 'and the scene had entered by then');
+
+  manager.push(new Recorder('Third', log));
+  assert.deepEqual(calls, [containers[1], containers[2]], 'a scene pushed over another is too');
+
+  manager.pop();
+  assert.equal(calls.length, 2, 'going back to a scene that was already open is not announced as a new screen');
+});
+
+test('onScreenChange sees the scene built (enter has filled the container) and a hook that throws is logged, not fatal', (t) => {
+  const errors = [];
+  t.mock.method(console, 'error', (...args) => errors.push(args.join(' ')));
+  const seen = [];
+  const { manager } = hostWith({ onScreenChange: (screen) => { seen.push(screen.built); throw new Error('hook broke'); } });
+  class Builds extends Scene { enter() { this.ui.built = true; } }
+
+  manager.replace(new Scene({}));
+  assert.doesNotThrow(() => manager.replace(new Builds({})), 'the game carries on');
+  assert.deepEqual(seen, [true], 'the container was already built when the hook ran');
+  assert.equal(errors.length, 1, 'the failure was reported');
+  assert.match(errors[0], /scene-manager:onScreenChange/, 'with where it happened');
+  assert.match(errors[0], /hook broke|Error/, 'and what');
+  assert.equal(manager.depth, 1, 'and the new scene is in place');
+});
+
 // ---- InputService ----------------------------------------------------------
 
 /** Builds an Event with extra own properties (`target` is a read-only getter, so assign via defineProperty). */

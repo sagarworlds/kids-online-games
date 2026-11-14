@@ -7,16 +7,16 @@ import { composeSyllable, signOnItsOwn } from '../logic/devanagari.js';
  * syllable. Dragging is never required: every sign is a button.
  *
  * @param {{
- *   content: import('../logic/levels.js').Content,
+ *   content: import('../logic/levels.js').Content, lang: import('../logic/devanagari.js').Lang,
  *   onMix: (consonant: import('../logic/devanagari.js').Consonant, sign: import('../logic/devanagari.js').Sign) => void
- * }} options
+ * }} options `lang` is the language of the letters and signs, so a screen reader reads them with the right voice.
  * @returns {{ el: HTMLElement, destroy: () => void }}
  */
-export function createMixer({ content, onMix }) {
+export function createMixer({ content, lang, onMix }) {
   let consonant = content.consonants[0];
   const handles = [];
-  const letterEl = el('span', { class: 'mixer__letter', text: consonant.char, attrs: { lang: 'hi' } });
-  const resultEl = el('span', { class: 'mixer__result', attrs: { 'aria-live': 'polite' } });
+  const letterEl = el('span', { class: 'mixer__letter', text: consonant.char, attrs: { lang } });
+  const resultEl = el('span', { class: 'mixer__result', attrs: { 'aria-live': 'polite', lang } });
   const zone = el('div', { class: 'mixer__zone', attrs: { role: 'group', 'aria-label': 'The train car. Drop a vowel sign here.' } },
     letterEl, el('span', { class: 'mixer__hint', text: 'Drop a vowel sign here' }), resultEl);
 
@@ -26,7 +26,7 @@ export function createMixer({ content, onMix }) {
   };
 
   const chips = content.consonants.map((c) => el('button', {
-    class: 'chip chip--letter', text: c.char, attrs: { type: 'button', 'aria-pressed': String(c === consonant), 'aria-label': `Letter ${c.char}` },
+    class: 'chip chip--letter', text: c.char, attrs: { type: 'button', 'aria-pressed': String(c === consonant), 'aria-label': `Letter ${c.char}`, lang },
     on: { click: () => {
       consonant = c;
       letterEl.textContent = c.char;
@@ -35,7 +35,7 @@ export function createMixer({ content, onMix }) {
     } },
   }));
   const tiles = content.signs.map((sign) => {
-    const tile = el('button', { class: 'tile tile--sign', text: signOnItsOwn(sign), attrs: { type: 'button', 'aria-label': `Vowel sign ${signOnItsOwn(sign)}. Press to add it to the letter.` } });
+    const tile = el('button', { class: 'tile tile--sign', text: signOnItsOwn(sign), attrs: { type: 'button', 'aria-label': `Vowel sign ${signOnItsOwn(sign)}. Press to add it to the letter.`, lang } });
     handles.push(makeDraggable(tile, { getZones: () => [zone], onDrop: () => { mix(sign); return true; }, onActivate: () => mix(sign) }));
     return tile;
   });

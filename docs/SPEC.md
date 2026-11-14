@@ -61,7 +61,7 @@ All 16 games run on one tiny engine: a scene manager, a game loop, and injected 
     ui/
         Button.js, Modal.js, Confetti.js, ProgressBar.js, Hud.js
     utils/
-        random.js (seeded RNG, shuffle), geometry.js, timer.js, errors.js
+        random.js (seeded RNG, shuffle), geometry.js, timer.js, errors.js, gridNav.js (arrow-key moves in a grid)
 /src/games/<game-slug>/
     index.html              Thin page that boots the game
     main.js                 Composition root: wires services into scenes
@@ -124,6 +124,10 @@ All 16 games run on one tiny engine: a scene manager, a game loop, and injected 
 - Read-aloud option via `speechSynthesis` for questions (helps early readers).
 - One `<main>` on every screen. A game page's `#game-root` is that landmark and scenes are plain containers inside it, so a screen can never
   have two or none (a scene must not add its own `<main>`). The home page has its own.
+- Text in Hindi or Marathi says so (WCAG 3.1.2, language of parts), because a screen reader reads unmarked Devanagari with its English voice,
+  which is gibberish. An element that is all Devanagari carries `lang="hi"` or `lang="mr"`; Devanagari inside an English sentence is wrapped
+  in `<span lang>` (Matra Mixer: `inLanguage` in `ui/inLanguage.js`). The language is the one the game is set to, and a language is named in
+  its own. An `aria-label` cannot carry a language, so a control's name is left as it is.
 - A control's accessible name contains the words written on it, in the same order (WCAG 2.5.3, "label in name"), and what the control cannot
   show (stars earned, locked, "Key 1") comes after them. Pieces built as separate spans get a space between them with `spaced()` from
   `engine/utils/dom.js`, or the words run together ("Forest3 living things"). A shortcut hint is drawn with CSS from a `data-key`
@@ -132,7 +136,16 @@ All 16 games run on one tiny engine: a scene manager, a game loop, and injected 
   the picture (the Word Builder bubbles) is kept out of the Tab order with `tabindex="-1"`; controls laid over a 3D picture are painted above
   it. A bar fixed to an edge (Plant Grower's "Next day") or a sticky header (the Matra Mixer chart) never covers the control that has the
   focus: the scrolling area gets `scroll-padding` as big as the bar.
+- When a screen replaces another (a menu opens a round, a round opens its results) the control that was pressed goes with the old screen, so
+  the focus moves to the new screen's first visible heading (`<h1>`, else `<h2>`; one in a hidden part, like the "Paused" card, does not
+  count): `focusScreenHeading` in `engine/ui/focusScreen.js`, which the `SceneManager` calls once the new scene has entered. The heading gets
+  `tabindex="-1"` (a script can focus it, but it is not a Tab stop) and no ring, since it is not a control. A scene that puts the focus on a
+  control itself keeps it, a screen with no visible heading leaves the focus where it is, and the first screen of a page does not take it at
+  all (a page that has just loaded starts at its top).
 - A control that is a checkbox or radio button is as big as its label, which is what a finger taps.
+- A grid with many cells (the Matra Mixer chart has about 400) is one Tab stop, not hundreds: Tab brings the focus to one cell, and the
+  arrow keys, Home, End and the page keys move it (`nextGridCell` in `engine/utils/gridNav.js`, the ARIA data-grid keys). The cell that
+  last had the focus, by key or by click, is the one Tab comes back to.
 
 **Shared game state shape**
 

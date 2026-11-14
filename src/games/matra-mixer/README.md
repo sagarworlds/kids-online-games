@@ -56,9 +56,15 @@ no voice).
 - `logic/rounds.js` makes the rounds for each activity from a seeded random source; `logic/session.js` counts tries and stars.
   `tests/matra-mixer/` checks, for example, that all syllables are different, that every level has enough words in both languages
   and both vowel sets, that no bubble round has two bubbles with the same syllable, and the recording plan.
-- `ui/Voice.js` plays recordings or speech; `ui/LearnGrid.js` and `ui/Mixer.js` are the chart and the matra station (the station
+- `ui/Voice.js` plays recordings or speech; `ui/LearnGrid.js` and `ui/Mixer.js` are the chart and the matra station (the chart is one
+  Tab stop that the arrow keys, Home, End and the page keys move through, via the shared `nextGridCell`; the station
   uses the shared drag-and-drop helper, and every sign is also a button). `scenes/RunScene.js` is the shared shape of the three
   activities.
+- Every piece of Devanagari says its language, `hi` or `mr` (the one the game is set to), so a screen reader does not read it with its
+  English voice. An element that is all Devanagari carries `lang` itself; a message that quotes a syllable or a word in English goes
+  through `inLanguage` (`ui/inLanguage.js`, which uses `splitScript` in `logic/devanagari.js`), which wraps each run of Devanagari in a
+  `<span lang>`. The language panel names each language in its own. A control's `aria-label` cannot carry a language and is left alone.
+  `e2e/specs/matra-language.e2e.mjs` visits every screen in both languages to keep it so.
 
 ## Notes for the reviewer: needs a human check
 
