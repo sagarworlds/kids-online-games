@@ -46,8 +46,10 @@ async function assertMarked(page, language, where) {
 /** A grown-up opens the language panel on the menu and picks the language. */
 async function chooseLanguage(page, language) {
   await page.locator(`${PANEL} summary`).click();
-  await page.locator(`${PANEL} label[for$="-lang-${language}"]`).click();
-  assert.equal(await page.locator(`${PANEL} input[name$="-lang"][value="${language}"]`).isChecked(), true, `${language} is chosen`);
+  // The radio button lies invisibly over its label (a segmented choice), so it is what a finger touches, and what a click must go to.
+  const radio = page.locator(`${PANEL} input[name$="-lang"][value="${language}"]`);
+  await radio.check();
+  assert.equal(await radio.isChecked(), true, `${language} is chosen`);
 }
 
 /** The chart, a picked syllable, the matra station and a mixed syllable, then back to the menu. */
@@ -115,7 +117,8 @@ describe('the language of the Devanagari in Matra Mixer', () => {
   });
 
   for (const { id, name } of LANGUAGES) {
-    it(`${name}: every screen says its language (${id})`, TIMEOUT, () => scenario(env, `matra-mixer language ${id}`, { screen: 'desktop' }, async ({ page, site }) => {
+    // Reduced motion: the bubbles of Bubble pop bob up and down for ever, and a click waits for its target to hold still.
+    it(`${name}: every screen says its language (${id})`, TIMEOUT, () => scenario(env, `matra-mixer language ${id}`, { screen: 'desktop', contextOptions: { reducedMotion: 'reduce' } }, async ({ page, site }) => {
       await openGame(page, site, GAME);
       await chooseLanguage(page, id);
       await assertMarked(page, id, 'the menu');
