@@ -21,6 +21,8 @@ import { activate, button, eventually, tap, textOf } from './ui.mjs';
  * @property {(page: Page, context: ActContext) => Promise<void>} start From the first screen to a round in progress.
  * @property {string} playing Selector present while a round is in progress, in 2D and in 3D.
  * @property {(page: Page, context: ActContext) => Promise<void>} act A first real move that must have a visible effect.
+ * @property {(page: Page) => Promise<void>} [back] From a round back to the first screen with the game's own button, for a game that has
+ *   one. Most games leave a round on a results screen instead, which takes the round played to the end. Used by specs/focus.e2e.mjs.
  */
 
 /** Presses the primary button of a menu (named differently in every game). */
@@ -273,6 +275,7 @@ export const GAMES = Object.freeze([
       await button(page, /Jump/).click();
       await eventually(async () => (await page.locator('.nl__arc').count()) === 1, { message: 'the first jump to be drawn' });
     },
+    back: press(/Back to the tower/),
   },
   {
     slug: 'matra-mixer', title: 'Matra Mixer', three: null,
@@ -283,6 +286,7 @@ export const GAMES = Object.freeze([
       assert.ok((await page.locator('.grid__cell').count()) > 100, 'the chart shows every letter with every vowel sign');
       await page.locator('.grid__cell').first().click();
     },
+    back: press(/Back to the menu/),
   },
   {
     slug: 'trace-trail', title: 'Trace Trail', three: null,

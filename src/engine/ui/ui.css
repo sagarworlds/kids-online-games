@@ -55,6 +55,10 @@ p { margin: 0 0 0.75em; }
   overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
 }
 
+/* A heading takes the focus from a script when a new screen opens (focusScreen.js), so a screen reader reads it. It is not a control, and
+   a ring round the title of every screen would only look like a mistake. */
+:is(h1, h2)[tabindex="-1"]:focus-visible { outline: none; box-shadow: none; }
+
 /* A link for keyboard users that jumps past what comes first on a page. Out of sight until it has the focus, then it drops in at the top left:
    a control that takes the focus has to be seen when it does (not `.sr-only`, which stays one pixel big). */
 .skip-link {
