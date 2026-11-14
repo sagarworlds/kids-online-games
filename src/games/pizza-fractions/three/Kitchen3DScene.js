@@ -26,6 +26,6 @@ export class Kitchen3DScene extends KitchenScene {
     // the Serve button and the buttons for each slice (the keyboard's way to the slices, and a precise tap on a phone) fit under it on a small phone.
     pizzaView.el.append(tray);
     const panel = el('div', { class: 'scene3d__panel' }, customer, pizzaView.sliceList, actions, status, after);
-    return el('main', { class: 'scene3d kitchen3d' }, pizzaView.el, panel);
+    return el('div', { class: 'scene3d kitchen3d' }, pizzaView.el, panel);
   }
 }

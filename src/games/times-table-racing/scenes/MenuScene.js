@@ -53,7 +53,7 @@ export class MenuScene extends RacingScene {
     const { view } = this.routes;
     const viewEl = createViewSwitch({ view, onChange: () => this.routes.menu(), notes: { '3d': 'In 3D view you race down the road, seen from behind your car.', '2d': 'In 2D view the race is a side-on picture.' } });
 
-    this.ui.append(hud.el, el('main', { class: 'menu' },
+    this.ui.append(hud.el, el('div', { class: 'menu' },
       el('h1', { class: 'menu__title', text: 'Times-Table Racing' }),
       el('p', { class: 'menu__intro', text: `Answer ${RACE_LENGTH} multiplication questions to drive across the finish line. Race the ghost of your own best run!` }),
       picker.el,

@@ -34,7 +34,7 @@ export class MenuScene extends PizzaScene {
     const { view } = this.routes;
     const viewEl = createViewSwitch({ view, onChange: () => this.routes.menu(), notes: { '3d': 'In 3D view the pizza is round on a plate: turn it, and tapped slices lift up.', '2d': 'In 2D view the pizza is a flat picture.' } });
 
-    this.ui.append(hud.el, el('main', { class: 'menu' },
+    this.ui.append(hud.el, el('div', { class: 'menu' },
       el('h1', { class: 'menu__title', text: 'Pizza Fractions' }),
       el('p', { class: 'menu__intro', text: 'Customers order a fraction of a pizza, like 3/8 pepperoni. Pick a topping and tap slices to cover exactly that much!' }),
       picker.el,

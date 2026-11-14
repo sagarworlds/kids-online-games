@@ -35,7 +35,7 @@ export class MenuScene extends BubblesScene {
         el('span', { class: 'menu__stars', html: ICONS.star.repeat(earned) + ICONS.starEmpty.repeat(3 - earned) }));
     }));
 
-    this.ui.append(hud.el, el('main', { class: 'menu' },
+    this.ui.append(hud.el, el('div', { class: 'menu' },
       el('h1', { class: 'menu__title', text: 'Word Builder Bubbles' }),
       el('p', { class: 'menu__intro', text: `Look at the picture and the clue, then pop the bubbles in the right order to spell the word. ${WORDS_PER_ROUND} words per round, ${HINTS_PER_ROUND} hints.` }),
       picker.el,

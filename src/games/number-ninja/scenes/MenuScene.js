@@ -49,7 +49,7 @@ export class MenuScene extends NinjaScene {
     const { view } = this.routes;
     const viewEl = createViewSwitch({ view, onChange: () => this.routes.menu(), notes: { '3d': 'In 3D view the stars are spinning solids that split in two when you get the answer right.', '2d': 'In 2D view the stars are flat pictures.' } });
 
-    const main = el('main', { class: 'menu' },
+    const main = el('div', { class: 'menu' },
       el('h1', { class: 'menu__title', text: 'Number Ninja' }),
       el('p', { class: 'menu__intro', text: 'Stars full of sums fall from the sky. Type the answer and press Enter before they land!' }),
       picker.el,

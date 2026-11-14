@@ -1,5 +1,5 @@
 import { TowerBase } from './TowerBase.js';
-import { el } from '../../../engine/utils/dom.js';
+import { el, spaced } from '../../../engine/utils/dom.js';
 import { createButton } from '../../../engine/ui/Button.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
@@ -26,19 +26,23 @@ export class MenuScene extends TowerBase {
         const open = isFloorOpen(floor, cleared);
         const stars = bestStars[floorKey(floor)] ?? 0;
         const done = cleared.has(floor);
+        // What the button shows ("10", "× 10 table", "Trick") comes first and in the same order: a name has to contain the words
+        // on its button, and what the button cannot show (stars, locked) follows.
+        const shown = `Floor ${floor}, × ${floor} table${trickFor(floor) ? ', Trick' : ''}`;
         const label = open
-          ? `Floor ${floor}, the ${floor} times table. ${stars} of 3 stars.${done ? ' Cleared.' : ''}${trickFor(floor) ? ' Has a trick.' : ''}`
-          : `Floor ${floor}, locked. Clear floor ${floor - 1} first.`;
+          ? `${shown}. ${stars} of 3 stars.${done ? ' Cleared.' : ''}`
+          : `${shown}. Locked: clear floor ${floor - 1} first.`;
         const button = el('button', {
           class: `floor${open ? '' : ' is-locked'}${done ? ' is-cleared' : ''}`, attrs: { type: 'button', 'aria-disabled': String(!open), 'aria-label': label },
           on: { click: () => { if (!open) return; services.audio.play('click'); this.routes.floor(floor); } },
         },
-        el('span', { class: 'floor__number', text: String(floor) }),
-        el('span', { class: 'floor__name', text: `× ${floor} table` }),
-        trickFor(floor) ? el('span', { class: 'floor__trick', text: '✨ Trick' }) : null,
-        open
-          ? el('span', { class: 'menu__stars', html: ICONS.star.repeat(stars) + ICONS.starEmpty.repeat(3 - stars), attrs: { 'aria-hidden': 'true' } })
-          : el('span', { class: 'floor__lock', text: '🔒' }));
+        ...spaced(
+          el('span', { class: 'floor__number', text: String(floor) }),
+          el('span', { class: 'floor__name', text: `× ${floor} table` }),
+          trickFor(floor) ? el('span', { class: 'floor__trick', text: '✨ Trick' }) : null,
+          open
+            ? el('span', { class: 'menu__stars', html: ICONS.star.repeat(stars) + ICONS.starEmpty.repeat(3 - stars), attrs: { 'aria-hidden': 'true' } })
+            : el('span', { class: 'floor__lock', text: '🔒' })));
         return el('li', {}, button);
       }));
       this.#drawRevision(revisionEl, levelId);
@@ -70,7 +74,7 @@ export class MenuScene extends TowerBase {
    * @returns {HTMLElement}
    */
   layout({ title, intro, picker, view, revision, heading, tower }) {
-    return el('main', { class: 'menu' }, title, intro, picker, view, revision, heading, tower);
+    return el('div', { class: 'menu' }, title, intro, picker, view, revision, heading, tower);
   }
 
   /**

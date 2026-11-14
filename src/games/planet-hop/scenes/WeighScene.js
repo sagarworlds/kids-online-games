@@ -61,7 +61,7 @@ export class WeighScene extends HopScene {
       onSettings: () => services.openSettings(),
     });
     this.#showHops();
-    this.#host = el('main', { class: 'weigh' });
+    this.#host = el('div', { class: 'weigh' });
     this.ui.append(this.#hud.el, this.#host);
     this.#off = services.input.on('key', (event) => this.#panel?.handleKey(event));
     if (resume) this.#start(parseWeight(resume.kg), String(resume.who));

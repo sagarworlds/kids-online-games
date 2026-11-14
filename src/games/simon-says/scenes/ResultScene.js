@@ -30,7 +30,7 @@ export class ResultScene extends SimonScene {
     const name = services.profile.getProfile().name;
 
     const hud = createHud({ homeHref: services.game.homeHref, title: services.game.title, onSettings: () => services.openSettings() });
-    this.ui.append(hud.el, el('main', { class: 'result' },
+    this.ui.append(hud.el, el('div', { class: 'result' },
       el('h1', { text: stars >= 2 ? `Great job, ${name}!` : `Good try, ${name}!` }),
       el('div', { class: 'result__stars', attrs: { role: 'img', 'aria-label': `${stars} out of 3 stars` }, html: ICONS.star.repeat(stars) + ICONS.starEmpty.repeat(3 - stars) }),
       el('p', { class: 'result__praise', text: newBest && longest > 0 ? `${praiseFor(stars, services.rng)} New personal best!` : praiseFor(stars, services.rng) }),

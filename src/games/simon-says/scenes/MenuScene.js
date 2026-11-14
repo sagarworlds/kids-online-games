@@ -51,7 +51,7 @@ export class MenuScene extends SimonScene {
     const { view } = this.routes;
     const viewEl = createViewSwitch({ view, onChange: () => this.routes.menu(), notes: { '3d': 'In 3D view the pads are big buttons on a console: they press down and glow, and you can turn the console.', '2d': 'In 2D view the pads are flat buttons.' } });
 
-    this.ui.append(hud.el, el('main', { class: 'menu' },
+    this.ui.append(hud.el, el('div', { class: 'menu' },
       el('h1', { class: 'menu__title', text: 'Simon Says' }),
       el('p', { class: 'menu__intro', text: 'Watch the pads light up, listen to the notes, then play them back. Every round adds one more!' }),
       picker.el, modesBox, viewEl,

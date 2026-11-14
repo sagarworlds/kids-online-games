@@ -49,7 +49,7 @@ export class BoardScene extends HindiScene {
     this.#offVoices = services.speech.onVoicesChanged(() => this.#grid.refreshSpeakers());
     this.#statusEl = el('p', { class: 'board__status', attrs: { role: 'status' } });
 
-    this.ui.append(this.#hud.el, el('main', { class: 'board' }, this.#statusEl, this.#grid.el));
+    this.ui.append(this.#hud.el, el('div', { class: 'board' }, this.#statusEl, this.#grid.el));
     this.#peekLeft = peek ? PEEK_SECONDS : 0;
     this.#syncHud();
     if (peek) {

@@ -34,7 +34,7 @@ export class ResultScene extends PizzaScene {
         el('td', { text: `${r.coins} coins${r.bonus === true ? ' (with bonus)' : ''}` }));
     });
 
-    this.ui.append(hud.el, el('main', { class: 'result' },
+    this.ui.append(hud.el, el('div', { class: 'result' },
       el('h1', { text: stars >= 2 ? `Great job, ${name}!` : `Nice try, ${name}!` }),
       el('div', { class: 'result__stars', attrs: { role: 'img', 'aria-label': `${stars} out of 3 stars` }, html: ICONS.star.repeat(stars) + ICONS.starEmpty.repeat(3 - stars) }),
       el('p', { class: 'result__praise', text: improvedStars || improvedScore ? `${praise} New best!` : praise }),

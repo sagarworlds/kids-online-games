@@ -40,7 +40,7 @@ export class ResultScene extends PlantScene {
     });
 
     const hud = createHud({ homeHref: services.game.homeHref, title: services.game.title, onSettings: () => services.openSettings() });
-    this.ui.append(hud.el, el('main', { class: 'result' },
+    this.ui.append(hud.el, el('div', { class: 'result' },
       el('h1', { text: stars === 1 ? `Let's try again, ${name}!` : `Lovely gardening, ${name}!` }),
       el('p', { class: 'result__mode', text: `${plant.name} · ${LEVELS[levelId].label}` }),
       art.el,

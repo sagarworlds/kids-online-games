@@ -38,7 +38,7 @@ export class MenuScene extends HindiScene {
         el('span', { class: 'menu__stars', html: ICONS.star.repeat(earned) + ICONS.starEmpty.repeat(3 - earned) }));
     }));
 
-    this.ui.append(hud.el, el('main', { class: 'menu' },
+    this.ui.append(hud.el, el('div', { class: 'menu' },
       el('h1', { class: 'menu__title' }, el('span', { text: 'Hindi–English Match' })),
       el('p', { class: 'menu__intro' }, 'Flip two cards to find a Hindi word and its English meaning, like ',
         el('span', { class: 'hi', text: 'सेब', attrs: { lang: 'hi' } }), ' and Apple.'),

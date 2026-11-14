@@ -55,6 +55,14 @@
 }
 .card3d__back { color: #fff; font-size: 2.4rem; font-weight: 800; background: repeating-linear-gradient(45deg, var(--primary), var(--primary) 10px, #7a5cff 10px, #7a5cff 20px); }
 .card3d__front { transform: rotateY(180deg); background: #fff; color: var(--ink); }
+/* Only the face that is showing counts as visible. The face turned away is hidden once the card is edge-on (half way through the flip),
+   so a face-down card has no word on it: find-in-page does not see it, and a check of "what is visible on this button" does not either.
+   The word was always out of the reading order (aria-hidden); this makes the page's visible text agree with the picture. */
+.card3d__face { transition: visibility 0s linear 0.175s; }
+.card3d__front, .card3d.is-up .card3d__back { visibility: hidden; }
+.card3d.is-up .card3d__front { visibility: visible; }
+/* With reduced motion the card turns at once, so the faces must not wait half a flip to swap. */
+@media (prefers-reduced-motion: reduce) { .card3d__face { transition-delay: 0s; } }
 .is-hindi .card3d__front { background: #ffe2bd; }
 .is-english .card3d__front { background: #d4e8ff; }
 .card3d__tag { position: absolute; left: 8px; top: 4px; font-size: 0.8rem; font-weight: 800; color: var(--ink-soft); }

@@ -60,7 +60,7 @@ export function createAnswerPanel({ mode, onAnswer }) {
           // Keep the focus off the tapped button so a later Enter or key press does not re-press it.
           if (event.detail > 0) event.currentTarget.blur();
         } },
-      }, el('span', { class: 'option__key', text: String(i + 1), attrs: { 'aria-hidden': 'true' } }),
+      }, el('span', { class: 'option__key', data: { key: String(i + 1) }, attrs: { 'aria-hidden': 'true' } }),
       el('span', { class: 'option__value', text: String(value), attrs: { 'aria-hidden': 'true' } })));
       optionsEl.replaceChildren(...optionButtons);
     }

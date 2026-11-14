@@ -34,7 +34,7 @@ export class MenuScene extends TrainScene {
     const { view } = this.routes;
     const viewEl = createViewSwitch({ view, onChange: () => this.routes.menu(), notes: { '3d': 'In 3D view the carriages are on a toy train that rolls away when the sentence is right.', '2d': 'In 2D view the train is a flat picture.' } });
 
-    this.ui.append(hud.el, el('main', { class: 'menu' },
+    this.ui.append(hud.el, el('div', { class: 'menu' },
       el('h1', { class: 'menu__title', text: 'Sentence Train' }),
       el('p', { class: 'menu__intro', text: 'The word carriages are all mixed up! Drag them behind the engine in the right order, then blow the whistle.' }),
       picker.el,

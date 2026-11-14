@@ -1,4 +1,4 @@
-import { el } from '../../../engine/utils/dom.js';
+import { el, spaced } from '../../../engine/utils/dom.js';
 
 /** The words shown for each role. */
 export const ROLE_LABELS = Object.freeze({
@@ -15,12 +15,15 @@ export const ROLE_LABELS = Object.freeze({
  * @returns {{ el: HTMLElement, card: HTMLButtonElement }} `el` is what gets placed on the board.
  */
 export function createOrganismCard(organism, { showRole, onInfo }) {
+  // The role is written on the card on Easy, so the name says it too: a name has to contain the words shown on its button.
+  const label = showRole ? `${organism.name}, ${ROLE_LABELS[organism.role]}` : organism.name;
   const card = el('button', {
-    class: 'card', attrs: { type: 'button', 'aria-label': organism.name }, data: { id: organism.id },
+    class: 'card', attrs: { type: 'button', 'aria-label': label }, data: { id: organism.id },
   },
-  el('span', { class: 'card__icon', text: organism.icon, attrs: { 'aria-hidden': 'true' } }),
-  el('span', { class: 'card__name', text: organism.name }),
-  showRole ? el('span', { class: `card__role card__role--${organism.role}`, text: ROLE_LABELS[organism.role] }) : null);
+  ...spaced(
+    el('span', { class: 'card__icon', text: organism.icon, attrs: { 'aria-hidden': 'true' } }),
+    el('span', { class: 'card__name', text: organism.name }),
+    showRole ? el('span', { class: `card__role card__role--${organism.role}`, text: ROLE_LABELS[organism.role] }) : null));
   const info = el('button', {
     class: 'card__info', attrs: { type: 'button', 'aria-label': `About the ${organism.name.toLowerCase()}` },
     on: { click: () => onInfo(organism) },

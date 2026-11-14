@@ -24,7 +24,7 @@ export class ResultScene extends TraceBase {
       el('span', { class: 'glyphrow__stars', html: ICONS.star.repeat(r.stars) + ICONS.starEmpty.repeat(3 - r.stars), attrs: { role: 'img', 'aria-label': `${r.stars} out of 3 stars` } })));
 
     const hud = createHud({ homeHref: services.game.homeHref, title: services.game.title, onSettings: () => services.openSettings() });
-    this.ui.append(hud.el, el('main', { class: 'result' },
+    this.ui.append(hud.el, el('div', { class: 'result' },
       el('h1', { text: stars === 1 ? `Nice try, ${name}!` : `Lovely writing, ${name}!` }),
       el('p', { class: 'result__mode', text: `${SETS[setId].label} · ${LEVELS[levelId].label}` }),
       el('div', { class: 'result__stars', attrs: { role: 'img', 'aria-label': `${stars} out of 3 stars` }, html: ICONS.star.repeat(stars) + ICONS.starEmpty.repeat(3 - stars) }),

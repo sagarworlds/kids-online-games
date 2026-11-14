@@ -44,7 +44,7 @@ export class ResultScene extends TowerBase {
     const praise = praiseFor(stars, services.rng);
 
     const hud = createHud({ homeHref: services.game.homeHref, title: services.game.title, onSettings: () => services.openSettings() });
-    this.ui.append(hud.el, el('main', { class: 'result' },
+    this.ui.append(hud.el, el('div', { class: 'result' },
       el('h1', { text: stars === 1 ? `Keep climbing, ${name}!` : `Great climbing, ${name}!` }),
       el('p', { class: 'result__mode', text: this.#modeText(result) }),
       el('div', { class: 'result__stars', attrs: { role: 'img', 'aria-label': `${stars} out of 3 stars` }, html: starsHtml(stars) }),

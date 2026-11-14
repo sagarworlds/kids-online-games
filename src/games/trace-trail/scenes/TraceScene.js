@@ -67,7 +67,7 @@ export class TraceScene extends TraceBase {
     if (prefersReducedMotion()) this.#watch.hidden = true;
 
     this.ui.classList.add('trace-scene');
-    this.ui.append(this.#hud.el, el('main', { class: 'trace' }, this.#stage, this.#noteEl,
+    this.ui.append(this.#hud.el, el('div', { class: 'trace' }, this.#stage, this.#noteEl,
       el('div', { class: 'trace__actions' }, this.#watch, this.#skip, this.#next)));
     this.#show();
   }

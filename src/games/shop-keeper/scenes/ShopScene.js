@@ -76,7 +76,7 @@ export class ShopScene extends ShopKeeperScene {
     this.#changeSection = el('div', { class: 'shop__change' }, payment, this.#trayView.el, drawer.el, actions);
     this.#changeSection.hidden = !this.level.showTotal; // Medium and Hard work out the total first
 
-    this.ui.append(this.#hud.el, el('main', { class: 'shop' },
+    this.ui.append(this.#hud.el, el('div', { class: 'shop' },
       el('section', { class: 'shop__counter' },
         el('div', { class: 'customer' }, this.#faceEl, el('div', { class: 'customer__talk' },
           el('p', { class: 'customer__name', text: `Customer ${round.index + 1}` }), this.#speechEl)),

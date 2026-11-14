@@ -40,7 +40,7 @@ export class Puzzle3DScene extends PuzzleScene {
       createButton({ label: 'Whole board', icon: '🔭', onClick: () => this.#showWholeBoard() }),
       createViewToggle({ mode: '3d', onChange: (next) => this.#switchView(next) }));
     // The run buttons stay at the top of the panel while the blocks below scroll, so Run is always one tap away.
-    return el('main', { class: 'scene3d puzzle3d' }, boardEl,
+    return el('div', { class: 'scene3d puzzle3d' }, boardEl,
       el('div', { class: 'scene3d__panel' }, controls, status, tools, tip, hint, editorEl));
   }
 

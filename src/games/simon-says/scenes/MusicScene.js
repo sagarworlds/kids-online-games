@@ -66,7 +66,7 @@ export class MusicScene extends SimonScene {
    * @returns {HTMLElement} The `main` element.
    */
   layout({ display, pads, slots, controls, note }) {
-    return el('main', { class: 'simon' }, display, pads.el, slots, controls, note);
+    return el('div', { class: 'simon' }, display, pads.el, slots, controls, note);
   }
 
   #tap(padId) {

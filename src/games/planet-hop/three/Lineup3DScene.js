@@ -70,7 +70,7 @@ export class Lineup3DScene extends HopScene {
     this.#slotsEl = el('div', { class: 'slots', attrs: { role: 'group', 'aria-label': 'Orbits, from the Sun outwards' } });
     this.#scoreEl = el('p', { class: 'lineup__score' });
     this.#actionsEl = el('div', { class: 'lineup__actions' });
-    this.ui.append(this.#hud.el, el('main', { class: 'scene3d lineup3d' }, stageEl,
+    this.ui.append(this.#hud.el, el('div', { class: 'scene3d lineup3d' }, stageEl,
       this.#panelEl));
     this.#panelEl.append(
       this.#status.el,

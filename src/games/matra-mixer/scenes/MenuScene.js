@@ -43,7 +43,7 @@ export class MenuScene extends MatraBase {
     });
     draw();
 
-    this.ui.append(hud.el, el('main', { class: 'menu' },
+    this.ui.append(hud.el, el('div', { class: 'menu' },
       el('h1', { class: 'menu__title', text: 'Matra Mixer' }),
       el('p', { class: 'menu__intro', text: 'A consonant train pulls into the matra station. Add a vowel sign to a letter and hear the syllable it makes: क + ा = का.' }),
       this.#prefsPanel(draw), picker.el, el('h2', { class: 'menu__heading', text: 'Choose an activity' }), cardsEl));

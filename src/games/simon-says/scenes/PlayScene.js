@@ -97,7 +97,7 @@ export class PlayScene extends SimonScene {
    * @returns {HTMLElement} The `main` element.
    */
   layout({ display, pads, timer, controls, note }) {
-    return el('main', { class: 'simon' }, display, pads.el, timer, controls, note);
+    return el('div', { class: 'simon' }, display, pads.el, timer, controls, note);
   }
 
   // ----------------------------------------------------------- sequence

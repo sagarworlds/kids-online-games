@@ -29,7 +29,7 @@ export class Case3DScene extends CaseScene {
 
   layout({ file, hintBox, options, after, announcer, view }) {
     const panel = el('div', { class: 'scene3d__panel' }, file, hintBox, options, after, announcer);
-    this.#main = el('main', { class: `scene3d case3d${this.#flat ? ' case3d--flat' : ''}` }, view.el, panel);
+    this.#main = el('div', { class: `scene3d case3d${this.#flat ? ' case3d--flat' : ''}` }, view.el, panel);
     return this.#main;
   }
 }

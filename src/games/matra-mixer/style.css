@@ -41,7 +41,9 @@
 .detail__empty { margin: 0; font-weight: 700; color: var(--ink-soft); }
 .learn__stage { width: 100%; }
 
-.grid__scroller { max-height: 56vh; overflow: auto; background: #fff; border: 4px solid var(--ink); border-radius: 16px; }
+/* scroll-padding makes a cell that takes the keyboard focus scroll into the open: clear of the sticky header row (75px) and letter column
+   (52px) below, and not left as a sliver at the edge (the browser leaves a cell alone while any part of it shows). */
+.grid__scroller { max-height: 56vh; overflow: auto; scroll-padding: 4.2rem 1rem 1rem 3rem; background: #fff; border: 4px solid var(--ink); border-radius: 16px; }
 .grid__scroller:focus-visible { outline: 4px solid var(--primary); outline-offset: 2px; }
 .grid { border-collapse: separate; border-spacing: 3px; margin: 0 auto; }
 .grid th { position: sticky; z-index: 2; background: #fff; }

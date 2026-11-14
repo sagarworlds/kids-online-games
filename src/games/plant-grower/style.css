@@ -89,6 +89,9 @@
 .garden__effect { margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--ink-soft); }
 /* The main button stays at the bottom of the screen while the page scrolls, so it is always in reach, even on a small phone
    with a long weather note. */
+/* The page scrolls inside .scene (the flat garden) or .scene3d__panel (beside the 3D picture). A control that takes the keyboard focus is
+   scrolled to clear of the bar below (about 5rem tall), not left under it. */
+.scene, .scene3d__panel { scroll-padding-bottom: 6rem; }
 .garden__actions { position: sticky; bottom: 0; z-index: 5; display: flex; justify-content: center; padding: 8px 0 6px; background: linear-gradient(rgba(255, 248, 231, 0), var(--bg) 35%); }
 /* On a phone the heading above the sliders is only for screen readers: the screen has no room to spare. */
 @media (max-width: 639px) {

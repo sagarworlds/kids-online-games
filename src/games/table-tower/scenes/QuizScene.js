@@ -100,7 +100,7 @@ export class QuizScene extends TowerBase {
     if (timed) this.#timeBar = createProgressBar({ label: 'Time left', max: Math.round(this.#session.secondsLeft), value: this.#session.secondsLeft });
 
     this.ui.classList.add('quiz-scene');
-    this.ui.append(this.#hud.el, el('main', { class: 'quiz' },
+    this.ui.append(this.#hud.el, el('div', { class: 'quiz' },
       timed ? this.#timeBar.el : null, this.#promptEl, this.#answerEl, this.#feedbackEl, el('div', { class: 'quiz__actions' }, this.#nextButton)));
   }
 

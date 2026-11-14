@@ -118,7 +118,7 @@ export class PuzzleScene extends RobotScene {
   layout({ boardEl, controls, status, tip, hint, editorEl }) {
     // Controls sit right under the board and messages appear below them, so the Run button never moves.
     const boardColumn = el('section', { class: 'puzzle__board-col' }, el('div', { class: 'board-wrap' }, boardEl), controls, status, tip, hint);
-    return el('main', { class: 'puzzle' }, boardColumn, editorEl);
+    return el('div', { class: 'puzzle' }, boardColumn, editorEl);
   }
 
   /** @returns {import('../logic/interpreter.js').Program} A copy of the blocks the child has built so far. */
