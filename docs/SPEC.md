@@ -61,7 +61,7 @@ All 16 games run on one tiny engine: a scene manager, a game loop, and injected 
     ui/
         Button.js, Modal.js, Confetti.js, ProgressBar.js, Hud.js
     utils/
-        random.js (seeded RNG, shuffle), geometry.js, timer.js, errors.js
+        random.js (seeded RNG, shuffle), geometry.js, timer.js, errors.js, gridNav.js (arrow-key moves in a grid)
 /src/games/<game-slug>/
     index.html              Thin page that boots the game
     main.js                 Composition root: wires services into scenes
@@ -133,6 +133,9 @@ All 16 games run on one tiny engine: a scene manager, a game loop, and injected 
   it. A bar fixed to an edge (Plant Grower's "Next day") or a sticky header (the Matra Mixer chart) never covers the control that has the
   focus: the scrolling area gets `scroll-padding` as big as the bar.
 - A control that is a checkbox or radio button is as big as its label, which is what a finger taps.
+- A grid with many cells (the Matra Mixer chart has about 400) is one Tab stop, not hundreds: Tab brings the focus to one cell, and the
+  arrow keys, Home, End and the page keys move it (`nextGridCell` in `engine/utils/gridNav.js`, the ARIA data-grid keys). The cell that
+  last had the focus, by key or by click, is the one Tab comes back to.
 
 **Shared game state shape**
 
