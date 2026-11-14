@@ -16,16 +16,18 @@ export class LearnScene extends MatraBase {
   #stage = null;
   #tabs = {};
   #picked = null;
+  #lang = 'hi';
 
   enter() {
     const { services } = this;
     // The chart shows everything for the saved language and vowel signs, whatever the level.
     this.content = this.contentFor('hard');
+    this.#lang = this.prefs().lang;
     const hud = createHud({ homeHref: services.game.homeHref, title: 'Learn the matras', onSettings: () => services.openSettings() });
     this.#detail = el('div', { class: 'detail', attrs: { 'aria-live': 'polite' } });
     this.#stage = el('div', { class: 'learn__stage' });
-    this.#grid = createLearnGrid({ content: this.content, onPick: (syllable) => this.#pick(syllable) });
-    this.#mixer = createMixer({ content: this.content, onMix: (consonant, sign) => this.#pick(this.content.syllables.find((s) => s.consonant === consonant && s.sign === sign)) });
+    this.#grid = createLearnGrid({ content: this.content, lang: this.#lang, onPick: (syllable) => this.#pick(syllable) });
+    this.#mixer = createMixer({ content: this.content, lang: this.#lang, onMix: (consonant, sign) => this.#pick(this.content.syllables.find((s) => s.consonant === consonant && s.sign === sign)) });
     const tab = (id, label) => {
       const button = el('button', { class: 'tab', text: label, attrs: { type: 'button', role: 'tab' }, on: { click: () => this.#switch(id) } });
       this.#tabs[id] = button;
@@ -60,8 +62,8 @@ export class LearnScene extends MatraBase {
     this.#grid.select(syllable);
     this.services.audio.play('click');
     this.#detail.replaceChildren(
-      el('span', { class: 'detail__big', text: syllable.text }),
-      el('span', { class: 'detail__sum', text: `${syllable.consonant.char} + ${signOnItsOwn(syllable.sign)} = ${syllable.text}` }),
+      el('span', { class: 'detail__big', text: syllable.text, attrs: { lang: this.#lang } }),
+      el('span', { class: 'detail__sum', text: `${syllable.consonant.char} + ${signOnItsOwn(syllable.sign)} = ${syllable.text}`, attrs: { lang: this.#lang } }),
       createButton({ label: 'Hear it', icon: '🔊', variant: 'accent', onClick: () => this.voice.say(syllableParts(syllable)) }));
     this.voice.say(syllableParts(syllable));
   }
