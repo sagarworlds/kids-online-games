@@ -39,7 +39,7 @@ jobs:
           test ! -e dist/tests
           test ! -e dist/docs
 
-  # Real-browser checks (see e2e/README.md). The site has no dependencies; only this job installs Playwright.
+  # Real-browser checks (see e2e/README.md). The site has no dependencies; only this job installs Playwright (and axe-core for the accessibility checks).
   browser:
     name: Browser tests
     runs-on: ubuntu-latest

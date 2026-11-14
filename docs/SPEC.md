@@ -122,6 +122,17 @@ All 16 games run on one tiny engine: a scene manager, a game loop, and injected 
 - Colour contrast 4.5:1 for text; never use colour alone to signal right/wrong (add an icon ✔ / ✖ and a shape).
 - `prefers-reduced-motion` turns off shakes, confetti and screen flashes.
 - Read-aloud option via `speechSynthesis` for questions (helps early readers).
+- One `<main>` on every screen. A game page's `#game-root` is that landmark and scenes are plain containers inside it, so a screen can never
+  have two or none (a scene must not add its own `<main>`). The home page has its own.
+- A control's accessible name contains the words written on it, in the same order (WCAG 2.5.3, "label in name"), and what the control cannot
+  show (stars earned, locked, "Key 1") comes after them. Pieces built as separate spans get a space between them with `spaced()` from
+  `engine/utils/dom.js`, or the words run together ("Forest3 living things"). A shortcut hint is drawn with CSS from a `data-key`
+  attribute, not written as text, so it is not one of the words on the button.
+- Whatever can take the keyboard focus can be seen when it does. A skip link appears when it has the focus; a screen-reader-only mirror of
+  the picture (the Word Builder bubbles) is kept out of the Tab order with `tabindex="-1"`; controls laid over a 3D picture are painted above
+  it. A bar fixed to an edge (Plant Grower's "Next day") or a sticky header (the Matra Mixer chart) never covers the control that has the
+  focus: the scrolling area gets `scroll-padding` as big as the bar.
+- A control that is a checkbox or radio button is as big as its label, which is what a finger taps.
 
 **Shared game state shape**
 
@@ -147,6 +158,7 @@ All 16 games run on one tiny engine: a scene manager, a game loop, and injected 
 - [ ] `node --test` passes for its `logic/` tests
 - [ ] Playable with mouse, touch and keyboard
 - [ ] No console errors during a full round
+- [ ] Passes the accessibility checks on its first screen and a round, in 2D and 3D (`e2e/specs/a11y.e2e.mjs` runs them for every game in `e2e/support/games.mjs`)
 - [ ] Listed in the hub with icon, name and learning tag
 
 ## Home page (game hub), player profile & local storage
