@@ -15,7 +15,10 @@
 export function focusScreenHeading(screen) {
   const doc = screen.ownerDocument;
   const holder = doc.activeElement;
-  if (holder && holder !== doc.body && holder !== doc.documentElement) return false;
+  // A scene that replaces another removes it, and the page takes the focus back at once. A scene pushed over another only hides it, and the
+  // browser lets the hidden control stay the active element until the next frame: it has lost the focus all the same, so it does not count.
+  const lost = !holder || holder === doc.body || holder === doc.documentElement || holder.closest('[hidden]') !== null;
+  if (!lost) return false;
 
   // The first heading that shows: a hidden one (the "Paused" card, say) is not what the screen is about. A level-one heading wins over a
   // level-two one, which is how most screens name themselves.

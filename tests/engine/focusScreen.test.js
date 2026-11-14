@@ -45,12 +45,23 @@ test('a level-one heading wins over a level-two one, and a hidden heading is not
   assert.equal(paused.focused, null, 'and the hidden "Paused" card is skipped');
 });
 
+/** A control that has the focus: `hiddenScreen` puts it inside a part of the page that has just been hidden. */
+function control({ hiddenScreen = false } = {}) {
+  return { tag: 'button', closest: (selector) => (selector === '[hidden]' && hiddenScreen ? {} : null) };
+}
+
 test('the focus is left where it is when a control or a dialog already has it', () => {
   const title = heading('title');
-  const button = { tag: 'button' };
-  assert.equal(focusScreenHeading(screenWith({ h1: [title], active: button })), false);
+  assert.equal(focusScreenHeading(screenWith({ h1: [title], active: control() })), false);
   assert.equal(title.focused, null);
   assert.equal(title.attributes.tabindex, undefined, 'and the heading is not touched');
+});
+
+test('a control on a screen that has just been hidden has lost the focus, as when a scene is pushed over another', () => {
+  // The browser lets a control that was hidden a moment ago stay the active element until the next frame, so it still reads as focused.
+  const title = heading('title');
+  assert.equal(focusScreenHeading(screenWith({ h1: [title], active: control({ hiddenScreen: true }) })), true);
+  assert.deepEqual(title.focused, { preventScroll: true }, 'the new screen\'s heading takes the focus');
 });
 
 test('a screen with no visible heading is left alone', () => {

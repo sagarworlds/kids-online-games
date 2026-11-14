@@ -132,6 +132,12 @@ All 16 games run on one tiny engine: a scene manager, a game loop, and injected 
   the picture (the Word Builder bubbles) is kept out of the Tab order with `tabindex="-1"`; controls laid over a 3D picture are painted above
   it. A bar fixed to an edge (Plant Grower's "Next day") or a sticky header (the Matra Mixer chart) never covers the control that has the
   focus: the scrolling area gets `scroll-padding` as big as the bar.
+- When a screen replaces another (a menu opens a round, a round opens its results) the control that was pressed goes with the old screen, so
+  the focus moves to the new screen's first visible heading (`<h1>`, else `<h2>`; one in a hidden part, like the "Paused" card, does not
+  count): `focusScreenHeading` in `engine/ui/focusScreen.js`, which the `SceneManager` calls once the new scene has entered. The heading gets
+  `tabindex="-1"` (a script can focus it, but it is not a Tab stop) and no ring, since it is not a control. A scene that puts the focus on a
+  control itself keeps it, a screen with no visible heading leaves the focus where it is, and the first screen of a page does not take it at
+  all (a page that has just loaded starts at its top).
 - A control that is a checkbox or radio button is as big as its label, which is what a finger taps.
 
 **Shared game state shape**
