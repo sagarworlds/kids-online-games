@@ -1,23 +1,26 @@
-import { el, clear } from '../engine/utils/dom.js';
+import { el, clear, spaced } from '../engine/utils/dom.js';
 import { GameError, logError } from '../engine/utils/errors.js';
 import { createButton } from '../engine/ui/Button.js';
 import { confirmDialog } from '../engine/ui/Modal.js';
 import { openParentArea } from '../engine/ui/SettingsPanel.js';
 import { showToast } from '../engine/ui/Toast.js';
 import { ICONS } from '../engine/ui/icons.js';
+import { pickContinueGame } from './continueGame.js';
 import { SUBJECTS } from './gamesRegistry.js';
 import { resetAllProgress } from './resetProgress.js';
 
 /**
  * Renders the home page: greeting + editable name, total stars, subject
- * filters and the game cards. It only talks to services passed in, and it
- * refreshes itself when another tab changes the data.
+ * filters, a "Continue where you left off" card and the game cards. It only
+ * talks to services passed in, and it refreshes itself when another tab
+ * changes the data.
  */
 export class HubPage {
   #root;
   #games;
   #profile;
   #rewards;
+  #lastPlayed;
   #storage;
   #settings;
   #rng;
@@ -26,6 +29,7 @@ export class HubPage {
   #editing = false;
   #header = null;
   #filters = null;
+  #resume = null;
   #grid = null;
   #disposers = [];
 
@@ -35,16 +39,18 @@ export class HubPage {
    *   games: readonly import('./gamesRegistry.js').GameEntry[],
    *   profile: import('./ProfileService.js').ProfileService,
    *   rewards: import('../engine/services/RewardService.js').RewardService,
+   *   lastPlayed: import('../engine/services/LastPlayedService.js').LastPlayedService,
    *   storage: import('../engine/services/StorageService.js').StorageService,
    *   settings: import('../engine/services/SettingsService.js').SettingsService,
    *   rng: () => number
    * }} deps
    */
-  constructor({ root, games, profile, rewards, storage, settings, rng }) {
+  constructor({ root, games, profile, rewards, lastPlayed, storage, settings, rng }) {
     this.#root = root;
     this.#games = games;
     this.#profile = profile;
     this.#rewards = rewards;
+    this.#lastPlayed = lastPlayed;
     this.#storage = storage;
     this.#settings = settings;
     this.#rng = rng;
@@ -54,13 +60,16 @@ export class HubPage {
   mount() {
     this.#header = el('header', { class: 'hub__header' });
     this.#filters = el('nav', { class: 'hub__filters', attrs: { 'aria-label': 'Subjects' } });
-    this.#grid = el('main', { class: 'hub__main', attrs: { id: 'games' } });
+    // The card has a container of its own, apart from the subject sections: those are rebuilt whenever a filter chip is pressed.
+    this.#resume = el('div', { class: 'hub__resume-slot' });
+    this.#grid = el('div', { class: 'hub__sections' });
+    const main = el('main', { class: 'hub__main', attrs: { id: 'games' } }, this.#resume, this.#grid);
     const footer = el('footer', { class: 'hub__footer' },
       createButton({ label: 'Grown-ups', icon: '🔒', variant: 'ghost', onClick: () => this.#openGrownUps() }),
       el('p', { class: 'hub__privacy', text: 'No ads. No sign-up. Everything stays on this device.' }));
 
     clear(this.#root);
-    this.#root.append(this.#header, this.#filters, this.#grid, footer);
+    this.#root.append(this.#header, this.#filters, main, footer);
     this.#renderAll();
 
     // Another tab renamed the player or changed progress: show it here too.
@@ -83,6 +92,7 @@ export class HubPage {
   #renderAll() {
     this.#renderHeader();
     this.#renderFilters();
+    this.#renderResume();
     this.#renderGrid();
   }
 
@@ -91,6 +101,7 @@ export class HubPage {
     // Do not wipe a half-typed name; only update the parts that cannot lose input.
     if (!this.#editing) this.#renderHeader();
     else this.#updateTotal();
+    this.#renderResume();
     this.#renderGrid();
   }
 
@@ -195,6 +206,47 @@ export class HubPage {
         on: { click: () => { this.#subject = id; this.#renderFilters(); this.#renderGrid(); } },
       }));
     this.#filters.append(el('div', { class: 'chips' }, ...chips));
+  }
+
+  // --------------------------------------------------------------- continue
+
+  /**
+   * Shows the "Continue where you left off" card for the game the child was last playing, and nothing at all when there is none (a first
+   * visit, after a reset, a game that is gone). The page rebuilds itself from time to time, which would pull the keyboard focus out from
+   * under a child standing on the card, so a card that is already showing the right game is left exactly as it is.
+   */
+  #renderResume() {
+    try {
+      const game = pickContinueGame(this.#lastPlayed.current(), this.#games);
+      const shown = this.#resume.firstElementChild;
+      if (!game) {
+        if (shown) clear(this.#resume);
+        return;
+      }
+      if (shown?.dataset.slug === game.slug) return;
+      clear(this.#resume);
+      this.#resume.append(this.#buildResume(game));
+    } catch (error) {
+      // A nicety must not take the home page down (a failure while the page is built would replace all of it with the error screen).
+      logError(error, 'hub:continue');
+      clear(this.#resume);
+    }
+  }
+
+  /**
+   * @param {import('./gamesRegistry.js').GameEntry} game
+   * @returns {HTMLElement}
+   */
+  #buildResume(game) {
+    return el('section', { class: 'hub__section hub__resume', attrs: { 'aria-labelledby': 'resume-heading' }, data: { slug: game.slug } },
+      el('h2', { text: 'Continue where you left off', attrs: { id: 'resume-heading' } }),
+      // A link, not a button: it opens a page. Not the class "card", which the grid of games below counts and styles.
+      el('a', { class: 'resume', attrs: { href: game.path } },
+        el('span', { class: 'resume__icon', text: game.icon, attrs: { 'aria-hidden': 'true' } }),
+        el('span', { class: 'resume__text' }, ...spaced(
+          el('span', { class: 'resume__label', text: 'Continue' }),
+          el('span', { class: 'resume__title', text: game.title }))),
+        el('span', { class: 'resume__go', text: '▶', attrs: { 'aria-hidden': 'true' } })));
   }
 
   // ------------------------------------------------------------------ grid

@@ -32,6 +32,25 @@
 }
 .hub__cards li { display: contents; }
 
+/* "Continue where you left off": one big link to the game the child was last playing. It is not a .card, which the grid of games counts. */
+.resume {
+  display: flex; align-items: center; gap: 16px;
+  min-height: 96px; padding: 12px 20px;
+  color: var(--ink); text-decoration: none;
+  background: var(--surface); border: 3px solid var(--ink); border-radius: 24px; box-shadow: var(--shadow);
+  transition: transform 0.12s ease;
+}
+a.resume:hover { transform: translateY(-3px) rotate(-0.5deg); }
+a.resume:active { transform: translateY(1px); }
+.resume__icon { flex: none; font-size: 3rem; line-height: 1; }
+.resume__text { display: flex; flex: 1 1 auto; flex-direction: column; min-width: 0; }
+.resume__label { font-size: 0.85rem; font-weight: 700; color: var(--ink-soft); }
+.resume__title { font-size: 1.4rem; font-weight: 800; }
+.resume__go {
+  display: grid; place-items: center; flex: none; width: 56px; height: 56px; font-size: 1.4rem;
+  color: var(--primary-ink); background: var(--primary); border: 3px solid var(--ink); border-radius: 50%;
+}
+
 .card {
   position: relative;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
