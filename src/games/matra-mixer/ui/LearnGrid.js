@@ -9,17 +9,21 @@ import { signOnItsOwn } from '../logic/devanagari.js';
  * Page Up and Page Down move it (`nextGridCell`), and Enter or Space picks the cell. The cell that last had the focus is the one Tab comes
  * back to.
  *
- * @param {{ content: import('../logic/levels.js').Content, onPick: (syllable: import('../logic/levels.js').Syllable) => void }} options
+ * @param {{
+ *   content: import('../logic/levels.js').Content, lang: import('../logic/devanagari.js').Lang,
+ *   onPick: (syllable: import('../logic/levels.js').Syllable) => void
+ * }} options `lang` is the language of the letters, which the table declares once (a screen reader reads Devanagari with its English voice
+ *   unless it is told), apart from the one English word in it.
  * @returns {{ el: HTMLElement, select: (syllable: import('../logic/levels.js').Syllable|null) => void }}
  */
-export function createLearnGrid({ content, onPick }) {
+export function createLearnGrid({ content, lang, onPick }) {
   const cells = new Map();
   /** The buttons by row and column, and where each button is. */
   const grid = [];
   const positions = new Map();
   let current = { row: 0, col: 0 };
 
-  const head = el('tr', {}, el('th', { class: 'grid__corner', attrs: { scope: 'col' } }, el('span', { class: 'sr-only', text: 'Letter' })),
+  const head = el('tr', {}, el('th', { class: 'grid__corner', attrs: { scope: 'col' } }, el('span', { class: 'sr-only', text: 'Letter', attrs: { lang: 'en' } })),
     ...content.signs.map((sign) => el('th', { class: 'grid__sign', attrs: { scope: 'col' } },
       el('span', { class: 'grid__sign-mark', text: signOnItsOwn(sign) }), el('span', { class: 'grid__sign-vowel', text: sign.vowel }))));
   const rows = content.consonants.map((consonant, row) => {
@@ -48,6 +52,7 @@ export function createLearnGrid({ content, onPick }) {
 
   const table = el('table', {
     class: 'grid',
+    attrs: { lang },
     on: {
       keydown: (event) => {
         const from = positions.get(event.target);

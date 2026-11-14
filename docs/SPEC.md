@@ -124,6 +124,10 @@ All 16 games run on one tiny engine: a scene manager, a game loop, and injected 
 - Read-aloud option via `speechSynthesis` for questions (helps early readers).
 - One `<main>` on every screen. A game page's `#game-root` is that landmark and scenes are plain containers inside it, so a screen can never
   have two or none (a scene must not add its own `<main>`). The home page has its own.
+- Text in Hindi or Marathi says so (WCAG 3.1.2, language of parts), because a screen reader reads unmarked Devanagari with its English voice,
+  which is gibberish. An element that is all Devanagari carries `lang="hi"` or `lang="mr"`; Devanagari inside an English sentence is wrapped
+  in `<span lang>` (Matra Mixer: `inLanguage` in `ui/inLanguage.js`). The language is the one the game is set to, and a language is named in
+  its own. An `aria-label` cannot carry a language, so a control's name is left as it is.
 - A control's accessible name contains the words written on it, in the same order (WCAG 2.5.3, "label in name"), and what the control cannot
   show (stars earned, locked, "Key 1") comes after them. Pieces built as separate spans get a space between them with `spaced()` from
   `engine/utils/dom.js`, or the words run together ("Forest3 living things"). A shortcut hint is drawn with CSS from a `data-key`

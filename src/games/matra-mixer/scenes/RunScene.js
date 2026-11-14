@@ -5,6 +5,7 @@ import { createButton } from '../../../engine/ui/Button.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { LEVELS } from '../logic/levels.js';
 import { RoundSession } from '../logic/session.js';
+import { inLanguage } from '../ui/inLanguage.js';
 
 const TONE_ICON = { good: '✔', bad: '✖', info: 'ℹ' };
 
@@ -101,12 +102,17 @@ export class RunScene extends MatraBase {
     return outcome;
   }
 
-  /** Shows a message under the round. @param {string} text @param {'good'|'bad'|'info'} tone */
+  /**
+   * Shows a message under the round. The Devanagari in it (a syllable, a sum, a word) is marked with the language of the run, so a screen
+   * reader says it in Hindi or Marathi.
+   * @param {string} text
+   * @param {'good'|'bad'|'info'} tone
+   */
   say(text, tone = 'info') {
     this.#noteEl.className = `run__note run__note--${tone}`;
     this.#noteEl.replaceChildren(
       el('span', { class: 'run__note-icon', text: TONE_ICON[tone], attrs: { 'aria-hidden': 'true' } }),
-      el('span', { text }));
+      el('span', {}, ...inLanguage(text, this.lang)));
   }
 
   #next() {

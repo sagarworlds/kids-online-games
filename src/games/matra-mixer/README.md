@@ -60,6 +60,11 @@ no voice).
   Tab stop that the arrow keys, Home, End and the page keys move through, via the shared `nextGridCell`; the station
   uses the shared drag-and-drop helper, and every sign is also a button). `scenes/RunScene.js` is the shared shape of the three
   activities.
+- Every piece of Devanagari says its language, `hi` or `mr` (the one the game is set to), so a screen reader does not read it with its
+  English voice. An element that is all Devanagari carries `lang` itself; a message that quotes a syllable or a word in English goes
+  through `inLanguage` (`ui/inLanguage.js`, which uses `splitScript` in `logic/devanagari.js`), which wraps each run of Devanagari in a
+  `<span lang>`. The language panel names each language in its own. A control's `aria-label` cannot carry a language and is left alone.
+  `e2e/specs/matra-language.e2e.mjs` visits every screen in both languages to keep it so.
 
 ## Notes for the reviewer: needs a human check
 

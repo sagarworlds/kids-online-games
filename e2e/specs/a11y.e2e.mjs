@@ -5,7 +5,7 @@
 // The last block checks the checks: each one is shown a page with the mistake it is there for and must find it.
 import assert from 'node:assert/strict';
 import { after, before, describe, it } from 'node:test';
-import { MIN_TARGET, axeViolations, problemsOnScreen, showWholeScreen, smallTargets, tabStops } from '../support/a11y.mjs';
+import { MIN_TARGET, axeViolations, problemsOnScreen, showWholeScreen, smallTargets, tabStops, unmarkedHindi } from '../support/a11y.mjs';
 import { launchBrowser } from '../support/browser.mjs';
 import { expectPicture, openGame, startRound, switchView } from '../support/flow.mjs';
 import { selectGames } from '../support/games.mjs';
@@ -277,6 +277,26 @@ describe('the accessibility checks themselves', () => {
     const small = await smallTargets(page);
     assert.deepEqual(small.map((target) => target.name), ['S'], `only the 30px button is too small (found: ${JSON.stringify(small)})`);
     assert.ok(MIN_TARGET >= 48, 'the limit is the site\'s 48px, not the 24px WCAG minimum');
+    await page.close();
+  });
+
+  it('the language check finds Hindi and Marathi with no language, and leaves marked text and hidden parts alone', async () => {
+    // The page says it is English (as `pageWith` writes it), so Devanagari with no `lang` of its own, or marked as English, is read wrongly.
+    const page = await pageWith(`
+      <h1>Page</h1>
+      <p>Say <span class="bare">का</span> aloud.</p>
+      <p class="english" lang="en">Say का aloud.</p>
+      <p>Say <span class="hindi" lang="hi">का</span> and <span class="marathi" lang="mr-IN">आई</span> aloud.</p>
+      <div lang="hi"><button class="inside">गाय</button></div>
+      <p hidden>गाय</p>
+      <div class="panel"><span class="names">हिन्दी</span></div>`);
+    const named = (gaps) => gaps.map((gap) => /^(\S+)/.exec(gap)[1]).sort();
+    assert.deepEqual(named(await unmarkedHindi(page)), ['p.english', 'span.bare', 'span.names'],
+      'text with no language and text marked as English are found; hi, mr-IN, an outer lang and a hidden part are not');
+    assert.deepEqual(named(await unmarkedHindi(page, { language: 'mr' })), ['button.inside', 'p.english', 'span.bare', 'span.hindi', 'span.names'],
+      'with a language asked for, text marked with the other one is found too');
+    assert.deepEqual(named(await unmarkedHindi(page, { language: 'mr', skip: '.panel' })), ['button.inside', 'p.english', 'span.bare', 'span.hindi'],
+      'and a part that is left out is not looked at');
     await page.close();
   });
 });

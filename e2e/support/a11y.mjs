@@ -240,6 +240,34 @@ export function smallTargets(page, min = MIN_TARGET) {
 }
 
 /**
+ * Text in Hindi or Marathi (Devanagari) that is not marked with its language (WCAG 3.1.2). A screen reader reads it with its English voice,
+ * which is gibberish, unless the text or something around it says `lang="hi"` or `lang="mr"`. Hidden parts of the page are not counted.
+ *
+ * @param {import('playwright').Page} page
+ * @param {{ language?: 'hi'|'mr', skip?: string }} [options] With `language`, text marked with the other one counts too (a game set to
+ *   Marathi must not say Hindi). `skip` is a selector for parts to leave out, such as a panel that names both languages.
+ * @returns {Promise<string[]>} One line for each piece of text, empty when all of it is marked.
+ */
+export function unmarkedHindi(page, { language = null, skip = null } = {}) {
+  return page.evaluate(({ wanted, leaveOut }) => {
+    const gaps = [];
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      if (!/[ऀ-ॿ]/.test(node.nodeValue ?? '')) continue;
+      const holder = node.parentElement;
+      if (!holder || holder.closest('[hidden], [inert]') || holder.closest('script, style')) continue;
+      if (leaveOut && holder.closest(leaveOut)) continue;
+      const lang = holder.closest('[lang]')?.getAttribute('lang') ?? document.documentElement.lang;
+      const right = wanted ? new RegExp(`^${wanted}(-|$)`, 'i').test(lang) : /^(hi|mr)(-|$)/i.test(lang);
+      if (!right) {
+        gaps.push(`${holder.tagName.toLowerCase()}${typeof holder.className === 'string' && holder.className.trim() ? `.${holder.className.trim().split(/\s+/)[0]}` : ''} "${node.nodeValue.trim().slice(0, 30)}" (language: ${lang || 'none'})`);
+      }
+    }
+    return gaps;
+  }, { wanted: language, leaveOut: skip });
+}
+
+/**
  * Everything the accessibility checks have to say about the screen that is showing now, as a list of plain sentences (empty when it is fine).
  * Pass `keyboard: false` for a screen whose Tab order was already walked.
  *
@@ -256,6 +284,8 @@ export async function problemsOnScreen(page, { keyboard = true } = {}) {
       if (stop.hidden) problems.push(`${stop.tag} "${stop.name}" cannot be seen when it has the keyboard focus (it has no size, or something is on top of it)`);
     }
   }
+
+  for (const gap of await unmarkedHindi(page)) problems.push(`Hindi or Marathi text with no language (WCAG 3.1.2): ${gap}`);
 
   const restore = await showWholeScreen(page);
   try {

@@ -30,7 +30,7 @@ export class BuildScene extends RunScene {
     this.#tiles = [];
     const audible = this.voice.audible;
     const hear = createButton({ label: 'Hear it', icon: '🔊', variant: 'accent', onClick: () => this.voice.say(syllableParts(round.target)) });
-    this.#previewEl = el('div', { class: 'build__preview', attrs: { 'aria-live': 'polite' } });
+    this.#previewEl = el('div', { class: 'build__preview', attrs: { 'aria-live': 'polite', lang: this.lang } });
     this.#check = createButton({ label: 'Check', icon: '✔', variant: 'primary', big: true, disabled: true, onClick: () => this.#submit(round) });
 
     const consonantRow = this.#row('Letter', round.consonants, (c) => c.char, (c) => `letter ${c.char}`, (c) => { this.#consonant = c; this.#update(); }, 'consonant');
@@ -38,7 +38,7 @@ export class BuildScene extends RunScene {
 
     body.append(
       el('p', { class: 'run__prompt', text: audible ? 'Listen. Which letter and vowel sign make this sound?' : 'No sound on this device, so the syllable is shown. Build it.' }),
-      audible ? hear : el('div', { class: 'build__target', text: round.target.text }),
+      audible ? hear : el('div', { class: 'build__target', text: round.target.text, attrs: { lang: this.lang } }),
       el('div', { class: 'build__make' }, this.#previewEl, this.#check),
       consonantRow, signRow);
     if (audible) this.voice.say(syllableParts(round.target));
@@ -55,6 +55,7 @@ export class BuildScene extends RunScene {
         onPick(item);
       } });
       tile.setAttribute('aria-pressed', 'false');
+      tile.setAttribute('lang', this.lang);
       tile.dataset.kind = kind;
       this.#tiles.push({ tile, item, kind });
       return tile;
