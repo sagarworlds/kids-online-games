@@ -115,7 +115,12 @@ describe('the focus when one screen replaces another', () => {
   it('with a keyboard, Enter on the start button lands on the new heading with no ring, and Tab goes on from there', TIMEOUT, () => scenario(env, 'focus keyboard', { screen: 'desktop' }, async ({ page, site }) => {
     const game = GAMES.find((candidate) => candidate.slug === 'pizza-fractions');
     await openGame(page, site, game);
-    const focusedText = () => page.evaluate(() => (document.activeElement?.textContent ?? '').replace(/\s+/g, ' ').trim());
+    // While the page itself has the focus, its text is every word on screen, "Open the shop" included, so it must not count as the button.
+    const focusedText = () => page.evaluate(() => {
+      const focused = document.activeElement;
+      if (!focused || focused === document.body || focused === document.documentElement) return '';
+      return (focused.textContent ?? '').replace(/\s+/g, ' ').trim();
+    });
     // Tab on from the top of the page to the start button, as a keyboard user does.
     for (let press = 0; press < 12 && !/Open the shop/.test(await focusedText()); press++) await page.keyboard.press('Tab');
     assert.match(await focusedText(), /Open the shop/, 'Tab reaches the start button');
