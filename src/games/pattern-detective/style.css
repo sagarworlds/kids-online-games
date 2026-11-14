@@ -58,6 +58,9 @@
 .option:active:not(:disabled) { transform: translateY(2px); box-shadow: none; }
 .option:focus-visible { outline: 4px solid var(--primary); outline-offset: 3px; }
 .option__key { position: absolute; top: 4px; left: 8px; font-size: 0.8rem; font-weight: 800; color: var(--ink-soft); }
+/* The key's number is drawn from data-key instead of being text, so the only words on the button are its answer, which the button's
+   name starts with ("12. Key 1"). A name has to contain the words shown on its button, and a digit in front of the answer would not be. */
+.option__key::before { content: attr(data-key); }
 /* A wrong card is greyed out and crossed, a right one ticked, so neither is only a colour. */
 .option.is-wrong { opacity: 0.5; border-style: dashed; cursor: default; }
 .option.is-wrong::after { content: '✖'; position: absolute; top: 2px; right: 8px; font-weight: 800; color: var(--bad); }

@@ -33,7 +33,7 @@ export class LearnScene extends TowerBase {
     this.#counter = el('p', { class: 'learn__count', attrs: { 'aria-live': 'polite' } });
     this.#back = createButton({ label: 'Back', icon: '◀', onClick: () => this.#go(-1) });
     this.#next = createButton({ label: 'Next', icon: '▶', variant: 'primary', onClick: () => this.#go(1) });
-    this.ui.append(hud.el, el('main', { class: 'learn' },
+    this.ui.append(hud.el, el('div', { class: 'learn' },
       this.#counter, this.#body,
       el('div', { class: 'learn__nav' }, this.#back, this.#next),
       el('div', { class: 'result__actions' },

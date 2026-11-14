@@ -97,7 +97,7 @@ export class StationScene extends TrainScene {
    * @returns {HTMLElement} The `main` element.
    */
   layout({ top, yard, siding, actions, note, status, after, announcer }) {
-    return el('main', { class: 'station' }, top, yard, siding, actions, note, status, after, announcer);
+    return el('div', { class: 'station' }, top, yard, siding, actions, note, status, after, announcer);
   }
 
   /** @param {number} dt Seconds since the last frame. */

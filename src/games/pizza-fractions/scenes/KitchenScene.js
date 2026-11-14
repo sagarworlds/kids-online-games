@@ -99,7 +99,7 @@ export class KitchenScene extends PizzaScene {
    * @returns {HTMLElement} The `main` element.
    */
   layout({ customer, pizzaView, tray, actions, status, after }) {
-    return el('main', { class: 'kitchen' }, customer, el('section', { class: 'kitchen__work' }, pizzaView.el, tray, actions, status, after));
+    return el('div', { class: 'kitchen' }, customer, el('section', { class: 'kitchen__work' }, pizzaView.el, tray, actions, status, after));
   }
 
   /** Frees what the pizza holds (the 3D pizza holds graphics memory). */

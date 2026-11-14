@@ -29,7 +29,7 @@ export class MenuScene extends ShopKeeperScene {
         el('span', { class: 'menu__stars', html: ICONS.star.repeat(earned) + ICONS.starEmpty.repeat(3 - earned) }));
     }));
 
-    this.ui.append(hud.el, el('main', { class: 'menu' },
+    this.ui.append(hud.el, el('div', { class: 'menu' },
       el('h1', { class: 'menu__title', text: 'Shop Keeper' }),
       el('p', { class: 'menu__intro', text: 'Customers buy things and pay with a note. Work out the change and drag coins and notes into the tray to give it back!' }),
       picker.el,

@@ -120,7 +120,7 @@ export class TripScene extends QuestScene {
     // The question, the map and the answers are separate blocks so the stylesheet can put the question above the map on a
     // phone (a child must read what to tap before looking for it) and the answers right under a flag question.
     this.#fallbackEl = fallback;
-    this.ui.append(this.#hud.el, el('main', { class: `trip${isMap ? ' trip--map' : ''}${this.layoutClass()}` },
+    this.ui.append(this.#hud.el, el('div', { class: `trip${isMap ? ' trip--map' : ''}${this.layoutClass()}` },
       el('section', { class: 'trip__ask' }, ...this.#promptNodes()),
       el('div', { class: 'trip__map' }, this.#map.el),
       el('section', { class: 'trip__answer' }, fallback, this.#optionsEl, this.#statusEl, this.#afterEl),
@@ -155,7 +155,7 @@ export class TripScene extends QuestScene {
     this.#optionEls = this.#question.options.map((option, i) => el('button', {
       class: 'option', attrs: { type: 'button', 'aria-label': `${option.label}. Key ${i + 1}` },
       on: { click: (event) => { this.#pick(option.code); if (event.detail > 0) event.currentTarget.blur(); } },
-    }, el('span', { class: 'option__key', text: String(i + 1), attrs: { 'aria-hidden': 'true' } }), el('span', { class: 'option__label', text: option.label })));
+    }, el('span', { class: 'option__key', data: { key: String(i + 1) }, attrs: { 'aria-hidden': 'true' } }), el('span', { class: 'option__label', text: option.label })));
     this.#optionsEl.replaceChildren(...this.#optionEls);
   }
 

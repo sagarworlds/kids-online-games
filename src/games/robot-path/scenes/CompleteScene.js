@@ -58,7 +58,7 @@ export class CompleteScene extends RobotScene {
         el('span', { class: 'criteria__mark', text: c.met ? '✔' : '✖', attrs: { 'aria-hidden': 'true' } }),
         el('span', { text: `${c.met ? '' : 'Not yet: '}${describe[c.id]()}` }))));
 
-    const main = el('main', { class: 'result' },
+    const main = el('div', { class: 'result' },
       el('h1', { text: stars >= 2 ? `Great job, ${name}!` : `Nice work, ${name}!` }),
       el('p', { class: 'result__level', text: `Level ${level.id}: ${level.title}` }),
       starRow,

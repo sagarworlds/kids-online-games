@@ -33,7 +33,7 @@ export class MenuScene extends LightsScene {
     const { view } = this.routes;
     const viewEl = createViewSwitch({ view, onChange: () => this.routes.menu(), notes: { '3d': 'In 3D view the jars stand on a table at night: turn it, and the fireflies fly away when you win.', '2d': 'In 2D view the jars are a flat grid.' } });
 
-    this.ui.append(hud.el, el('main', { class: 'menu' },
+    this.ui.append(hud.el, el('div', { class: 'menu' },
       el('h1', { class: 'menu__title', text: 'Lights Out' }),
       el('p', { class: 'menu__intro', text: 'Tap a jar to flip it and the jars next to it. Set every firefly free by turning all the lights off!' }),
       picker.el,

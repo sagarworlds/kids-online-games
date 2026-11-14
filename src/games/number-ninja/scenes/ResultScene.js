@@ -44,7 +44,7 @@ export class ResultScene extends NinjaScene {
     const percent = Math.round(summary.accuracy * 100);
     const stat = (label, value) => el('div', { class: 'result__stat' }, el('dt', { text: label }), el('dd', { text: value }));
 
-    const main = el('main', { class: 'result' },
+    const main = el('div', { class: 'result' },
       el('h1', { text: headline }),
       stars,
       el('p', { class: 'result__praise', text: improvedStars || improvedScore ? `${praise} New personal best!` : praise }),

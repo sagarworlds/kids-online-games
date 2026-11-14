@@ -34,7 +34,7 @@ export class MenuScene extends DetectiveScene {
     const { view } = this.routes;
     const viewEl = createViewSwitch({ view, onChange: () => this.routes.menu(), notes: { '3d': 'In 3D view the pattern is a row of solids on pedestals: turn them, and tap one to hear its name.', '2d': 'In 2D view the pattern is a flat picture.' } });
 
-    this.ui.append(hud.el, el('main', { class: 'menu' },
+    this.ui.append(hud.el, el('div', { class: 'menu' },
       el('h1', { class: 'menu__title', text: 'Pattern Detective' }),
       el('p', { class: 'menu__intro', text: `Every case is a pattern with a piece missing. Work out the rule and pick what comes next! ${CASES_PER_ROUND} cases per round.` }),
       picker.el,

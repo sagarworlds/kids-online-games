@@ -60,7 +60,7 @@ export class CaseScene extends DetectiveScene {
    * @returns {HTMLElement} The `main` element.
    */
   layout({ file, hintBox, options, after, announcer }) {
-    return el('main', { class: 'case' }, file, hintBox, options, after, announcer);
+    return el('div', { class: 'case' }, file, hintBox, options, after, announcer);
   }
 
   /** Says something through the polite live region (screen readers). @param {string} text */
@@ -123,7 +123,7 @@ export class CaseScene extends DetectiveScene {
     this.#optionEls = puzzle.options.map((option, i) => el('button', {
       class: 'option', attrs: { type: 'button', 'aria-label': `${describeItem(option)}. Key ${i + 1}` },
       on: { click: (event) => { this.#pick(i); if (event.detail > 0) event.currentTarget.blur(); } },
-    }, el('span', { class: 'option__key', text: String(i + 1), attrs: { 'aria-hidden': 'true' } }), createItemView(option)));
+    }, el('span', { class: 'option__key', data: { key: String(i + 1) }, attrs: { 'aria-hidden': 'true' } }), createItemView(option)));
     const options = el('div', { class: 'options', attrs: { role: 'group', 'aria-label': 'Which one comes next? Keys 1 to 4' } }, ...this.#optionEls);
 
     this.#afterEl = el('div', { class: 'case__after' });

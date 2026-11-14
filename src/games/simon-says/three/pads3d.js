@@ -24,5 +24,5 @@ export function createPads3D({ pads, onPress }, onFallBack) {
  * @returns {HTMLElement}
  */
 export function layoutAroundPads(pads, panel) {
-  return el('main', { class: 'scene3d simon3d' }, pads.el, el('div', { class: 'scene3d__panel' }, ...panel));
+  return el('div', { class: 'scene3d simon3d' }, pads.el, el('div', { class: 'scene3d__panel' }, ...panel));
 }

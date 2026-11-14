@@ -30,7 +30,7 @@ export class FloorScene extends TowerBase {
       el('span', { class: 'activity__text', text }),
       stars === null ? null : el('span', { class: 'menu__stars', html: starsHtml(stars), attrs: { role: 'img', 'aria-label': `${stars} out of 3 stars` } }));
 
-    this.ui.append(hud.el, el('main', { class: 'floorpage' },
+    this.ui.append(hud.el, el('div', { class: 'floorpage' },
       el('h1', { class: 'menu__title', text: `Floor ${floor}` }),
       el('p', { class: 'menu__intro', text: `The ${floor} times table, ${level.label} level.${trick ? ' This floor has a trick card!' : ''}` }),
       el('div', { class: 'activities' },

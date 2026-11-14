@@ -31,7 +31,7 @@ export class LearnScene extends MatraBase {
       this.#tabs[id] = button;
       return button;
     };
-    this.ui.append(hud.el, el('main', { class: 'learn' },
+    this.ui.append(hud.el, el('div', { class: 'learn' },
       el('div', { class: 'tabs', attrs: { role: 'tablist', 'aria-label': 'How to learn' } }, tab('grid', '📋 Chart'), tab('mixer', '🚂 Matra station')),
       services.settings.sound ? null : el('p', { class: 'learn__muted', text: '🔇 Sound is off in the grown-ups settings, so syllables will not be spoken.' }),
       this.#detail, this.#stage,

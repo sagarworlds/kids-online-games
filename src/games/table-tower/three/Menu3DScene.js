@@ -26,7 +26,7 @@ export class Menu3DScene extends MenuScene {
       createButton({ label: 'Whole tower', icon: '🗼', onClick: () => this.#tower.showWholeTower() }));
     const panel = el('div', { class: 'scene3d__panel' }, title, intro, picker, view, this.#note, buttons, revision, heading, tower);
     if (this.#shown) this.#applyLevel();
-    return el('main', { class: 'scene3d menu3d' }, this.#tower.el, panel);
+    return el('div', { class: 'scene3d menu3d' }, this.#tower.el, panel);
   }
 
   levelDrawn(levelId, cleared) {

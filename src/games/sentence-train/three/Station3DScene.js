@@ -37,6 +37,6 @@ export class Station3DScene extends StationScene {
     const { top, yard, siding, actions, note, status, after, announcer, view } = parts;
     yard.hidden = true; // the train is on the 3D track; the yard is where it goes back to if 3D stops
     const panel = el('div', { class: 'scene3d__panel' }, top, yard, siding, actions, note, status, after, announcer);
-    return el('main', { class: 'scene3d station3d' }, view.el, panel);
+    return el('div', { class: 'scene3d station3d' }, view.el, panel);
   }
 }

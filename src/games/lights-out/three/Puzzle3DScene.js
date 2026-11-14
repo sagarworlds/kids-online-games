@@ -21,6 +21,6 @@ export class Puzzle3DScene extends PuzzleScene {
 
   layout({ board, overlay, status, controls, note }) {
     // The jar buttons are laid over the picture; the "solved" card goes in the panel, so the fireflies can be seen flying away above it.
-    return el('main', { class: 'scene3d lights3d' }, board.el, el('div', { class: 'scene3d__panel' }, overlay, status, controls, note));
+    return el('div', { class: 'scene3d lights3d' }, board.el, el('div', { class: 'scene3d__panel' }, overlay, status, controls, note));
   }
 }

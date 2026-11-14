@@ -10,6 +10,6 @@ export class LoadingScene extends QuestScene {
   enter() {
     const { services } = this;
     const hud = createHud({ homeHref: services.game.homeHref, title: services.game.title, onSettings: () => services.openSettings() });
-    this.ui.append(hud.el, el('main', { class: 'loading' }, el('p', { class: 'loading__text', text: '🌍 Getting the globe ready…', attrs: { role: 'status' } })));
+    this.ui.append(hud.el, el('div', { class: 'loading' }, el('p', { class: 'loading__text', text: '🌍 Getting the globe ready…', attrs: { role: 'status' } })));
   }
 }

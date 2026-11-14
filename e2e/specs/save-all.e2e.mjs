@@ -13,7 +13,7 @@ import { GAMES, selectGames } from '../support/games.mjs';
 import { REPO } from '../support/headers.mjs';
 import { watchPage } from '../support/log.mjs';
 import { startSite } from '../support/site.mjs';
-import { eventually } from '../support/ui.mjs';
+import { answerGrownUpCheck, eventually } from '../support/ui.mjs';
 
 const TIMEOUT = { timeout: 300_000 };
 const TOTAL = GAMES.length;
@@ -39,10 +39,7 @@ async function savedFiles(page) {
 /** Opens the grown-ups' settings from the home page, answering the grown-ups' check (a times-table question) correctly. */
 async function openGrownUpSettings(page) {
   await page.getByRole('button', { name: 'Grown-ups settings' }).click();
-  const question = /what is (\d+) × (\d+)\?/.exec(await page.locator('label[for="parent-answer"]').textContent());
-  assert.ok(question, 'the grown-ups\' check asks a times-table question');
-  await page.locator('#parent-answer').fill(String(Number(question[1]) * Number(question[2])));
-  await page.getByRole('button', { name: 'Continue' }).click();
+  await answerGrownUpCheck(page);
   await page.getByRole('heading', { name: 'Offline play' }).waitFor();
 }
 

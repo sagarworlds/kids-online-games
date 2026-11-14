@@ -54,7 +54,7 @@ export class ResultScene extends RacingScene {
       }));
     const toPractise = Object.keys(summary.perTable).map(Number).filter((t) => heatFor(summary.perTable[t]) === 'practise').sort((a, b) => a - b);
 
-    this.ui.append(hud.el, el('main', { class: 'result' },
+    this.ui.append(hud.el, el('div', { class: 'result' },
       el('h1', { text: stars >= 2 ? `Great race, ${name}!` : `Nice try, ${name}!` }),
       el('div', { class: 'result__stars', attrs: { role: 'img', 'aria-label': `${stars} out of 3 stars` }, html: ICONS.star.repeat(stars) + ICONS.starEmpty.repeat(3 - stars) }),
       el('p', { class: 'result__praise', text: improvedStars || improvedScore || newBest ? `${praise} New best!` : praise }),

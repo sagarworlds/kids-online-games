@@ -49,6 +49,17 @@ export async function activate(locator, key = 'Enter') {
   await locator.page().keyboard.press(key);
 }
 
+/**
+ * Answers the grown-ups' check (a times-table question) that opens first, and presses Continue.
+ * @param {import('playwright').Page} page A page with the check open.
+ */
+export async function answerGrownUpCheck(page) {
+  const question = /what is (\d+) × (\d+)\?/.exec(await page.locator('label[for="parent-answer"]').textContent());
+  assert.ok(question, 'the grown-ups\' check asks a times-table question');
+  await page.locator('#parent-answer').fill(String(Number(question[1]) * Number(question[2])));
+  await page.getByRole('button', { name: 'Continue' }).click();
+}
+
 /** The page does not scroll sideways (a sign a layout overflowed the screen). */
 export const fitsWidth = (page) => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1);
 

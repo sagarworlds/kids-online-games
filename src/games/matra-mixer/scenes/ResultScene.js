@@ -26,7 +26,7 @@ export class ResultScene extends MatraBase {
       : { text: round.target.text, note: `${round.target.consonant.char} + ${round.target.sign.char || 'अ'}`, parts: syllableParts(round.target) }));
 
     const hud = createHud({ homeHref: services.game.homeHref, title: services.game.title, onSettings: () => services.openSettings() });
-    this.ui.append(hud.el, el('main', { class: 'result' },
+    this.ui.append(hud.el, el('div', { class: 'result' },
       el('h1', { text: stars === 1 ? `Keep going, ${name}!` : `Well done, ${name}!` }),
       el('p', { class: 'result__mode', text: `${TITLES[activity]} · ${LANGS[lang].label} · ${LEVELS[levelId].label}` }),
       el('div', { class: 'result__stars', attrs: { role: 'img', 'aria-label': `${stars} out of 3 stars` }, html: ICONS.star.repeat(stars) + ICONS.starEmpty.repeat(3 - stars) }),

@@ -26,6 +26,6 @@ export class Garden3DScene extends GardenScene {
     art.el.append(bubble);
     const vitals = el('div', { class: 'garden3d__vitals' }, health, meter.el);
     const panel = el('div', { class: 'scene3d__panel' }, banner, vitals, controls, summary, el('div', { class: 'garden__actions' }, nextButton));
-    return { main: el('main', { class: 'scene3d garden3d' }, art.el, panel), stageEl: null };
+    return { main: el('div', { class: 'scene3d garden3d' }, art.el, panel), stageEl: null };
   }
 }

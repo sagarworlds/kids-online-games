@@ -53,7 +53,7 @@ export class LineupScene extends HopScene {
     this.#scoreEl = el('p', { class: 'lineup__score' });
     this.#actionsEl = el('div', { class: 'lineup__actions' });
 
-    this.ui.append(this.#hud.el, el('main', { class: 'lineup' },
+    this.ui.append(this.#hud.el, el('div', { class: 'lineup' },
       el('p', { class: 'lineup__help', text: 'Put the planets in order from the Sun. Drag each one to its orbit, or tap it and then tap its orbit.' }),
       el('div', { class: 'orbits' }, el('div', { class: 'orbits__sun' }, createSunArt(72), el('span', { text: 'Sun' })), this.#slotsEl),
       this.#statusEl,

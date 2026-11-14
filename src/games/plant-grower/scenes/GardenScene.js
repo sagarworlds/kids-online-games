@@ -124,7 +124,7 @@ export class GardenScene extends PlantScene {
   layout({ banner, bubble, art, health, meter, controls, summary, nextButton }) {
     // The plant and its health sit side by side on a phone (so the sliders still fit on the screen) and one above the other on a wide one.
     const stageEl = el('section', { class: 'garden__stage', attrs: { 'aria-label': 'Your plant' } }, bubble, el('div', { class: 'garden__plant' }, art.el), el('div', { class: 'garden__vitals' }, health, meter.el));
-    const main = el('main', { class: 'garden' }, banner,
+    const main = el('div', { class: 'garden' }, banner,
       el('div', { class: 'garden__body' }, stageEl, el('div', { class: 'garden__side' }, controls, summary, el('div', { class: 'garden__actions' }, nextButton))));
     return { main, stageEl };
   }

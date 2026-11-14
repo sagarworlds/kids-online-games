@@ -73,7 +73,7 @@ export class PuzzleScene extends LightsScene {
    * @returns {HTMLElement} The `main` element.
    */
   layout({ board, overlay, status, controls, note }) {
-    return el('main', { class: 'lo' }, el('div', { class: 'lo-board' }, board.el, overlay), status, controls, note);
+    return el('div', { class: 'lo' }, el('div', { class: 'lo-board' }, board.el, overlay), status, controls, note);
   }
 
   /** Frees what the board holds (the 3D board holds graphics memory). */

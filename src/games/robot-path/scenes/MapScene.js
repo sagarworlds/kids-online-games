@@ -1,5 +1,5 @@
 import { RobotScene } from './RobotScene.js';
-import { el } from '../../../engine/utils/dom.js';
+import { el, spaced } from '../../../engine/utils/dom.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { ICONS } from '../../../engine/ui/icons.js';
 import { createViewToggle } from '../../../engine/three/ViewToggle.js';
@@ -41,11 +41,12 @@ export class MapScene extends RobotScene {
               },
             },
           },
-          el('span', { class: 'levelbtn__num', text: String(level.id) }),
-          el('span', { class: 'levelbtn__title', text: level.title }),
-          open
-            ? el('span', { class: 'levelbtn__stars', html: ICONS.star.repeat(stars) + ICONS.starEmpty.repeat(3 - stars) })
-            : el('span', { class: 'levelbtn__lock', text: '🔒', attrs: { 'aria-hidden': 'true' } })));
+          ...spaced(
+            el('span', { class: 'levelbtn__num', text: String(level.id) }),
+            el('span', { class: 'levelbtn__title', text: level.title }),
+            open
+              ? el('span', { class: 'levelbtn__stars', html: ICONS.star.repeat(stars) + ICONS.starEmpty.repeat(3 - stars) })
+              : el('span', { class: 'levelbtn__lock', text: '🔒', attrs: { 'aria-hidden': 'true' } }))));
         });
         return el('section', { class: 'world', attrs: { 'aria-labelledby': `world-${world.id}` } },
           el('h2', { text: `World ${world.id}: ${world.name}`, attrs: { id: `world-${world.id}` } }),
@@ -59,7 +60,7 @@ export class MapScene extends RobotScene {
       createViewToggle({ mode: view.mode(), onChange: (next) => { view.choose(next); this.routes.map(); } }),
       el('p', { class: 'map__viewnote', text: view.mode() === '3d' ? 'In 3D view you can turn the board and ride behind the robot.' : 'In 2D view the board is flat.' })) : null;
 
-    const main = el('main', { class: 'map' },
+    const main = el('div', { class: 'map' },
       el('h1', { text: 'Robot Path' }),
       el('p', { class: 'map__summary', text: `${totals.stars} of ${totals.maxStars} stars · ${totals.completed} of ${data.levels.length} levels done` }),
       lockedWorld !== null ? el('p', { class: 'lock-note', text: `🔒 A grown-up has set this to World ${lockedWorld}.` }) : null,

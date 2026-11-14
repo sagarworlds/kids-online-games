@@ -1,5 +1,5 @@
 import { QuestScene } from './QuestScene.js';
-import { el } from '../../../engine/utils/dom.js';
+import { el, spaced } from '../../../engine/utils/dom.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
 import { createButton } from '../../../engine/ui/Button.js';
@@ -35,17 +35,21 @@ export class WorldScene extends QuestScene {
     };
     const continents = CONTINENT_IDS.map((id) => {
       const s = summary.continents[id];
-      return el('button', { class: 'continent', attrs: { type: 'button', 'aria-label': `${id}: ${s.explored} of ${s.total} countries explored, ${s.percent} percent. Start a trip.` }, on: { click: () => fly(id) } },
-        el('span', { class: 'continent__name', text: id }),
-        el('span', { class: 'continent__bar', attrs: { 'aria-hidden': 'true' } }, el('span', { class: 'continent__fill', style: { width: `${s.percent}%` } })),
-        el('span', { class: 'continent__pct', text: `${s.percent}% explored`, attrs: { 'aria-hidden': 'true' } }));
+      // The name starts with the words on the button ("Africa", "0% explored") and then says what the picture shows and what it does:
+      // a name has to contain the words shown on its button.
+      const label = `${id}, ${s.percent}% explored. ${s.explored} of ${s.total} countries. Start a trip.`;
+      return el('button', { class: 'continent', attrs: { type: 'button', 'aria-label': label }, on: { click: () => fly(id) } },
+        ...spaced(
+          el('span', { class: 'continent__name', text: id }),
+          el('span', { class: 'continent__bar', attrs: { 'aria-hidden': 'true' } }, el('span', { class: 'continent__fill', style: { width: `${s.percent}%` } })),
+          el('span', { class: 'continent__pct', text: `${s.percent}% explored`, attrs: { 'aria-hidden': 'true' } })));
     });
 
     // Only offered where the device can do 3D. Choosing is remembered for next time (see `createViewChoice`).
     const { view } = this.routes;
     const viewEl = view.supported ? createViewToggle({ mode: view.mode(), onChange: (next) => { view.choose(next); this.routes.hub(); } }) : null;
 
-    this.ui.append(hud.el, el('main', { class: `hub${this.layoutClass()}` },
+    this.ui.append(hud.el, el('div', { class: `hub${this.layoutClass()}` },
       el('div', { class: 'hub__map' }, this.#map.el),
       el('p', { class: 'hub__summary', text: `${summary.world.percent}% of the world explored (${summary.world.explored} of ${summary.world.total} countries)` }),
       picker.el,

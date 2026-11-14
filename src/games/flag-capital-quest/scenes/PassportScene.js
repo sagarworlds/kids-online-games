@@ -25,7 +25,7 @@ export class PassportScene extends QuestScene {
           : el('p', { class: 'passport__empty', text: 'No stamps here yet.' }));
     });
 
-    this.ui.append(hud.el, el('main', { class: 'passport' },
+    this.ui.append(hud.el, el('div', { class: 'passport' },
       el('h1', { text: 'Passport' }),
       el('p', { class: 'passport__total', text: explored.size === 0
         ? 'Your passport is empty. Answer two questions about a country to earn its stamp!'

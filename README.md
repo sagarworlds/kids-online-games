@@ -27,7 +27,7 @@ npm test           # unit tests for engine, hub and every game's logic/
 
 `npm test` needs nothing installed. A second suite drives a real browser (Playwright, in its own package so the
 site keeps no dependencies): every game in 2D and 3D, on a desktop and a phone, with 3D made to fail on purpose,
-and offline from the service worker. See [`e2e/README.md`](e2e/README.md).
+offline from the service worker, and for accessibility (axe, keyboard focus, tap sizes). See [`e2e/README.md`](e2e/README.md).
 
 ```bash
 cd e2e && npm ci && npx playwright install chromium && npm test

@@ -71,7 +71,7 @@ export class RunScene extends MatraBase {
     this.#nextButton = createButton({ label: 'Next', icon: '▶', variant: 'primary', big: true, onClick: () => this.#next() });
     this.#nextButton.hidden = true;
     this.ui.classList.add('run-scene');
-    this.ui.append(this.#hud.el, el('main', { class: 'run' }, this.#body, this.#noteEl, el('div', { class: 'run__actions' }, this.#nextButton)));
+    this.ui.append(this.#hud.el, el('div', { class: 'run' }, this.#body, this.#noteEl, el('div', { class: 'run__actions' }, this.#nextButton)));
     this.#show();
   }
 
