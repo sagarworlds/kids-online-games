@@ -8,6 +8,7 @@ export const KEY_PREFIX = 'kidsgames:';
 export const PROFILE_KEY = `${KEY_PREFIX}profile`;
 export const SETTINGS_KEY = `${KEY_PREFIX}settings`;
 export const DEVICE_KEY = `${KEY_PREFIX}device`;
+export const LAST_PLAYED_KEY = `${KEY_PREFIX}last-played`;
 
 /** @param {string} slug Game folder name, e.g. 'number-ninja'. @returns {string} */
 export const gameKey = (slug) => `${KEY_PREFIX}${slug}`;
@@ -58,6 +59,19 @@ export const deviceSchema = {
   version: 1,
   defaults: () => ({ version: 1, slow3d: false, frameWatch: 'on' }),
   validate: (d) => typeof d.slow3d === 'boolean' && (d.frameWatch === 'on' || d.frameWatch === 'off'),
+};
+
+/**
+ * The game the child was last playing, for the home page's "Continue where you left off" card. One record for the whole site, not one
+ * per game, so the hub reads a single key to find it. `at` (milliseconds since 1970) is when that game became the one played last. It is
+ * for people and later features: nothing is decided from it, so a clock set backwards cannot make the card wrong.
+ * @typedef {{ version: number, slug: string, at: number }} LastPlayed
+ */
+/** @type {Schema} */
+export const lastPlayedSchema = {
+  version: 1,
+  defaults: () => ({ version: 1, slug: '', at: 0 }),
+  validate: (d) => typeof d.slug === 'string' && Number.isFinite(d.at),
 };
 
 /**
