@@ -673,7 +673,7 @@ A memory card-flip game where each pair is a Hindi word and its English meaning 
 
 **Modules**
 
-- `data/pairs.json` — topics: Fruits, Animals, Colours, Body, Family, Numbers 1–10 (at least 12 pairs each).
+- `data/pairs.json` — topics: Fruits, Animals, Colours, Body, Family, Numbers 1–10, Vegetables, Nature, Food, Home (at least 12 pairs each in each language, and at least six with a picture, so Easy can fill a round of one topic).
 - `logic/deck.js` — `buildDeck(pairs, count, rng, { language })` with Fisher–Yates shuffle; a pair with no word in the language is not used.
 - `logic/languages.js` — Hindi and Marathi (name, voice, card tag), `wordIn`, `levelKey` (the key a language's stars are saved under), `readLanguage` / `withLanguage` (the saved choice).
 - `logic/matchState.js` — state machine: `idle → oneUp → twoUp → (matched | mismatch) → idle`; exposes `flip(cardId)`.
@@ -699,7 +699,7 @@ A memory card-flip game where each pair is a Hindi word and its English meaning 
 - [ ] The game can be played in Marathi: the language is chosen on the menu and remembered, Marathi cards carry `lang="mr"`, and Marathi stars are kept apart from Hindi's (unit and browser checks)
 - [ ] Every card of every level is on the screen, at least 48px each way and clear of the others, on a desktop, a phone, a small phone and the smallest phone (browser check)
 
-**Marathi:** the menu has a language choice, Hindi or Marathi (remembered in the save). Each pair has a `mr` word beside its `hi` word (89 of 91 do: Marathi has no separate words for the two maternal grandparents), the cards show "मरा" and the word with `lang="mr"`, speech uses `mr-IN`, and stars are kept per language (Hindi under the plain level ids, Marathi under `mr-<level>`). `logic/languages.js` holds what differs between languages.
+**Marathi:** the menu has a language choice, Hindi or Marathi (remembered in the save). Each pair has a `mr` word beside its `hi` word (145 of 147 do: Marathi has no separate words for the two maternal grandparents), the cards show "मरा" and the word with `lang="mr"`, speech uses `mr-IN`, and stars are kept per language (Hindi under the plain level ids, Marathi under `mr-<level>`). `logic/languages.js` holds what differs between languages.
 
 **Stretch ideas:** English ↔ picture mode for younger siblings; a Tamil option the same way.
 
