@@ -98,3 +98,12 @@ a.card:active { transform: translateY(1px); }
 .report__facts { margin-left: auto; font-size: 0.9rem; color: var(--ink-soft); }
 .report__game.is-unplayed .report__title { color: var(--ink-soft); }
 .report__last { padding: 0 8px; font-size: 0.75rem; font-weight: 800; color: var(--primary-ink); background: var(--primary); border-radius: 999px; }
+
+/* ---------- Back up progress (a section of the settings dialog) ---------- */
+
+.backup { margin-top: 12px; padding-top: 12px; border-top: 2px solid var(--line); }
+.backup h3 { margin: 0 0 6px; font-size: 1.1rem; }
+.backup__about { margin: 0 0 8px; font-size: 0.95rem; }
+.backup__actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.backup__status { margin: 8px 0 0; font-weight: 700; color: var(--good); }
+.backup .message { margin: 8px 0 0; }

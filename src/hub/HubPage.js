@@ -7,6 +7,7 @@ import { showToast } from '../engine/ui/Toast.js';
 import { ICONS } from '../engine/ui/icons.js';
 import { pickContinueGame } from './continueGame.js';
 import { SUBJECTS } from './gamesRegistry.js';
+import { buildBackupSection } from './BackupSection.js';
 import { buildProgressSection } from './ProgressSection.js';
 import { summarizeProgress } from './progressSummary.js';
 import { resetAllProgress } from './resetProgress.js';
@@ -293,8 +294,8 @@ export class HubPage {
     return openParentArea({
       settings: this.#settings,
       rng: this.#rng,
-      // What the child has done comes before the one thing here that cannot be undone.
-      extraSections: [this.#buildProgressSection(), this.#buildResetSection()].filter(Boolean),
+      // What the child has done, and how to keep it safe, come before the one thing here that cannot be undone.
+      extraSections: [this.#buildProgressSection(), this.#buildBackupSection(), this.#buildResetSection()].filter(Boolean),
     }).catch((error) => logError(error, 'hub:grown-ups'));
   }
 
@@ -316,6 +317,20 @@ export class HubPage {
       this.#progress = null;
       return null;
     }
+  }
+
+  /** Saving a copy of the progress and restoring one. A restore changes what the whole page shows, so the page redraws itself. */
+  #buildBackupSection() {
+    return buildBackupSection({
+      storage: this.#storage,
+      games: this.#games,
+      onRestored: () => {
+        this.#settings.reload();
+        this.#editing = false;
+        this.#renderAll();
+        this.#refreshProgress();
+      },
+    });
   }
 
   /** After a reset the dialog is still open: make its numbers say so, in place. */
