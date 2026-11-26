@@ -25,10 +25,14 @@ const SAVES = {
   'lights-out': save({ badges: ['curious'] }),
 };
 
+/** The record of the game played last (what the home page's continue card reads): Simon Says. */
+const LAST_PLAYED = JSON.stringify({ version: 1, slug: 'simon-says', at: 1_700_000_000_000 });
+
 /** Puts the saves in the browser before any page runs, as if those games had been played on this device. */
-const withSaves = (context) => context.addInitScript((saves) => {
+const withSaves = (context) => context.addInitScript(([saves, last]) => {
   for (const [slug, value] of Object.entries(saves)) localStorage.setItem(`kidsgames:${slug}`, value);
-}, SAVES);
+  localStorage.setItem('kidsgames:last-played', last);
+}, [SAVES, LAST_PLAYED]);
 
 describe('the grown-ups\' progress summary', () => {
   const env = /** @type {{ site: Awaited<ReturnType<typeof startSite>>, browser: import('playwright').Browser }} */ ({});
@@ -82,7 +86,8 @@ describe('the grown-ups\' progress summary', () => {
     const row = (slug) => section.locator(`.report__game[data-slug="${slug}"]`);
     assert.match(await textOf(row('number-ninja')), /Number Ninja\s+5 stars, 2 levels, 1 badge$/, 'two levels, the best of each: 3 + 2');
     assert.match(await textOf(row('pizza-fractions')), /Pizza Fractions\s+1 star, 1 level$/);
-    assert.match(await textOf(row('simon-says')), /Simon Says\s+3 stars, 1 level$/);
+    assert.match(await textOf(row('simon-says')), /Simon Says\s+Played last\s+3 stars, 1 level$/, 'the game played last is marked');
+    assert.equal(await section.locator('.report__last').count(), 1, 'and it is the only one');
     assert.match(await textOf(row('lights-out')), /Lights Out\s+1 badge$/, 'a game with only a badge is played, with no stars made up');
     assert.match(await textOf(row('robot-path')), /Robot Path\s+Not played yet$/);
 
