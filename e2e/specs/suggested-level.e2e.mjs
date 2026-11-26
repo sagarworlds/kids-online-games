@@ -23,9 +23,12 @@ const seeded = (slug, bestStars, settings = null) => (context) => context.addIni
   if (locked) localStorage.setItem('kidsgames:settings', locked);
 }, [slug, bestStars ? saveWith(bestStars) : null, settings]);
 
-/** Which level the menu has chosen, which ones it points out as suggested, and which cannot be chosen. */
+/**
+ * Which level the menu has chosen, which ones it points out as suggested, and which cannot be chosen. Only the level picker's own buttons are
+ * read (the engine names them "level-<n>"): a menu may have other choices of the same kind beside it, such as a language or a topic.
+ */
 const picker = (page) => page.evaluate(() => {
-  const radios = [...document.querySelectorAll('fieldset.segmented input[type="radio"]')];
+  const radios = [...document.querySelectorAll('fieldset.segmented input[type="radio"]')].filter((radio) => radio.name.startsWith('level-'));
   const taggedIn = (radio) => document.querySelector(`label[for="${radio.id}"] .segmented__suggested`) !== null;
   return {
     levels: radios.map((radio) => radio.value),
