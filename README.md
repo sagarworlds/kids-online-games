@@ -79,7 +79,7 @@ index.html                 Home page (hub)
 src/engine/                Game loop, scenes, services (input, audio, storage, rewards, speech), UI kit
 src/engine/three/           Shared 3D layer: stage, orbit camera, labels, 3D-or-2D choice (see docs/SPEC.md)
 src/vendor/three/           three.js r187, vendored unchanged (MIT)
-src/hub/                   Home page: games registry, player name, profile, continue card, progress summary, reset
+src/hub/                   Home page: games registry, player name, profile, continue card, progress summary, back up and restore, reset
 src/app/createApp.js       Wires services for a game page (composition helper)
 src/games/<slug>/          One folder per game (index.html, main.js, scenes/, logic/, data/, style.css)
 tests/                     Node tests (engine, hub, each game's logic/)
