@@ -1,4 +1,6 @@
 import { DRAG_THRESHOLD, exceedsThreshold, zoneAtPoint } from '../utils/dragMath.js';
+import { createMachine } from '../utils/stateMachine.js';
+import { DRAG_GESTURE_MACHINE } from './dragGesture.machine.js';
 
 /** How long a rejected piece takes to slide back to where it started. */
 const SNAP_BACK_MS = 180;
@@ -31,6 +33,9 @@ const SNAP_BACK_MS = 180;
 export function makeDraggable(node, { getZones, onDrop, onActivate, onDragStart, onDragEnd, threshold = DRAG_THRESHOLD }) {
   /** @type {{ pointerId: number, start: { x: number, y: number }, offset: { x: number, y: number }, ghost: HTMLElement|null, over: HTMLElement|null }|null} */
   let press = null;
+  /** Whether that press is waiting, being dragged, or over; the legal moves are in `dragGesture.machine.js`. */
+  const gesture = createMachine(DRAG_GESTURE_MACHINE);
+  /** Set for a moment after a drag ends, so the click the browser raises next is not also a tap. A timed flag, not a phase. */
   let suppressClick = false;
 
   node.classList.add('dd-item');
@@ -55,6 +60,7 @@ export function makeDraggable(node, { getZones, onDrop, onActivate, onDragStart,
     ghost.style.height = `${box.height}px`;
     document.body.append(ghost);
     press.ghost = ghost;
+    gesture.must('DRAG_START'); // before onDragStart runs, so a callback that tears the element down finds a drag to end
     press.offset = { x: press.start.x - box.left, y: press.start.y - box.top };
     node.classList.add('is-dragging');
     document.addEventListener('keydown', onEscape);
@@ -66,16 +72,17 @@ export function makeDraggable(node, { getZones, onDrop, onActivate, onDragStart,
   }
 
   function onPointerDown(event) {
-    if (press || (event.pointerType === 'mouse' && event.button !== 0)) return;
+    if (!gesture.is('idle') || (event.pointerType === 'mouse' && event.button !== 0)) return;
     press = { pointerId: event.pointerId, start: { x: event.clientX, y: event.clientY }, offset: { x: 0, y: 0 }, ghost: null, over: null };
     // Capture keeps move/up events coming to this node even when the pointer leaves it (and the page, on desktop).
+    gesture.must('POINTER_DOWN');
     node.setPointerCapture?.(event.pointerId);
   }
 
   function onPointerMove(event) {
     if (!press || event.pointerId !== press.pointerId) return;
     const point = { x: event.clientX, y: event.clientY };
-    if (!press.ghost) {
+    if (gesture.is('pressed')) {
       if (!exceedsThreshold(press.start, point, threshold)) return;
       startDrag();
     }
@@ -89,15 +96,18 @@ export function makeDraggable(node, { getZones, onDrop, onActivate, onDragStart,
     // Detach first: `onDrop` often redraws the screen and so calls `destroy()` on this very element, which must not
     // find a half-finished drag and end it a second time.
     press = null;
-    if (!ended.ghost) return; // a tap: the click event that follows calls onActivate
+    const wasDragging = gesture.is('dragging');
+    gesture.must('POINTER_UP');
+    if (!wasDragging) return; // a tap: the click event that follows calls onActivate
     const zone = zoneAtPoint(zoneBoxes(), event.clientX, event.clientY)?.element ?? null;
     finish(ended, zone ? onDrop(zone, node) !== false : false);
   }
 
   function onEscape(event) {
-    if (event.key !== 'Escape' || !press?.ghost) return;
+    if (event.key !== 'Escape' || !gesture.is('dragging')) return;
     const ended = press;
     press = null;
+    gesture.must('CANCEL');
     finish(ended, false);
   }
 
@@ -125,7 +135,9 @@ export function makeDraggable(node, { getZones, onDrop, onActivate, onDragStart,
     if (!press || event.pointerId !== press.pointerId) return;
     const ended = press;
     press = null;
-    if (ended.ghost) finish(ended, false);
+    const wasDragging = gesture.is('dragging');
+    gesture.must('CANCEL');
+    if (wasDragging) finish(ended, false);
   }
 
   function onClick(event) {
@@ -145,9 +157,10 @@ export function makeDraggable(node, { getZones, onDrop, onActivate, onDragStart,
 
   return {
     destroy() {
-      if (press?.ghost) {
+      if (gesture.is('dragging')) {
         const ended = press;
         press = null;
+        gesture.must('CANCEL');
         finish(ended, false);
       }
       node.removeEventListener('pointerdown', onPointerDown);
