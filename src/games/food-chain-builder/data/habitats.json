@@ -29,6 +29,18 @@
       "name": "Desert",
       "icon": "🏜️",
       "ambient": "desert"
+    },
+    {
+      "id": "sundarbans",
+      "name": "Sundarbans",
+      "icon": "🐅",
+      "ambient": "ocean"
+    },
+    {
+      "id": "ghats",
+      "name": "Western Ghats",
+      "icon": "🐒",
+      "ambient": "forest"
     }
   ],
   "habitats": [
@@ -804,6 +816,272 @@
           "scorpion": "down",
           "snake": "same",
           "eagle": "same"
+        }
+      }
+    },
+    {
+      "id": "sundarbans-easy",
+      "place": "sundarbans",
+      "name": "Sundarbans",
+      "level": "easy",
+      "organisms": [
+        "mangrove",
+        "chital",
+        "tiger"
+      ],
+      "required": [
+        {
+          "from": "mangrove",
+          "to": "chital"
+        },
+        {
+          "from": "chital",
+          "to": "tiger"
+        }
+      ],
+      "allowed": []
+    },
+    {
+      "id": "sundarbans-medium",
+      "place": "sundarbans",
+      "name": "Sundarbans",
+      "level": "medium",
+      "organisms": [
+        "mangrove",
+        "chital",
+        "tiger",
+        "fiddlercrab",
+        "mudskipper",
+        "kingfisher"
+      ],
+      "required": [
+        {
+          "from": "mangrove",
+          "to": "chital"
+        },
+        {
+          "from": "chital",
+          "to": "tiger"
+        },
+        {
+          "from": "mangrove",
+          "to": "fiddlercrab"
+        },
+        {
+          "from": "fiddlercrab",
+          "to": "mudskipper"
+        },
+        {
+          "from": "mudskipper",
+          "to": "kingfisher"
+        }
+      ],
+      "allowed": [
+        {
+          "from": "fiddlercrab",
+          "to": "kingfisher"
+        }
+      ]
+    },
+    {
+      "id": "sundarbans-hard",
+      "place": "sundarbans",
+      "name": "Sundarbans",
+      "level": "hard",
+      "organisms": [
+        "mangrove",
+        "mudalgae",
+        "chital",
+        "fiddlercrab",
+        "shrimp",
+        "fish",
+        "tiger",
+        "crocodile"
+      ],
+      "required": [
+        {
+          "from": "mangrove",
+          "to": "chital"
+        },
+        {
+          "from": "mangrove",
+          "to": "fiddlercrab"
+        },
+        {
+          "from": "mudalgae",
+          "to": "fiddlercrab"
+        },
+        {
+          "from": "mudalgae",
+          "to": "shrimp"
+        },
+        {
+          "from": "chital",
+          "to": "tiger"
+        },
+        {
+          "from": "shrimp",
+          "to": "fish"
+        },
+        {
+          "from": "fish",
+          "to": "crocodile"
+        },
+        {
+          "from": "fiddlercrab",
+          "to": "crocodile"
+        },
+        {
+          "from": "chital",
+          "to": "crocodile"
+        }
+      ],
+      "allowed": [
+        {
+          "from": "fish",
+          "to": "tiger"
+        }
+      ],
+      "whatIf": {
+        "removed": "chital",
+        "effects": {
+          "mangrove": "up",
+          "mudalgae": "same",
+          "fiddlercrab": "same",
+          "shrimp": "same",
+          "fish": "same",
+          "tiger": "down",
+          "crocodile": "down"
+        }
+      }
+    },
+    {
+      "id": "ghats-easy",
+      "place": "ghats",
+      "name": "Western Ghats",
+      "level": "easy",
+      "organisms": [
+        "grass",
+        "tahr",
+        "leopard"
+      ],
+      "required": [
+        {
+          "from": "grass",
+          "to": "tahr"
+        },
+        {
+          "from": "tahr",
+          "to": "leopard"
+        }
+      ],
+      "allowed": []
+    },
+    {
+      "id": "ghats-medium",
+      "place": "ghats",
+      "name": "Western Ghats",
+      "level": "medium",
+      "organisms": [
+        "grass",
+        "tahr",
+        "fig",
+        "caterpillar",
+        "macaque",
+        "leopard"
+      ],
+      "required": [
+        {
+          "from": "grass",
+          "to": "tahr"
+        },
+        {
+          "from": "tahr",
+          "to": "leopard"
+        },
+        {
+          "from": "fig",
+          "to": "caterpillar"
+        },
+        {
+          "from": "caterpillar",
+          "to": "macaque"
+        },
+        {
+          "from": "fig",
+          "to": "macaque"
+        },
+        {
+          "from": "macaque",
+          "to": "leopard"
+        }
+      ],
+      "allowed": []
+    },
+    {
+      "id": "ghats-hard",
+      "place": "ghats",
+      "name": "Western Ghats",
+      "level": "hard",
+      "organisms": [
+        "grass",
+        "fig",
+        "tahr",
+        "giantsquirrel",
+        "caterpillar",
+        "macaque",
+        "hornbill",
+        "leopard"
+      ],
+      "required": [
+        {
+          "from": "grass",
+          "to": "tahr"
+        },
+        {
+          "from": "fig",
+          "to": "giantsquirrel"
+        },
+        {
+          "from": "fig",
+          "to": "caterpillar"
+        },
+        {
+          "from": "fig",
+          "to": "macaque"
+        },
+        {
+          "from": "fig",
+          "to": "hornbill"
+        },
+        {
+          "from": "caterpillar",
+          "to": "macaque"
+        },
+        {
+          "from": "caterpillar",
+          "to": "hornbill"
+        },
+        {
+          "from": "tahr",
+          "to": "leopard"
+        },
+        {
+          "from": "macaque",
+          "to": "leopard"
+        }
+      ],
+      "allowed": [],
+      "whatIf": {
+        "removed": "macaque",
+        "effects": {
+          "grass": "same",
+          "fig": "up",
+          "tahr": "same",
+          "giantsquirrel": "same",
+          "caterpillar": "up",
+          "hornbill": "same",
+          "leopard": "down"
         }
       }
     }

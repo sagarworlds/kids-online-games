@@ -1082,7 +1082,7 @@ The child draws arrows between living things in a habitat (grass → rabbit → 
 
 **Learning goal:** producers, consumers (herbivore, carnivore, omnivore), energy flow direction, habitats, interdependence.
 
-**Core loop:** a habitat loads (Forest, Ocean, Pond, Grassland, Desert) with 4–8 organism cards → the child drags from one organism to another to draw an arrow meaning "is eaten by" → taps Check → correct arrows turn green, wrong ones turn red with a reason → when all required links are present the chain "comes alive" (animation) → next habitat.
+**Core loop:** a habitat loads (Forest, Ocean, Pond, Grassland, Desert, and the Indian habitats, Sundarbans and Western Ghats) with 3–8 organism cards → the child drags from one organism to another to draw an arrow meaning "is eaten by" → taps Check → correct arrows turn green, wrong ones turn red with a reason → when all required links are present the chain "comes alive" (animation) → next habitat.
 
 **Screens:** Habitat select → Builder (scene background, organism cards, arrow layer, Check, Eraser, Info button per card) → "What if?" challenge (Hard) → Results (stars, organisms learned).
 
@@ -1138,8 +1138,10 @@ The child draws arrows between living things in a habitat (grass → rabbit → 
 - [ ] "What if?" works on Hard habitats
 - [ ] Each card's Info shows role and fact
 - [ ] No word on a card is broken in the middle, in any habitat, on a desktop, a phone or a small phone (browser check)
+- [ ] The Sundarbans and the Western Ghats have an Easy, Medium and Hard habitat each, and every habitat of every place can be solved in the browser
+- [ ] No step of a food chain has more living things than fit across a phone (data validation test)
 
-**Stretch ideas:** decomposers bonus (mushrooms, worms) closing the loop; Indian habitats pack (Sundarbans, Western Ghats).
+**Stretch ideas:** decomposers bonus (mushrooms, worms) closing the loop. (Done: the Indian habitats pack, Sundarbans and Western Ghats, 6 more puzzles and 14 more living things.)
 
 ## Game 14 — Plant Grower (`plant-grower`)
 

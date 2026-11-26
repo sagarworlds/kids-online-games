@@ -5,7 +5,8 @@ For ages 8–10. Works with touch, mouse and keyboard, and offline once loaded.
 
 ## How to play
 
-Pick a level, then a habitat: **Forest, Ocean, Pond, Grassland** or **Desert** (15 puzzles in all).
+Pick a level, then a habitat: **Forest, Ocean, Pond, Grassland** or **Desert**, or one of two places in India, the **Sundarbans**
+(the mangrove forest where tigers swim) and the **Western Ghats** (the rainforest hills of the west coast): 21 puzzles in all.
 
 - **Draw an arrow** from the food to the one that eats it: drag from one card to the other, or tap (or press Enter on) the
   food and then the eater. An arrow from *grass* to *rabbit* means the rabbit eats the grass: arrows follow the energy.
@@ -31,11 +32,12 @@ fewer (↓). The rule is one step: what eats the missing thing goes down, what i
 
 ## How it works
 
-- `data/organisms.json` (34 living things) and `data/habitats.json` (5 places, 15 puzzles) hold all content. They are
+- `data/organisms.json` (48 living things) and `data/habitats.json` (7 places, 21 puzzles) hold all content. They are
   checked on load, and the same checks run in `tests/food-chain-builder/`: every link joins organisms of its own habitat;
   every link fits the roles (producers eat nothing, herbivores eat only producers, carnivores no plants); food only
-  flows one way; every living thing is in a required link; each level has the right number and shape; and every What
-  if answer equals what the one-step rule gives (so the data cannot disagree with the rule).
+  flows one way; every living thing is in a required link; each level has the right number and shape; no step of the food
+  chain has more living things than fit across a phone (`MAX_CARDS_ACROSS`); and every What if answer equals what the
+  one-step rule gives (so the data cannot disagree with the rule).
 - `logic/` is pure: `linkChecker` (correct, reversed, invalid, missing, duplicate), `whatIf`, `layout` (cards are placed
   by how far each is from the sun, left to right on a wide board and bottom to top on a phone), `messages`, `scoring`.
 - `ui/fitNames.js` measures each card's name in the browser and shrinks it (`logic/fit.js` does the arithmetic) until its longest word fits,
@@ -46,8 +48,13 @@ fewer (↓). The rule is one step: what eats the missing thing goes down, what i
 
 ## Needs a human check
 
-The organisms, their roles, diets and fun facts, and the food links of all 15 habitats were written for this game and
-**must be read by an adult before classroom use**. A few simplifications are on purpose and worth a look:
+The organisms, their roles, diets and fun facts, and the food links of all 21 habitats were written for this game and
+**must be read by an adult before classroom use**. The two Indian habitats are the newest and deserve a read by someone who knows them:
+the Sundarbans (mangrove, mud algae, spotted deer, fiddler crab, mudskipper, kingfisher, saltwater crocodile, tiger, with the shrimp and small
+fish the game already had) and the Western Ghats (fig tree, tahr, giant squirrel, lion-tailed macaque, hornbill, leopard, with the grass
+and caterpillar the game already had). Their links are the ones the diet sentences say (for example a leopard eats tahr and monkeys, a
+crocodile eats fish, crabs and deer); a fiddler crab is marked *omnivore* because it scoops algae and bits of leaves from the mud, and the mudskipper is shown eating animals, as the
+common Sundarbans kind does (some kinds eat algae). A few simplifications are on purpose and worth a look:
 foxes, mice, ducks and carp are marked *omnivore* because they eat plants and animals; "Small fish" and "Tuna" are
 marked *carnivore*; the habitats are simplified examples, not complete ecosystems; the What if answers follow a one-step rule and
 ignore the second-order effects of a real habitat. Habitat sounds are short tone patterns made in the browser.

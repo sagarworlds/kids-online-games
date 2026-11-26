@@ -24,6 +24,27 @@ export function trophicLevels(habitat) {
 }
 
 /**
+ * The most cards that can stand side by side. On a phone the board is about 330px wide and a card is 98px, so a fourth card in one row would sit
+ * on top of its neighbour. A level of the food chain is one such row on a phone (and one column on a wide board), so no level may hold more.
+ */
+export const MAX_CARDS_ACROSS = 3;
+
+/**
+ * The level of the food chain with the most living things in it, which decides how wide a row of cards has to be.
+ *
+ * @param {{ organisms: readonly string[], required: readonly import('./whatIf.js').Link[] }} habitat
+ * @returns {{ level: number, ids: string[] }} The widest level (the first one, when several tie); no ids for a habitat with nothing in it.
+ */
+export function widestLevel(habitat) {
+  /** @type {Map<number, string[]>} */
+  const byLevel = new Map();
+  for (const [id, level] of trophicLevels(habitat)) byLevel.set(level, [...(byLevel.get(level) ?? []), id]);
+  let widest = { level: 0, ids: /** @type {string[]} */ ([]) };
+  for (const [level, ids] of byLevel) if (ids.length > widest.ids.length) widest = { level, ids };
+  return widest;
+}
+
+/**
  * Where each card goes on the board, worked out from the food links so the arrows mostly point one way and rarely
  * cross: one column per level, producers first (left to right on a wide board; bottom to top on a tall one, so on a
  * phone the energy flows up), and inside a level the cards are ordered by where their foods sit.
