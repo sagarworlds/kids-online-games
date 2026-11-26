@@ -37,12 +37,18 @@
 
 .board { width: min(100%, 900px); margin: 0 auto; padding: 8px 12px 32px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
 .board__status { min-height: 1.7em; margin: 0; font-weight: 800; text-align: center; }
-/* Cap the grid by the screen height too, so every row stays on screen instead of the last one being cut off. */
-.cards { display: grid; grid-template-columns: repeat(var(--cols), 1fr); gap: 10px; width: min(100%, max(320px, calc((100vh - 170px) * 1.1))); }
+/* The level says how many columns it would like (--cols). A card is never narrower than 72px, so on a screen that cannot hold that many the grid has
+   fewer columns and more rows (Hard on a phone is four columns of five rows) instead of a last column that runs off the screen. The 1px is so that a
+   grid that fits its columns exactly does not lose one to rounding. The grid is capped by the screen height too, so rows stay on screen. */
+.cards {
+  --gap: 10px;
+  display: grid; gap: var(--gap); width: min(100%, max(320px, calc((100vh - 170px) * 1.1)));
+  grid-template-columns: repeat(auto-fit, minmax(max(72px, calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols) - 1px)), 1fr));
+}
 .cell { position: relative; }
 
 .card3d {
-  display: block; width: 100%; aspect-ratio: 1 / 1.05; min-height: 88px; padding: 0;
+  display: block; width: 100%; aspect-ratio: 1 / 1.05; padding: 0;
   background: none; border: 0; cursor: pointer; perspective: 800px;
   -webkit-tap-highlight-color: transparent; touch-action: manipulation;
 }
