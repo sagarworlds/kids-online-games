@@ -206,9 +206,13 @@ export class PlayScene extends BubblesScene {
     this.#syncSrList();
   }
 
+  /**
+   * The text mirror of the bubbles for screen readers. It is out of the Tab order (`tabindex="-1"`): a screen reader still finds and presses
+   * each one by browsing, while a keyboard player pops a bubble by typing its letter. Tab would only land on something nobody can see.
+   */
   #syncSrList() {
     this.#srList.replaceChildren(...(this.#solved() ? [] : this.#bubbles).map((b) => el('button', {
-      class: 'sr-bubble', text: `Bubble ${b.letter}`, attrs: { type: 'button' },
+      class: 'sr-bubble', text: `Bubble ${b.letter}`, attrs: { type: 'button', tabindex: -1 },
       on: { click: () => this.#pop(b) },
     })));
   }

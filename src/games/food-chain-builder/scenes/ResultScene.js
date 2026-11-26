@@ -33,7 +33,7 @@ export class ResultScene extends FoodScene {
     const nextHabitat = this.data.habitats.find((h) => h.place === data.places[nextIndex].id && h.level === habitat.level);
 
     const hud = createHud({ homeHref: services.game.homeHref, title: services.game.title, onSettings: () => services.openSettings() });
-    this.ui.append(hud.el, el('main', { class: 'result' },
+    this.ui.append(hud.el, el('div', { class: 'result' },
       el('h1', { text: result.stars >= 2 ? `Great job, ${name}!` : `Nice try, ${name}!` }),
       el('p', { class: 'result__mode', text: `${place.name} · ${LEVELS[habitat.level].label}` }),
       el('div', { class: 'result__stars', attrs: { role: 'img', 'aria-label': `${result.stars} out of 3 stars` }, html: ICONS.star.repeat(result.stars) + ICONS.starEmpty.repeat(3 - result.stars) }),

@@ -41,7 +41,7 @@ export class WhatIfScene extends FoodScene {
     this.#buttons.check = createButton({ label: 'Check my answers', icon: '✔', variant: 'primary', big: true, disabled: true, onClick: () => this.#checkAnswers() });
 
     const rows = this.#habitat.organisms.filter((id) => id !== whatIf.removed).map((id) => this.#row(data.lookup.get(id)));
-    this.ui.append(hud.el, el('main', { class: 'whatif' },
+    this.ui.append(hud.el, el('div', { class: 'whatif' },
       el('h1', { class: 'whatif__title', text: `What if all the ${removed.plural} disappeared?` }),
       el('div', { class: 'whatif__gone' }, el('span', { class: 'whatif__icon', text: removed.icon, attrs: { 'aria-hidden': 'true' } }), el('span', { text: `${removed.name}: gone!` })),
       el('p', { class: 'whatif__help', text: 'For each living thing, will there be more of it (↑), about the same (＝) or fewer (↓)? Think about who eats whom.' }),

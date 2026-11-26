@@ -30,6 +30,9 @@ const cssFiles = srcFiles.filter((f) => f.endsWith('.css'));
 const htmlFiles = [join(ROOT, 'index.html'), join(ROOT, '404.html'), ...srcFiles.filter((f) => f.endsWith('.html'))].filter(existsSync);
 const read = (f) => readFileSync(f, 'utf8');
 
+/** Third-party code copied into the repo (see src/vendor/three/README.md). */
+const VENDOR_DIR = 'src/vendor/';
+
 /** Removes comments so words like "document" in a JSDoc line do not count as code. */
 const stripComments = (code) => code.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:'"`\\])\/\/.*$/gm, '$1');
 
@@ -101,9 +104,98 @@ test('nothing in the shipped site calls out to another origin (no CDNs, fonts, a
   const allowed = ['http://www.w3.org/']; // XML namespaces such as the SVG one are identifiers, not requests
   const problems = [];
   for (const file of [...htmlFiles, ...jsFiles, ...cssFiles, ...srcFiles.filter((f) => f.endsWith('.json'))]) {
+    // The vendored three.js mentions web addresses in comments and warning texts. It is checked by its own test
+    // below (exact file list), and at run time the Content-Security-Policy blocks any request to another origin.
+    if (rel(file).startsWith(VENDOR_DIR)) continue;
     for (const m of read(file).matchAll(/https?:\/\/[^\s'"`)<>]+/g)) {
       if (!allowed.some((prefix) => m[0].startsWith(prefix))) problems.push(`${rel(file)}: ${m[0]}`);
     }
+  }
+  assert.deepEqual(problems, []);
+});
+
+test('src/vendor/ holds exactly the reviewed third-party files, and only the engine imports them', () => {
+  // Third-party code skips the "no other origin" scan above, so nothing may be added here without a review:
+  // adding a file means updating this list on purpose.
+  const expected = ['src/vendor/three/LICENSE', 'src/vendor/three/README.md', 'src/vendor/three/three.core.js', 'src/vendor/three/three.module.js'];
+  assert.deepEqual(srcFiles.map(rel).filter((f) => f.startsWith(VENDOR_DIR)).sort(), expected);
+
+  const problems = [];
+  for (const file of jsFiles) {
+    const from = rel(file);
+    if (from.startsWith(VENDOR_DIR) || from === 'src/engine/three/three.js') continue;
+    if (/from\s+['"][^'"]*vendor\//.test(stripComments(read(file)))) problems.push(`${from}: import three.js through src/engine/three/three.js`);
+  }
+  assert.deepEqual(problems, []);
+});
+
+test('three.js is only loaded on demand: no page or 2D code path imports it statically', () => {
+  // The library is about 2 MB. A game's main.js, its 2D scenes and the hub must reach a 3D scene with import(),
+  // so children on the 2D version (or on a slow phone) never download it.
+  const pullsThree = (file) => /from\s+['"][^'"]*engine\/three\/(three|Stage3D|labels)\.js['"]/.test(stripComments(read(file)));
+  const problems = [];
+  for (const file of jsFiles) {
+    const from = rel(file);
+    const is3dFile = /(^|\/)(three|scenes3d|view3d)\//.test(from) || /3[dD]\.js$/.test(from);
+    if (from.startsWith(VENDOR_DIR) || from.startsWith('src/engine/three/') || is3dFile) continue;
+    if (pullsThree(file)) problems.push(`${from}: static import of three.js outside a 3D file (use import())`);
+  }
+  assert.deepEqual(problems, []);
+});
+
+// ---- installable app -------------------------------------------------------
+
+const MANIFEST_FILE = join(ROOT, 'manifest.webmanifest');
+/** Every page a child can land on and add to the home screen: the home page and each game's page. */
+const frontDoors = htmlFiles.filter((f) => rel(f) === 'index.html' || /^src\/games\/[^/]+\/index\.html$/.test(rel(f)));
+
+/** The width and height written in a PNG file's header (the first chunk always holds them). */
+function pngSize(file) {
+  const bytes = readFileSync(file);
+  assert.equal(bytes.subarray(0, 8).toString('hex'), '89504e470d0a1a0a', `${rel(file)} is a PNG file`);
+  return { width: bytes.readUInt32BE(16), height: bytes.readUInt32BE(20) };
+}
+
+test('the web app manifest is valid, starts at the home page, and every icon is a real file of the size it names', () => {
+  assert.ok(existsSync(MANIFEST_FILE), 'manifest.webmanifest exists at the site root');
+  const manifest = JSON.parse(read(MANIFEST_FILE));
+  assert.ok(manifest.name && manifest.short_name, 'it has a name and a short name');
+  assert.ok(manifest.short_name.length <= 12, 'the short name fits under an icon');
+  assert.equal(manifest.start_url, './', 'it opens the home page');
+  assert.equal(manifest.scope, './', 'and covers the whole site, games included');
+  assert.equal(manifest.display, 'standalone', 'it runs like an app, without the browser bar');
+  assert.match(manifest.theme_color, /^#[0-9a-f]{6}$/i);
+  assert.match(manifest.background_color, /^#[0-9a-f]{6}$/i);
+
+  const home = read(join(ROOT, 'index.html'));
+  assert.equal(manifest.theme_color, /<meta name="theme-color" content="(#[0-9a-f]{6})">/i.exec(home)?.[1], 'the manifest colour is the home page colour');
+
+  const sized = (purpose) => manifest.icons.filter((icon) => (icon.purpose ?? 'any') === purpose && icon.type === 'image/png');
+  for (const [purpose, size] of [['any', 192], ['any', 512], ['maskable', 512]]) {
+    assert.ok(sized(purpose).some((icon) => icon.sizes === `${size}x${size}`), `a ${size}x${size} ${purpose} PNG icon`);
+  }
+  for (const icon of manifest.icons) {
+    const file = join(ROOT, icon.src);
+    assert.ok(existsSync(file), `${icon.src} exists`);
+    if (icon.type === 'image/png') {
+      const { width, height } = pngSize(file);
+      assert.equal(icon.sizes, `${width}x${height}`, `${icon.src} is ${width}x${height} but the manifest says ${icon.sizes}`);
+    }
+  }
+});
+
+test('the iOS home-screen icon is a 180 x 180 PNG', () => {
+  assert.deepEqual(pngSize(join(ROOT, 'icons/apple-touch-icon.png')), { width: 180, height: 180 });
+});
+
+test('the home page and every game page link the manifest and the home-screen icon (their paths are checked to resolve by the test above)', () => {
+  assert.equal(frontDoors.length, GAMES.filter((g) => g.available).length + 1, 'every game page plus the home page');
+  const problems = [];
+  for (const file of frontDoors) {
+    const html = read(file);
+    if (!/<link rel="manifest" href="[^"]*manifest\.webmanifest">/.test(html)) problems.push(`${rel(file)}: no manifest link`);
+    if (!/<link rel="apple-touch-icon" href="[^"]*icons\/apple-touch-icon\.png">/.test(html)) problems.push(`${rel(file)}: no apple-touch-icon link`);
+    if (!/<meta name="apple-mobile-web-app-title" content="[^"]+">/.test(html)) problems.push(`${rel(file)}: no apple-mobile-web-app-title`);
   }
   assert.deepEqual(problems, []);
 });

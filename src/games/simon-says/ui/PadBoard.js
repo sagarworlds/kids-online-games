@@ -24,8 +24,9 @@ function lighten(hex, amount) {
  * @returns {{
  *   el: HTMLElement,
  *   light: (padId: number, on: boolean) => void,
- *   setEnabled: (enabled: boolean) => void
- * }}
+ *   setEnabled: (enabled: boolean) => void,
+ *   button: (padId: number) => HTMLButtonElement|undefined
+ * }} `button` gives the button of a pad (the 3D board lays these over its picture).
  */
 export function createPadBoard({ pads, onPress }) {
   /** @type {Map<number, HTMLButtonElement>} */
@@ -48,6 +49,7 @@ export function createPadBoard({ pads, onPress }) {
 
   return {
     el: root,
+    button: (padId) => buttons.get(padId),
     light: (padId, on) => buttons.get(padId)?.classList.toggle('is-lit', on),
     setEnabled(enabled) {
       root.classList.toggle('is-waiting', !enabled);

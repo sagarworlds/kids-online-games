@@ -31,7 +31,7 @@ export class ResultScene extends DetectiveScene {
       el('span', { class: 'case-row__name', text: `Case ${i + 1}: ${typeName(r.type)}` }),
       el('span', { class: 'case-row__note', text: r.firstTry ? 'first pick' : `${r.wrongPicks} wrong ${r.wrongPicks === 1 ? 'pick' : 'picks'}` })));
 
-    this.ui.append(hud.el, el('main', { class: 'result' },
+    this.ui.append(hud.el, el('div', { class: 'result' },
       el('h1', { text: stars >= 2 ? `Great detective work, ${name}!` : `Good start, ${name}!` }),
       el('div', { class: 'badge', attrs: { role: 'img', 'aria-label': `Detective rank: ${rank}` } },
         el('span', { class: 'badge__icon', text: RANK_ICON[rank], attrs: { 'aria-hidden': 'true' } }),

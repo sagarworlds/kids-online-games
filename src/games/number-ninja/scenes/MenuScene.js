@@ -1,6 +1,7 @@
 import { NinjaScene } from './NinjaScene.js';
 import { el, clear } from '../../../engine/utils/dom.js';
 import { createButton } from '../../../engine/ui/Button.js';
+import { createViewSwitch } from '../../../engine/three/ViewToggle.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
 import { ICONS } from '../../../engine/ui/icons.js';
@@ -44,12 +45,17 @@ export class MenuScene extends NinjaScene {
     this.#note = el('p', { class: 'message', attrs: { role: 'status' } });
     this.#renderOps();
 
-    const main = el('main', { class: 'menu' },
+    // Only offered where the device can do 3D. The choice is remembered for next time (see `createViewChoice`).
+    const { view } = this.routes;
+    const viewEl = createViewSwitch({ view, onChange: () => this.routes.menu(), notes: { '3d': 'In 3D view the stars are spinning solids that split in two when you get the answer right.', '2d': 'In 2D view the stars are flat pictures.' } });
+
+    const main = el('div', { class: 'menu' },
       el('h1', { class: 'menu__title', text: 'Number Ninja' }),
       el('p', { class: 'menu__intro', text: 'Stars full of sums fall from the sky. Type the answer and press Enter before they land!' }),
       picker.el,
       el('div', { class: 'menu__ops-wrap' }, el('p', { class: 'field__label', text: 'Practise' }), this.#opsBox, this.#note),
       createButton({ label: 'Start', icon: '▶', variant: 'primary', big: true, onClick: () => this.#start() }),
+      viewEl,
       this.#buildBestStars());
 
     this.ui.append(hud.el, main);

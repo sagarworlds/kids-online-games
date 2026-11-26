@@ -53,3 +53,31 @@
 .result__stat dd { margin: 0; font-size: 1.6rem; font-weight: 800; white-space: nowrap; }
 .result__actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
 .menu__stars svg, .result__stars svg, .hud__value svg { width: 1em; height: 1em; }
+
+/* ---------- 3D pads ---------- */
+/* The shared layout of the picture and the controls (`.scene3d*`) is in src/engine/ui/ui.css. */
+.menu__view { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.menu__viewnote { margin: 0; color: var(--ink-soft); font-size: 0.95rem; }
+
+.pads3d { position: relative; --stage-bg: #1c2250; }
+/* The flat pads' buttons lie over the picture, one on each pad: invisible except for the focus ring (the picture shows the pad and its light). They take
+   no pointer events: a tap or a drag on the picture is the picture's, which works out which pad was tapped. The keyboard (keys 1 to 6, or Tab and Space)
+   and screen readers use the buttons. `left`, `top`, `width` and `height` of each are set from the pad's place in the picture. */
+.pads--overlay { position: absolute; inset: 0; display: block; width: auto; pointer-events: none; }
+.pads--overlay .pad {
+  position: absolute; transform: translate(-50%, -50%); aspect-ratio: auto; min-width: 0; min-height: 0;
+  background: transparent; border-color: transparent; border-radius: 22px; box-shadow: none; opacity: 1;
+}
+.pads--overlay .pad__shape, .pads--overlay .pad__key { display: none; }
+.pads--overlay .pad.is-lit { background: transparent; transform: translate(-50%, -50%); box-shadow: none; }
+.pads--overlay.is-waiting .pad:not(.is-lit) { opacity: 1; }
+.pads--overlay .pad:active { transform: translate(-50%, -50%); }
+.pads--overlay .pad:focus-visible { outline: 5px solid #ffffff; outline-offset: 2px; }
+
+.simon3d .scene3d__panel { align-items: center; gap: 10px; padding-top: 10px; }
+.simon3d .simon__display { min-height: 0; }
+
+/* If 3D stops working the picture goes and the flat pads are the board again, in the same place. */
+.pads3d--flat { display: flex; align-items: center; justify-content: center; background: var(--bg); }
+.pads3d--flat .pads { width: min(88%, 480px, 80%); }
+.pads3d--flat .pads--6 { width: min(94%, 600px); }

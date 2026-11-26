@@ -2,7 +2,8 @@
 
 Sixteen browser games for children aged 8–10: maths, languages, logic, science and memory.
 Plain HTML, CSS and JavaScript (ES modules). No frameworks, no bundler, no external CDNs,
-no ads, no cookies, no analytics. All progress stays in the browser's `localStorage`.
+no ads, no cookies, no analytics. The only third-party code is three.js, copied into `src/vendor/three/`
+for the 3D versions of some games. All progress stays in the browser's `localStorage`.
 
 The full design is in [`docs/SPEC.md`](docs/SPEC.md).
 
@@ -22,12 +23,39 @@ npm start          # http://localhost:3000  (zero-dependency static server)
 npm test           # unit tests for engine, hub and every game's logic/
 ```
 
+### Browser tests
+
+`npm test` needs nothing installed. A second suite drives a real browser (Playwright, in its own package so the
+site keeps no dependencies): every game in 2D and 3D, on a desktop and a phone, with 3D made to fail on purpose,
+offline from the service worker, and for accessibility (axe, keyboard focus, tap sizes). See [`e2e/README.md`](e2e/README.md).
+
+```bash
+cd e2e && npm ci && npx playwright install chromium && npm test
+```
+
 ## Offline
 
-After the first visit the whole site works without a network. `npm run build` generates `dist/sw.js`, a service
-worker that precaches every shipped file under a version derived from a hash of the site, so each deploy gets a fresh
-cache and old ones are deleted. Opened from `npm start` the worker stays inert (version `dev`), so local development
-never sees stale files. To try it: `npm run build`, `npm run start:dist`, open the site, then switch the network off.
+The home page works without a network after the first visit, and so does every game that has been opened once.
+`npm run build` generates `dist/sw.js`, a service worker that knows every shipped file, under a version derived from a hash
+of the site, so each deploy gets a fresh cache and old ones are deleted. It stores very little up front: when it installs it
+keeps the *core* (the home page, the shared engine and the icons, about 190 KB), and it saves each game, whole, the first
+time that game is opened while online (the page loads from the network as usual, the rest of the game's files follow in
+the background, and the page is stored last, so a stored page always means a complete game). A first visit therefore costs a
+few hundred kilobytes instead of the whole site (about 8 MB), and a new deploy only re-downloads the games the child had
+saved. A grown-up can also save everything at once, from the settings (behind the grown-ups' check): "Save all games for offline
+play" shows how many games are saved and downloads the rest with a progress bar (best on wifi). A game that was never opened and
+was not saved this way sends the child back to the home page with a note when they try it offline. With the
+browser's data saver on, games are stored only as they are played. Opened from `npm start` the worker stays inert (version
+`dev`), so local development never sees stale files. To try it: `npm run build`, `npm run start:dist`, open the site and a
+game, then switch the network off.
+
+## Install as an app
+
+The site is installable: `manifest.webmanifest` and the icons in `icons/` let a browser offer "Install" or "Add to Home
+Screen", so a tablet gets a Kids Games icon that opens the home page full screen. It works offline once visited (see above),
+and every page of the site links the manifest, so a child can add whichever page they are on. The icons are drawn from
+`favicon.svg`; after changing it, run `cd e2e && node tools/make-icons.mjs`. The browser tests ask Chromium itself whether
+each page is installable (`e2e/specs/install.e2e.mjs`).
 
 ## Deploy to Render (static site)
 
@@ -49,6 +77,8 @@ few other security headers. If you add an asset type from another origin, update
 ```
 index.html                 Home page (hub)
 src/engine/                Game loop, scenes, services (input, audio, storage, rewards, speech), UI kit
+src/engine/three/           Shared 3D layer: stage, orbit camera, labels, 3D-or-2D choice (see docs/SPEC.md)
+src/vendor/three/           three.js r187, vendored unchanged (MIT)
 src/hub/                   Home page: games registry, player name, profile, reset
 src/app/createApp.js       Wires services for a game page (composition helper)
 src/games/<slug>/          One folder per game (index.html, main.js, scenes/, logic/, data/, style.css)
@@ -72,6 +102,30 @@ scripts/                   build.mjs (copy to dist/), serve.mjs (local server)
 1. Create `src/games/<slug>/` following the structure and rules in `docs/SPEC.md`.
 2. In `src/hub/gamesRegistry.js`, set that game's `available` to `true`.
 3. Add tests under `tests/<slug>/` for its `logic/` files, then run `npm test`.
+
+## 3D versions
+
+Some games have a 3D version drawn with three.js; every game keeps its 2D version, which is also the fallback when a
+device has no WebGL 2 or 3D fails. The library is loaded only when a 3D scene opens. A 3D view that runs too slowly (a weak
+phone) first lowers its resolution and then gives way to the flat game, and the device remembers, so games open flat there
+from then on; a very weak device starts flat, and the child can always choose 3D. The rules for adding one are in
+the "3D versions (Three.js)" section of [`docs/SPEC.md`](docs/SPEC.md).
+
+Done so far: **Planet Hop** (Line them up and Weigh-in; see [its README](src/games/planet-hop/README.md#3d-view)) and
+**Robot Path** (the whole puzzle, with a robot's-eye camera; see [its README](src/games/robot-path/README.md#3d-view)) and
+**Flag & Capital Quest** (a globe to spin, with a plane that flies to each country; see [its README](src/games/flag-capital-quest/README.md#3d-view)) and
+**Times-Table Racing** (the track seen from behind your car, with a see-through ghost; see [its README](src/games/times-table-racing/README.md#3d-view)) and
+**Table Tower** (a tower that grows with each table cleared, and sums built from slabs; see [its README](src/games/table-tower/README.md#3d-view)) and
+**Plant Grower** (a plant in a pot you can turn, with a sun that crosses the sky and rain you can see; see [its README](src/games/plant-grower/README.md#3d-view)) and
+**Pizza Fractions** (a round pizza whose topped slices lift, with toppings that sit on them; see [its README](src/games/pizza-fractions/README.md#3d-view)) and
+**Lights Out** (jars with fireflies on a table at night, which fly away when you win; see [its README](src/games/lights-out/README.md#3d-view)) and
+**Pattern Detective** (the case file as solids on pedestals that turn, with a tap to hear each name; see [its README](src/games/pattern-detective/README.md#3d-view)) and
+**Number Ninja** (falling stars that spin and split in two when you answer; see [its README](src/games/number-ninja/README.md#3d-view)) and
+**Simon Says** (pads on a console that press down and glow, in the game and in Music Maker; see [its README](src/games/simon-says/README.md#3d-view)) and
+**Sentence Train** (a toy train yard where the carriages roll away when the sentence is right; see [its README](src/games/sentence-train/README.md#3d-view)).
+
+That is **all twelve** of the 3D versions in the plan. Where one differs from the plan's table (no cube on Lights Out's Hard level, no cylinder in Pattern Detective, a fixed camera in
+Number Ninja and Sentence Train), its README says why.
 
 ## State machines
 

@@ -18,7 +18,7 @@ export class WorksheetScene extends TraceBase {
     if (!set) throw new GameError('UNKNOWN_SET', `There is no set "${setId}"`, { setId });
     const hud = createHud({ homeHref: services.game.homeHref, title: `Worksheet: ${set.label}`, onSettings: () => services.openSettings() });
     this.ui.classList.add('worksheet-scene');
-    this.ui.append(hud.el, el('main', { class: 'worksheet' },
+    this.ui.append(hud.el, el('div', { class: 'worksheet' },
       el('div', { class: 'worksheet__actions' },
         createButton({ label: 'Print', icon: '🖨️', variant: 'primary', big: true, onClick: () => window.print() }),
         createButton({ label: 'Back', icon: '◀', onClick: () => this.routes.menu() })),

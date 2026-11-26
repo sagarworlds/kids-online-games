@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url';
 const REPO = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 /** Paths (relative to the repo root) that are part of the public site. */
-export const SHIPPED = ['index.html', '404.html', 'favicon.svg', 'src'];
+export const SHIPPED = ['index.html', '404.html', 'favicon.svg', 'manifest.webmanifest', 'icons', 'src'];
 
 /** All files under a directory, as sorted paths relative to it (with "/" separators). */
 async function listFiles(dir, base = dir) {
@@ -58,14 +58,15 @@ export async function build({ root = REPO, out = join(REPO, 'dist') } = {}) {
   const template = await readFile(join(root, 'sw.js'), 'utf8');
   const files = await listFiles(out);
   const version = await contentVersion(out, files, template);
-  // The home page URL ("./") is cached too, since "/" is what people actually open. 404.html is not worth caching.
-  const precache = ['./', ...files.filter((f) => f !== '404.html')];
+  // Every file the worker may store: the worker sorts them into the core (stored at install) and the games (stored when first opened).
+  // The home page URL ("./") is in the list too, since "/" is what people actually open. 404.html is not worth caching.
+  const cacheable = ['./', ...files.filter((f) => f !== '404.html')];
 
   const worker = template
     .replace(/^const VERSION = .*\/\/ __VERSION__$/m, `const VERSION = ${JSON.stringify(version)};`)
-    .replace(/^const PRECACHE = .*\/\/ __PRECACHE__$/m, `const PRECACHE = ${JSON.stringify(precache)};`);
-  if (worker === template || worker.includes('// __VERSION__') || worker.includes('// __PRECACHE__')) {
-    throw new Error('build: could not fill in the VERSION / PRECACHE lines of sw.js');
+    .replace(/^const FILES = .*\/\/ __FILES__$/m, `const FILES = ${JSON.stringify(cacheable)};`);
+  if (worker === template || worker.includes('// __VERSION__') || worker.includes('// __FILES__')) {
+    throw new Error('build: could not fill in the VERSION / FILES lines of sw.js');
   }
   await writeFile(join(out, 'sw.js'), worker);
   return { files, version };

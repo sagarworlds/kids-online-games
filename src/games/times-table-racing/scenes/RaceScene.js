@@ -92,7 +92,30 @@ export class RaceScene extends RacingScene {
   exit() {
     for (const off of this.#offs) off();
     this.#offs = [];
+    this.unmountTrack();
   }
+
+  /**
+   * Called once with the empty box the track is drawn behind (2D) or in (3D). The 2D track is drawn on the game canvas, so
+   * this does nothing; the 3D version of this scene overrides the three track hooks to show a 3D picture in the box instead.
+   * The race itself (questions, clock, ghost, stars) is this class, so both views play and score the same.
+   * @param {HTMLElement} trackEl
+   */
+  mountTrack(trackEl) {}
+
+  /**
+   * Draws the track from the state of the race, once a frame. The 3D version draws its own picture instead, and can fall
+   * back to this (`super.paintTrack`) if the graphics are lost in the middle of a race.
+   * @param {CanvasRenderingContext2D} ctx
+   * @param {{ x: number, y: number, w: number, h: number }} rect Where the track is on the canvas.
+   * @param {import('../ui/TrackRenderer.js').TrackState} state
+   */
+  paintTrack(ctx, rect, state) {
+    drawTrack(ctx, rect, state);
+  }
+
+  /** Called when the race ends or is left: the place to free anything `mountTrack` made. Safe to call more than once. */
+  unmountTrack() {}
 
   resize(width, height) {
     this.#width = width;
@@ -112,6 +135,7 @@ export class RaceScene extends RacingScene {
 
     this.#bannerEl = el('div', { class: 'race__banner', attrs: { 'aria-hidden': 'true' } });
     this.#trackEl = el('div', { class: 'race__track', attrs: { role: 'img', 'aria-label': 'Race track: your car and the ghost car' } }, this.#bannerEl);
+    this.mountTrack(this.#trackEl);
 
     this.#panel = createAnswerPanel({ mode: this.#level.mode, onAnswer: (value) => this.#onAnswer(value) });
     this.#panel.setQuestion(this.#race.question, this.#race.options);
@@ -290,7 +314,7 @@ export class RaceScene extends RacingScene {
 
   render(ctx) {
     if (!ctx || !this.#width) return;
-    drawTrack(ctx, this.#trackRect, {
+    this.paintTrack(ctx, this.#trackRect, {
       player: this.#shownPlayer, ghost: this.#shownGhost, scroll: this.#scroll, time: this.#time,
       wobble: this.#wobble, boost: this.#boost, wheel: this.#wheel, reduced: this.#reduced, count: RACE_LENGTH,
     });

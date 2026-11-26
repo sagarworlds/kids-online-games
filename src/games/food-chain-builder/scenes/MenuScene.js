@@ -1,5 +1,5 @@
 import { FoodScene } from './FoodScene.js';
-import { el } from '../../../engine/utils/dom.js';
+import { el, spaced } from '../../../engine/utils/dom.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
 import { ICONS } from '../../../engine/ui/icons.js';
@@ -26,10 +26,11 @@ export class MenuScene extends FoodScene {
           class: `place place--${place.id}`, attrs: { type: 'button', 'aria-label': `${place.name}. ${habitat.organisms.length} living things. ${earned} of 3 stars at ${LEVELS[levelId].label}.` },
           on: { click: () => { services.audio.play('click'); this.routes.build({ habitatId: habitat.id }); } },
         },
-        el('span', { class: 'place__icon', text: place.icon, attrs: { 'aria-hidden': 'true' } }),
-        el('span', { class: 'place__name', text: place.name }),
-        el('span', { class: 'place__count', text: `${habitat.organisms.length} living things` }),
-        el('span', { class: 'menu__stars', html: ICONS.star.repeat(earned) + ICONS.starEmpty.repeat(3 - earned), attrs: { 'aria-hidden': 'true' } }));
+        ...spaced(
+          el('span', { class: 'place__icon', text: place.icon, attrs: { 'aria-hidden': 'true' } }),
+          el('span', { class: 'place__name', text: place.name }),
+          el('span', { class: 'place__count', text: `${habitat.organisms.length} living things` }),
+          el('span', { class: 'menu__stars', html: ICONS.star.repeat(earned) + ICONS.starEmpty.repeat(3 - earned), attrs: { 'aria-hidden': 'true' } })));
       }));
     };
     const picker = createLevelPicker({
@@ -39,7 +40,7 @@ export class MenuScene extends FoodScene {
     });
     drawPlaces();
 
-    this.ui.append(hud.el, el('main', { class: 'menu' },
+    this.ui.append(hud.el, el('div', { class: 'menu' },
       el('h1', { class: 'menu__title', text: 'Food Chain Builder' }),
       el('p', { class: 'menu__intro', text: 'Who eats whom? Draw arrows from each food to the one that eats it, and watch the food web come alive!' }),
       el('p', { class: 'menu__learned', text: `Living things you have met: ${learned.size} of ${data.organisms.length}` }),

@@ -6,14 +6,19 @@ import { sanitizeMemory, dayNumber } from '../logic/memory.js';
  * @typedef {{ kind: 'challenge'|'revision'|'ladder', floor?: number, levelId: 'easy'|'medium'|'hard',
  *   summary?: ReturnType<import('../logic/session.js').QuizSession['summary']>, mistakes?: number }} RoundResult
  * @typedef {{
- *   menu: () => void,
+ *   menu: () => void | Promise<void>,
  *   floor: (floor: number) => void,
- *   learn: (floor: number) => void,
+ *   learn: (floor: number) => void | Promise<void>,
  *   ladder: (floor: number) => void,
  *   quiz: (choice: { mode: 'challenge'|'revision', floor?: number, levelId: 'easy'|'medium'|'hard' }) => void,
- *   results: (result: RoundResult) => void
+ *   results: (result: RoundResult) => void,
+ *   view: { supported: boolean, mode: () => '3d'|'2d', choose: (mode: '3d'|'2d') => void, fallBack: () => void },
+ *   fallBack: { menu: () => void }
  * }} Routes
- * Navigation between this game's scenes, built in `main.js` so scenes never import each other.
+ * Navigation between this game's scenes, built in `main.js` so scenes never import each other. `menu` and `learn` open in the
+ * child's chosen view (3D or 2D); `view` is what the menu uses to show and change that choice, and what a 3D scene uses to say
+ * "carry on in 2D for the rest of this visit" (`fallBack`) without changing what the child chose; `fallBack.menu` reopens the
+ * menu in 2D.
  */
 
 /** Base for Table Tower's scenes: a Scene that can navigate and read what the game has saved. */

@@ -53,6 +53,32 @@ logic/                           Pure rules, no DOM or timers (all unit-tested)
   round" without saying whether the retry resets; per sequence felt kinder for an 8-year-old.
 - Hidden tab: the sequence stops and is replayed (free) when the child comes back.
 
+## 3D view
+
+On a device that can do WebGL 2 the pads are 3D, in the game and in Music Maker. A **3D view / 2D view** button on the menu switches and remembers the
+choice. The sequences, the sound and light show, the answer clock, the retry, Replay, the scores, the stars and the saved progress are the same code as
+2D (the 3D scenes extend `PlayScene` and `MusicScene` through two small hooks: how the pads are made and how the screen is laid out), so the same seed
+and the same play give the same sequences and the same results in both views.
+
+- **The pads** are big buttons on a console, which you can turn and zoom (drag, pinch, scroll or the arrow keys on the picture). A pad that lights
+  **goes down like a pressed button and glows** in its colour, with a pool of light on the console round it; when it goes out it comes back up. Each pad
+  has its **shape raised on its top and its number beside it**, so the pads differ by more than colour, as on the flat pads. A pad that cannot be played
+  at the moment (the sequence is playing) is a little dimmer.
+- **Tap a pad** in the picture to play it, or press the keys 1 to 6 as before. A tap while the sequence is playing is ignored, as in 2D.
+- **The flat pads are still there.** They are laid over the picture, one button on each pad, invisible except for the focus ring. So the keyboard (keys, or
+  Tab and Space) and screen readers work as before, every pad is still named by its colour, shape and key ("Red pad, circle, key 1"), and the buttons are
+  never smaller than 48 pixels. A tap on the picture is worked out from the picture itself.
+- **If 3D cannot run**: no WebGL 2 means no 3D button; if a 3D file will not load, the flat screen opens. If 3D cannot start, or the graphics are lost
+  *in the middle of a game*, the picture goes and the flat pads become the board again, in the same place and on the same turn (the sequence in progress
+  can be finished, and the next ones are shown on the flat pads), and the next screens are flat too for the rest of the visit. That only lasts for the
+  visit; it does not change the saved choice.
+- **On a phone** the picture takes at least 45% of the screen's height, with the length, the status, the answer clock and Replay under it. With "less
+  motion" a pad goes down and glows at once, with no easing. three.js is loaded with `import()` only when a 3D screen opens.
+
+Files: `logic/look3d.js` (where each pad stands, the outline of each shape, the resting colour, how far a pad goes down as it lights, the camera),
+unit-tested in `tests/simon-says/look3d.test.js`; and `three/` (`PadBoard3D`, `pads3d`, `Play3DScene`, `Music3DScene`). The sound is not changed: it is the
+flat game's tones, played by the same scene code.
+
 ## Stretch ideas (not built)
 
 A "Twinkle Twinkle" song-learning mode; an animal sounds pack.

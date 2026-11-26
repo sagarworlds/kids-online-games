@@ -1,6 +1,6 @@
 /**
  * Registers the offline service worker (`/sw.js`). Called by the hub and by every game page, so whichever page
- * the child opens first makes the whole site available offline.
+ * the child opens first makes the home page available offline, and each game is saved the first time it is opened.
  *
  * Failure is never fatal: no service worker support (or a browser that blocks it in private mode) simply means
  * no offline mode. The error is logged once and the game carries on.

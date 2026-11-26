@@ -102,7 +102,7 @@ export class BuilderScene extends FoodScene {
     this.#buttons.help = createButton({ label: 'How it works', icon: '❓', onClick: () => { this.#introEl.hidden = !this.#introEl.hidden; } });
     setDisabled(this.#buttons.erase, true);
 
-    this.ui.append(this.#hud.el, el('main', { class: 'build' },
+    this.ui.append(this.#hud.el, el('div', { class: 'build' },
       this.#introEl,
       el('p', { class: 'build__help', text: 'Draw an arrow from each food to the one that eats it.' }),
       this.#board, this.#countEl,

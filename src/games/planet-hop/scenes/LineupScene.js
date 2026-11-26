@@ -7,7 +7,7 @@ import { ICONS } from '../../../engine/ui/icons.js';
 import { makeDraggable } from '../../../engine/ui/DragDrop.js';
 import { launchConfetti } from '../../../engine/ui/Confetti.js';
 import { LEVELS } from '../logic/levels.js';
-import { createLineup, place, allPlaced, lineupStars, lineupScore } from '../logic/lineup.js';
+import { createLineup, place, allPlaced, lineupStars, lineupScore, lineupLabel } from '../logic/lineup.js';
 import { createSizer } from '../logic/scale.js';
 import { createPlanetArt, createSunArt } from '../ui/PlanetArt.js';
 import { createSizeToggle } from '../ui/SizeToggle.js';
@@ -53,7 +53,7 @@ export class LineupScene extends HopScene {
     this.#scoreEl = el('p', { class: 'lineup__score' });
     this.#actionsEl = el('div', { class: 'lineup__actions' });
 
-    this.ui.append(this.#hud.el, el('main', { class: 'lineup' },
+    this.ui.append(this.#hud.el, el('div', { class: 'lineup' },
       el('p', { class: 'lineup__help', text: 'Put the planets in order from the Sun. Drag each one to its orbit, or tap it and then tap its orbit.' }),
       el('div', { class: 'orbits' }, el('div', { class: 'orbits__sun' }, createSunArt(72), el('span', { text: 'Sun' })), this.#slotsEl),
       this.#statusEl,
@@ -76,7 +76,7 @@ export class LineupScene extends HopScene {
 
   /** What the child sees for a planet: its name at Easy and Medium, only a description of its look at Hard. */
   #label(planet) {
-    return this.#config.showNames ? planet.name : `Planet, ${planet.look}`;
+    return lineupLabel(planet, this.#config.showNames);
   }
 
   // ------------------------------------------------------------------ drawing

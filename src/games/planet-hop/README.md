@@ -24,6 +24,38 @@ Keys **1–5** pick an answer. In the line-up, press Enter on a planet and then 
 "Show real size" draws the planets in their true proportions (Mercury becomes tiny); normally they are drawn on a
 compressed scale so the smallest is still easy to see and tap.
 
+## 3D view
+
+On a device that can do WebGL 2, **Line them up** and **Weigh-in** open in 3D by default (the quiz stays flat). A
+**3D view / 2D view** button on the menu, and inside each 3D round, switches and remembers the child's choice. Everything
+that decides play (the rules, hints, stars, scores, the mystery questions, the saved progress) is the same code as 2D, so
+the same play earns the same stars; only the picture and how a planet is picked up and put down change.
+
+| | 3D line-up | 3D weigh-in |
+|---|---|---|
+| What you see | The Sun with eight empty orbit rings. A planet you pick floats above the Sun, then slides into the orbit you choose. | All the planets and the Moon. A rocket flies in an arc to the place you pick and lands on top of it. |
+| How you play | Tap a planet, then tap its orbit on the picture **or** on the numbered orbit buttons below. | Tap a place on the picture **or** its button. Your felt weight shows on the card and the bar. |
+| Gravity | – | After landing, an astronaut steps out and jumps with the same push everywhere: about 5.9 times as high on the Moon as on Earth, 2.6 times on Mars, 40% as high on Jupiter. The sentence under the card says so (and "Jump again" repeats it). The jumps are real physics: height and time both go as 1 / gravity. |
+| "Show real size" | Planets grow or shrink to true proportions (Mercury becomes a speck, Jupiter about 29 times as wide). | Same; the rocket and astronaut shrink with the body they stand on, and the camera follows. |
+
+**Controls.** One finger or the mouse turns the picture, two fingers or the wheel zoom, and the arrow keys and + / − do
+both while the picture has focus. **Whole system** glides back to the overview. Orbits are evenly spaced, not to true
+distance (Neptune is 77 times as far out as Mercury, which would squash the inner planets into the Sun); sizes follow
+the same compressed or real scale as the 2D pictures.
+
+**If 3D cannot run**, the game opens the 2D version with no error screen: no WebGL 2, the 3D file failing to load, the
+scene failing to start, or the graphics being lost mid-round (a weigh-in keeps the weight already entered, in memory only).
+That only lasts for the visit; it does not change the child's saved choice. Phones: the picture is at least 46% of the
+height with the controls below (beside it in landscape), every button is at least 48 px, and with "less motion" turned on
+nothing spins, the camera cuts instead of gliding, the rocket is simply there, and the astronaut holds the top of the jump.
+
+Files: `logic/space3d.js` (where things go and how the camera frames them), `logic/motion3d.js` (easing, camera glide, the
+rocket's arc), `logic/gravityJump.js` (the jump and its sentence), `logic/rocketTrip.machine.js` (what the rocket is
+doing), and `three/` (`SpaceStage` builds the stage, camera and scenery from `SolarSystem`, `planetTextures` draws the
+planet surfaces on a canvas, `figures` builds the rocket and astronaut, and the two scenes). `ui/WeightSetup.js` and
+`ui/MissionCheck.js` are the screens the 2D and 3D weigh-ins share. three.js is loaded with `import()` only when a 3D
+scene opens, so the 2D game and the home page never download it. Tests: `tests/planet-hop/space3d.test.js`.
+
 ## How it works
 
 - `data/planets.json`, `quiz.json` and `presets.json` hold all the content. Planet order, gravity, size and distance are

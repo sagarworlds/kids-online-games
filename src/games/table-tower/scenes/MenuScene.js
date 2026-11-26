@@ -1,9 +1,10 @@
 import { TowerBase } from './TowerBase.js';
-import { el } from '../../../engine/utils/dom.js';
+import { el, spaced } from '../../../engine/utils/dom.js';
 import { createButton } from '../../../engine/ui/Button.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
 import { ICONS } from '../../../engine/ui/icons.js';
+import { createViewSwitch } from '../../../engine/three/ViewToggle.js';
 import { LEVELS, LEVEL_IDS, floorsOf, floorKey, isFloorOpen, CLEAR_STARS } from '../logic/levels.js';
 import { trickFor } from '../logic/splits.js';
 import { dueKeys } from '../logic/memory.js';
@@ -25,22 +26,27 @@ export class MenuScene extends TowerBase {
         const open = isFloorOpen(floor, cleared);
         const stars = bestStars[floorKey(floor)] ?? 0;
         const done = cleared.has(floor);
+        // What the button shows ("10", "× 10 table", "Trick") comes first and in the same order: a name has to contain the words
+        // on its button, and what the button cannot show (stars, locked) follows.
+        const shown = `Floor ${floor}, × ${floor} table${trickFor(floor) ? ', Trick' : ''}`;
         const label = open
-          ? `Floor ${floor}, the ${floor} times table. ${stars} of 3 stars.${done ? ' Cleared.' : ''}${trickFor(floor) ? ' Has a trick.' : ''}`
-          : `Floor ${floor}, locked. Clear floor ${floor - 1} first.`;
+          ? `${shown}. ${stars} of 3 stars.${done ? ' Cleared.' : ''}`
+          : `${shown}. Locked: clear floor ${floor - 1} first.`;
         const button = el('button', {
           class: `floor${open ? '' : ' is-locked'}${done ? ' is-cleared' : ''}`, attrs: { type: 'button', 'aria-disabled': String(!open), 'aria-label': label },
           on: { click: () => { if (!open) return; services.audio.play('click'); this.routes.floor(floor); } },
         },
-        el('span', { class: 'floor__number', text: String(floor) }),
-        el('span', { class: 'floor__name', text: `× ${floor} table` }),
-        trickFor(floor) ? el('span', { class: 'floor__trick', text: '✨ Trick' }) : null,
-        open
-          ? el('span', { class: 'menu__stars', html: ICONS.star.repeat(stars) + ICONS.starEmpty.repeat(3 - stars), attrs: { 'aria-hidden': 'true' } })
-          : el('span', { class: 'floor__lock', text: '🔒' }));
+        ...spaced(
+          el('span', { class: 'floor__number', text: String(floor) }),
+          el('span', { class: 'floor__name', text: `× ${floor} table` }),
+          trickFor(floor) ? el('span', { class: 'floor__trick', text: '✨ Trick' }) : null,
+          open
+            ? el('span', { class: 'menu__stars', html: ICONS.star.repeat(stars) + ICONS.starEmpty.repeat(3 - stars), attrs: { 'aria-hidden': 'true' } })
+            : el('span', { class: 'floor__lock', text: '🔒' })));
         return el('li', {}, button);
       }));
       this.#drawRevision(revisionEl, levelId);
+      this.levelDrawn(levelId, cleared);
     };
 
     const picker = createLevelPicker({
@@ -50,12 +56,34 @@ export class MenuScene extends TowerBase {
     });
     draw();
 
-    this.ui.append(hud.el, el('main', { class: 'menu' },
-      el('h1', { class: 'menu__title', text: 'Table Tower' }),
-      el('p', { class: 'menu__intro', text: `Climb the tower: every floor is one times table. Get ${CLEAR_STARS} stars in a floor's Challenge to open the next floor.` }),
-      picker.el, revisionEl,
-      el('h2', { class: 'menu__heading', text: 'Choose a floor' }), towerEl));
+    // Only offered where the device can do 3D. Choosing is remembered for next time (see `createViewChoice`).
+    const { view } = this.routes;
+    const viewEl = createViewSwitch({ view, onChange: () => this.routes.menu(), notes: { '3d': 'In 3D view you can turn the tower and see the sums as blocks.', '2d': 'In 2D view everything is flat.' } });
+
+    this.ui.append(hud.el, this.layout({
+      title: el('h1', { class: 'menu__title', text: 'Table Tower' }),
+      intro: el('p', { class: 'menu__intro', text: `Climb the tower: every floor is one times table. Get ${CLEAR_STARS} stars in a floor's Challenge to open the next floor.` }),
+      picker: picker.el, view: viewEl, revision: revisionEl,
+      heading: el('h2', { class: 'menu__heading', text: 'Choose a floor' }), tower: towerEl,
+    }));
   }
+
+  /**
+   * Arranges the screen's parts. The 3D version overrides this to put a 3D tower beside (or above) them.
+   * @param {{ title: HTMLElement, intro: HTMLElement, picker: HTMLElement, view: HTMLElement|null, revision: HTMLElement, heading: HTMLElement, tower: HTMLElement }} parts
+   * @returns {HTMLElement}
+   */
+  layout({ title, intro, picker, view, revision, heading, tower }) {
+    return el('div', { class: 'menu' }, title, intro, picker, view, revision, heading, tower);
+  }
+
+  /**
+   * Called each time the tower's floors are drawn (and when the level is changed): the 3D version updates its picture from this.
+   * @param {'easy'|'medium'|'hard'} levelId
+   * @param {ReadonlySet<number>} cleared The floors cleared so far.
+   */
+  levelDrawn(levelId, cleared) {}
+
 
   /** The level to show first: the one with the highest floor cleared so far, so a returning child lands where they were. */
   #startLevel() {

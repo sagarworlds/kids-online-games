@@ -2,6 +2,8 @@ import { createApp } from '../../app/createApp.js';
 import { loadJson } from '../../engine/utils/data.js';
 import { logError } from '../../engine/utils/errors.js';
 import { renderErrorScreen } from '../../engine/ui/ErrorScreen.js';
+import { createViewChoice } from '../../engine/three/view.js';
+import { openScreen } from '../../engine/three/openView.js';
 import { parseLevels } from './logic/levels.js';
 import { MapScene } from './scenes/MapScene.js';
 import { PuzzleScene } from './scenes/PuzzleScene.js';
@@ -21,11 +23,25 @@ async function boot() {
     // A malformed levels.json throws a GameError naming the file and field, and ends up on the friendly error screen.
     const data = await loadJson(new URL('./data/levels.json', import.meta.url), 'levels.json', parseLevels);
 
+    const view = createViewChoice({ storage: services.storage, slug: services.game.slug });
+    const puzzle2d = (params) => scenes.replace(new PuzzleScene(services, routes, data), params);
+    /**
+     * Opens a level in the child's chosen view (see `openScreen`).
+     */
+    const puzzle = (params) => openScreen({
+      view, scenes, where: 'robot-path:puzzle:3d', params,
+      load: () => import('./three/Puzzle3DScene.js'),
+      make: ({ Puzzle3DScene }) => new Puzzle3DScene(services, routes, data),
+      open2d: () => puzzle2d(params),
+    });
+
     /** @type {import('./scenes/RobotScene.js').Routes} */
     const routes = {
       map: () => scenes.replace(new MapScene(services, routes, data)),
-      puzzle: (params) => scenes.replace(new PuzzleScene(services, routes, data), params),
+      puzzle,
       complete: (params) => scenes.replace(new CompleteScene(services, routes, data), params),
+      view: { supported: view.supported, mode: view.mode, choose: view.choose },
+      fallBack: (params) => { view.fallBack(); puzzle2d(params); },
     };
 
     routes.map();

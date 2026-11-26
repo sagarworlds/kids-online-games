@@ -82,3 +82,36 @@
 .sentence-row.is-bad svg { color: var(--bad); }
 .sentence-row__note { font-size: 0.8rem; font-weight: 700; color: var(--ink-soft); white-space: nowrap; }
 .result__actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+
+/* ---------- 3D station ---------- */
+/* The shared layout of the picture and the controls (`.scene3d*`) is in src/engine/ui/ui.css. */
+.menu__view { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.menu__viewnote { margin: 0; color: var(--ink-soft); font-size: 0.95rem; }
+
+.train3d { position: relative; overflow: hidden; --stage-bg: #bfe3ff; }
+/* While the 3D track is showing, the page's train (the slots and the carriages in them) is laid over the picture, one slot on each place of the track. Only the slot a
+   carriage is dragged over and the focus ring can be seen: the picture shows the carriages. `left`, `top`, `width` and `height` of each slot are set from its place in
+   the picture. The engine is in the picture, and stays named for screen readers. */
+.train--overlay { position: absolute; inset: 0; display: block; padding: 0; border-bottom: 0; pointer-events: none; }
+.train--overlay .engine { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.train--overlay .slot { position: absolute; transform: translate(-50%, -50%); min-width: 0; min-height: 0; padding: 0; background: transparent; border-color: transparent; border-radius: 12px; pointer-events: auto; }
+.train--overlay .slot.is-empty { background: transparent; border-color: transparent; }
+.train--overlay .slot.is-over { border: 4px dashed #ffffff; background: rgba(255, 255, 255, 0.3); }
+.train--overlay .slot .carriage {
+  width: 100%; height: 100%; min-width: 0; min-height: 0; padding: 0; background: transparent; border-color: transparent; box-shadow: none; color: transparent;
+}
+.train--overlay .carriage::before, .train--overlay .carriage::after, .train--overlay .carriage__badge { display: none; }
+.train--overlay .carriage.is-wrong, .train--overlay .carriage.is-locked { background: transparent; border-color: transparent; animation: none; }
+.train--overlay .carriage:focus-visible { outline: 5px solid #ffffff; outline-offset: 0; box-shadow: 0 0 0 8px var(--ink); }
+
+.station3d .scene3d__panel { align-items: stretch; gap: 10px; padding-top: 8px; }
+/* Whistle and Hint stay at the bottom of the panel while the siding above them scrolls, so they are always in reach. */
+.station3d .station__actions { position: sticky; bottom: 0; z-index: 5; padding: 8px 0 6px; background: linear-gradient(rgba(255, 248, 231, 0), var(--bg) 35%); }
+/* On a small screen the panel under the picture is short: the help line is kept for screen readers only (the picture hint stays), and Whistle and Hint share one row. */
+@media (max-width: 480px), (max-height: 480px) {
+  .station3d .station__help { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+  .station3d .station__top { gap: 8px; }
+  .station3d .station__picture { width: 56px; height: 56px; font-size: 2rem; }
+  .station3d .station__actions { flex-wrap: nowrap; gap: 8px; }
+  .station3d .station__actions .btn { min-height: 56px; padding-left: 14px; padding-right: 14px; }
+}

@@ -1,5 +1,5 @@
 import { TraceBase } from './TraceBase.js';
-import { el } from '../../../engine/utils/dom.js';
+import { el, spaced } from '../../../engine/utils/dom.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
 import { createButton } from '../../../engine/ui/Button.js';
@@ -26,10 +26,11 @@ export class MenuScene extends TraceBase {
             class: 'set__play', attrs: { type: 'button', 'aria-label': `${set.label}: ${set.blurb}. ${stars} of 3 stars.` },
             on: { click: () => { services.audio.play('click'); this.routes.trace({ setId, levelId }); } },
           },
-          el('span', { class: 'set__icon', text: set.icon, attrs: { 'aria-hidden': 'true' } }),
-          el('span', { class: 'set__name', text: set.label }),
-          el('span', { class: 'set__blurb', text: set.blurb }),
-          el('span', { class: 'menu__stars', html: ICONS.star.repeat(stars) + ICONS.starEmpty.repeat(3 - stars), attrs: { 'aria-hidden': 'true' } })),
+          ...spaced(
+            el('span', { class: 'set__icon', text: set.icon, attrs: { 'aria-hidden': 'true' } }),
+            el('span', { class: 'set__name', text: set.label }),
+            el('span', { class: 'set__blurb', text: set.blurb }),
+            el('span', { class: 'menu__stars', html: ICONS.star.repeat(stars) + ICONS.starEmpty.repeat(3 - stars), attrs: { 'aria-hidden': 'true' } }))),
           createButton({ label: 'Worksheet', icon: '🖨️', ariaLabel: `Printable worksheet: ${set.label}`, onClick: () => this.routes.worksheet(setId) }));
       }));
     };
@@ -41,7 +42,7 @@ export class MenuScene extends TraceBase {
     });
     draw();
 
-    this.ui.append(hud.el, el('main', { class: 'menu' },
+    this.ui.append(hud.el, el('div', { class: 'menu' },
       el('h1', { class: 'menu__title', text: 'Trace Trail' }),
       el('p', { class: 'menu__intro', text: 'Trace letters and numbers with your finger or a stylus. A pencil shows how to write each one first, and a snail follows you along the path. Go slowly and stay on the dots!' }),
       picker.el, el('h2', { class: 'menu__heading', text: 'Choose what to write' }), setsEl,

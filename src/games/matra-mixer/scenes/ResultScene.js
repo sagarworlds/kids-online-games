@@ -8,6 +8,7 @@ import { ICONS } from '../../../engine/ui/icons.js';
 import { LEVELS, roundKey } from '../logic/levels.js';
 import { LANGS } from '../logic/devanagari.js';
 import { syllableParts, wordParts } from '../logic/audio.js';
+import { inLanguage } from '../ui/inLanguage.js';
 
 const TITLES = { build: 'Build the sound', bubbles: 'Bubble pop', words: 'Read words' };
 
@@ -26,9 +27,10 @@ export class ResultScene extends MatraBase {
       : { text: round.target.text, note: `${round.target.consonant.char} + ${round.target.sign.char || 'अ'}`, parts: syllableParts(round.target) }));
 
     const hud = createHud({ homeHref: services.game.homeHref, title: services.game.title, onSettings: () => services.openSettings() });
-    this.ui.append(hud.el, el('main', { class: 'result' },
+    this.ui.append(hud.el, el('div', { class: 'result' },
       el('h1', { text: stars === 1 ? `Keep going, ${name}!` : `Well done, ${name}!` }),
-      el('p', { class: 'result__mode', text: `${TITLES[activity]} · ${LANGS[lang].label} · ${LEVELS[levelId].label}` }),
+      // The language is named in its own language (हिन्दी, मराठी), which is the language of the run.
+      el('p', { class: 'result__mode' }, `${TITLES[activity]} · `, el('span', { attrs: { lang } }, LANGS[lang].label), ` · ${LEVELS[levelId].label}`),
       el('div', { class: 'result__stars', attrs: { role: 'img', 'aria-label': `${stars} out of 3 stars` }, html: ICONS.star.repeat(stars) + ICONS.starEmpty.repeat(3 - stars) }),
       el('p', { class: 'result__praise', text: improvedStars || improvedScore ? `${praise} New best!` : praise }),
       el('p', { class: 'result__summary', text: `${correct} of ${total} right the first time` }),
@@ -39,8 +41,9 @@ export class ResultScene extends MatraBase {
       items.length === 0 ? null : el('section', { class: 'missed', attrs: { 'aria-label': 'To practise' } },
         el('h2', { text: 'To practise' }),
         el('ul', { class: 'missed__list' }, ...items.map((item) => el('li', { class: 'missed__item' },
-          el('span', { class: 'missed__text', text: item.text }),
-          el('span', { class: 'missed__note', text: item.note }),
+          el('span', { class: 'missed__text', text: item.text, attrs: { lang } }),
+          // A syllable's note is a sum (क + ि), a word's is its meaning in English with a picture.
+          el('span', { class: 'missed__note' }, ...inLanguage(item.note, lang)),
           createButton({ icon: '🔊', ariaLabel: `Hear ${item.text}`, onClick: () => this.voice.say(item.parts) })))))));
     if (stars === 3) launchConfetti({ rng: services.rng });
     services.audio.play(stars === 3 ? 'cheer' : 'chime');

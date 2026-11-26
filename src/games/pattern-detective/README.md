@@ -68,6 +68,37 @@ logic/                            Pure rules, no DOM (all unit-tested):
   levels.js, scoring.js           Levels, stars, ranks
 ```
 
+## 3D view
+
+On a device that can do WebGL 2 the case file is 3D. A **3D view / 2D view** button on the menu switches and remembers the choice. The
+cases, the answer cards, the hints, the stamp and the rule, the stars and the saved progress are the same code as 2D (the 3D case extends
+`CaseScene` through a few small hooks: a picture that goes with the strip of items, and how the screen is laid out), so the same seed and the same
+picks give the same cases, hints and stars in both views.
+
+- **The picture** shows the items of the sequence standing on pedestals in a row, from left to right: a circle is a **sphere**, a square a
+  **cube**, a triangle a **cone**, a star a flat **star**, an arrow a flat **arrow**; a number sits on a block; a growing group is that many small
+  solids on one pedestal. The gap is an empty gold pedestal with a "?". Turn and zoom it (drag, pinch, scroll or the arrow keys on the picture). The
+  solids turn slowly on the spot; **an arrow never does**, because its angle is what the "turning arrow" case is about (it lies flat and points
+  clockwise by the angle, as seen from above). **Tap a solid** to turn it once and hear its name ("orange sphere", "the number 12").
+- **Every colour also has its pattern** (dots, stripes, hatching) wrapped round the solid, as on the flat shapes, so colour is never the only clue.
+- **After a wrong pick** the hint is written in the page as before, and shown in the picture too: a ring round the items to look at, and the jumps
+  (+4, ×2) written between the items or the sizes and angles under them. **When the case is solved** the answer drops into the gap.
+- **The answer cards are the page's**: tap one or press 1 to 4, as in 2D. The flat strip of items stays in the page (kept in step with the
+  case, every item named) for screen readers; it is hidden only while the picture is showing.
+- **If 3D cannot run**: no WebGL 2 means no 3D button; if the 3D file will not load, the flat case opens. If 3D cannot start, or the graphics are
+  lost *in the middle of a case*, the picture goes and the strip of items is shown on its sheet again, with the hint, the crossed cards and the
+  counters exactly as they were, and the next cases are flat too for the rest of the visit. That only lasts for the visit; it does not change the
+  saved choice.
+- **On a phone** the picture takes at least 40% of the screen's height with the four answer cards under it (the panel scrolls, the page does not).
+  With "less motion" nothing turns or bobs and the answer lands at once. three.js is loaded with `import()` only when the 3D case opens.
+
+**Not built: a cylinder.** The plan for the 3D versions lists a cylinder among the solids, but no case uses a shape that would become one (the
+shapes are circle, square, triangle, star and arrow), and adding a shape would change the cases and the flat pictures too. The solids are the five
+the cases already have.
+
+Files: `logic/look3d.js` (which solid each shape is, where each pedestal and each solid of a group stands, the arrow's angle, the turns and the drop,
+the camera), unit-tested in `tests/pattern-detective/look3d.test.js`; and `three/` (`solids`, `CaseView3D`, `Case3DScene`).
+
 ## Not yet verified
 
 Tested in headless Chromium (desktop and a phone-sized viewport with touch) with a small solver that reads each case the

@@ -101,10 +101,8 @@
   .pic__misses { display: none; }
 }
 
-/* On a phone the title leaves the top bar, so the bar stays on one row and the pictures keep the room. */
+/* On a phone the shared top bar already stays on one row (the title leaves it), so the pictures keep the room. */
 @media (max-width: 479px) {
-  .spot .hud__title { display: none; }
-  .spot .hud__stat { margin-left: auto; }
   /* The clock icon says what the time is, so the word "Time" can go too: a 360 px wide phone has no room for both. */
   .spot .hud__label { display: none; }
   .spot .hud__value::before { content: '⏱ '; }

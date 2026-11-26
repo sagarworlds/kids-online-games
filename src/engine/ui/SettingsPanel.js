@@ -2,6 +2,7 @@ import { el } from '../utils/dom.js';
 import { logError } from '../utils/errors.js';
 import { askParentCheck } from './ParentGate.js';
 import { openModal } from './Modal.js';
+import { buildOfflineSection } from './OfflineSection.js';
 
 /**
  * Builds a labelled on/off switch.
@@ -14,7 +15,7 @@ function toggle(label, checked, onChange) {
 
 /**
  * Opens the parent settings after a successful grown-up check:
- * sound, read-aloud and difficulty lock. Changes apply immediately.
+ * sound, read-aloud, difficulty lock and saving games for offline play. Changes apply immediately.
  *
  * @param {{
  *   settings: import('../services/SettingsService.js').SettingsService,
@@ -51,6 +52,7 @@ export async function openParentArea({ settings, rng, extraSections = [] }) {
     el('div', { class: 'field' },
       el('label', { text: 'Difficulty lock', attrs: { for: 'difficulty-lock' } }),
       lockSelect),
+    buildOfflineSection(),
     ...extraSections);
 
   const modal = openModal({ title: 'Grown-ups settings', body, actions: [{ label: 'Done', variant: 'primary' }] });

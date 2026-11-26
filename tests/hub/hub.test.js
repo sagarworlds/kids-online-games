@@ -243,3 +243,25 @@ test('loadJson reports the file name for fetch failures, HTTP errors and bad JSO
     (e) => e.code === 'INVALID_DATA' && e.context.file === 'a.json');
   await assert.rejects(loadJson('x', 'a.json', () => { throw new Error('shape'); }, ok({})), /shape/);
 });
+
+// ---- being sent home from a game that was never saved for offline play ------
+
+test('offlineNotice names the game from the registry and says what to do', async () => {
+  const { offlineNotice } = await import('../../src/hub/offlineNotice.js');
+  const message = offlineNotice('?offline=lights-out', GAMES);
+  assert.match(message, /^Lights Out is not saved for offline play yet\./);
+  assert.match(message, /Open it once while you are online/);
+});
+
+test('offlineNotice says nothing when the page was not opened that way', async () => {
+  const { offlineNotice } = await import('../../src/hub/offlineNotice.js');
+  for (const search of ['', '?', '?x=1', '#offline=lights-out']) assert.equal(offlineNotice(search, GAMES), null, JSON.stringify(search));
+});
+
+test('offlineNotice never shows text from the address: an unknown game gets a plain "That game"', async () => {
+  const { offlineNotice } = await import('../../src/hub/offlineNotice.js');
+  const message = offlineNotice('?offline=%3Cb%3Eclick%20here%3C%2Fb%3E', GAMES);
+  assert.match(message, /^That game is not saved for offline play yet\./);
+  assert.ok(!/click here|<b>/.test(message));
+  assert.match(offlineNotice('?offline=', GAMES), /^That game /, 'an empty value too');
+});

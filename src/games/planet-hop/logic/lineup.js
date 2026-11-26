@@ -42,6 +42,15 @@ export function isCorrectSlot(planets, planetId, slotIndex) {
   return planet.order === slotIndex + 1;
 }
 
+/**
+ * What a screen reader (and the child) is told a planet is called in the line-up: its name at Easy and Medium, and only
+ * a description of its look at Hard, where working out which planet it is *is* the question.
+ * @param {import('./planets.js').Planet} planet
+ * @param {boolean} showNames `LEVELS[level].lineup.showNames`.
+ * @returns {string}
+ */
+export const lineupLabel = (planet, showNames) => (showNames ? planet.name : `Planet, ${planet.look}`);
+
 /** The hint after a wrong drop, such as "Mars is the 4th planet, the red one." @param {import('./planets.js').Planet} planet */
 export const hintFor = (planet) => `${planet.name} is the ${ordinal(planet.order)} planet, ${planet.look}.`;
 

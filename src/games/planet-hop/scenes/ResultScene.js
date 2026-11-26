@@ -21,7 +21,7 @@ export class ResultScene extends HopScene {
     const praise = praiseFor(result.stars, services.rng);
 
     const hud = createHud({ homeHref: services.game.homeHref, title: services.game.title, onSettings: () => services.openSettings() });
-    this.ui.append(hud.el, el('main', { class: 'result' },
+    this.ui.append(hud.el, el('div', { class: 'result' },
       el('h1', { text: result.stars >= 2 ? `Great flying, ${name}!` : `Nice flying, ${name}!` }),
       el('p', { class: 'result__mode', text: `${MODES[result.mode].label} · ${LEVELS[result.levelId].label}` }),
       el('div', { class: 'result__stars', attrs: { role: 'img', 'aria-label': `${result.stars} out of 3 stars` }, html: ICONS.star.repeat(result.stars) + ICONS.starEmpty.repeat(3 - result.stars) }),

@@ -37,10 +37,11 @@ All 16 games run on one tiny engine: a scene manager, a game loop, and injected 
 **Tech constraints**
 
 - Vanilla JavaScript (ES2022 modules), HTML5, CSS3. No frameworks, no bundler, no external CDNs.
-- Runs by opening `index.html` through any static server (`npx serve .`). Works offline.
-- Target: Chrome, Edge, Safari, Firefox (latest 2 versions); tablets 768px+ and desktops. Portrait and landscape.
+- One exception: the 3D versions use three.js, copied into `src/vendor/three/` and loaded only by 3D scenes (see "3D versions (Three.js)").
+- Runs by opening `index.html` through any static server (`npx serve .`). Works offline (the home page after one visit, each game after it has been opened once; see "Offline" in the README), and can be installed as an app (`manifest.webmanifest` plus the icons in `icons/`, linked from every page).
+- Target: Chrome, Edge, Safari, Firefox (latest 2 versions); tablets 768px+ and desktops. Portrait and landscape. The 3D versions also target phones from 360px wide.
 - Canvas for action games; DOM + CSS for card, drag-and-drop and quiz games.
-- Unit tests with Node's built-in runner (`node --test`), so no test dependencies either.
+- Unit tests with Node's built-in runner (`node --test`), so no test dependencies either. Real-browser checks (Playwright) live in their own package, `e2e/`, so the site itself still has none.
 
 **Folder structure**
 
@@ -60,7 +61,7 @@ All 16 games run on one tiny engine: a scene manager, a game loop, and injected 
     ui/
         Button.js, Modal.js, Confetti.js, ProgressBar.js, Hud.js
     utils/
-        random.js (seeded RNG, shuffle), geometry.js, timer.js, errors.js
+        random.js (seeded RNG, shuffle), geometry.js, timer.js, errors.js, gridNav.js (arrow-key moves in a grid)
 /src/games/<game-slug>/
     index.html              Thin page that boots the game
     main.js                 Composition root: wires services into scenes
@@ -112,7 +113,7 @@ All 16 games run on one tiny engine: a scene manager, a game loop, and injected 
 - Rounds last 1–3 minutes. Instant feedback on every answer (sound + colour + animation in under 150 ms).
 - No "Game Over". Mistakes show "Try again!" plus a hint after 2 wrong tries.
 - Results screen always shows 1–3 stars and one positive message; stars save per level.
-- Every game has three difficulty levels (Easy / Medium / Hard) and a parent settings panel: sound on/off, read-aloud on/off, difficulty lock.
+- Every game has three difficulty levels (Easy / Medium / Hard) and a parent settings panel: sound on/off, read-aloud on/off, difficulty lock, and "Save all games for offline play" (which games are saved for offline use, and a button that saves every one at once).
 - No ads, no external links, no data leaves the device, no personal data collected.
 
 **Accessibility**
@@ -121,6 +122,30 @@ All 16 games run on one tiny engine: a scene manager, a game loop, and injected 
 - Colour contrast 4.5:1 for text; never use colour alone to signal right/wrong (add an icon ✔ / ✖ and a shape).
 - `prefers-reduced-motion` turns off shakes, confetti and screen flashes.
 - Read-aloud option via `speechSynthesis` for questions (helps early readers).
+- One `<main>` on every screen. A game page's `#game-root` is that landmark and scenes are plain containers inside it, so a screen can never
+  have two or none (a scene must not add its own `<main>`). The home page has its own.
+- Text in Hindi or Marathi says so (WCAG 3.1.2, language of parts), because a screen reader reads unmarked Devanagari with its English voice,
+  which is gibberish. An element that is all Devanagari carries `lang="hi"` or `lang="mr"`; Devanagari inside an English sentence is wrapped
+  in `<span lang>` (Matra Mixer: `inLanguage` in `ui/inLanguage.js`). The language is the one the game is set to, and a language is named in
+  its own. An `aria-label` cannot carry a language, so a control's name is left as it is.
+- A control's accessible name contains the words written on it, in the same order (WCAG 2.5.3, "label in name"), and what the control cannot
+  show (stars earned, locked, "Key 1") comes after them. Pieces built as separate spans get a space between them with `spaced()` from
+  `engine/utils/dom.js`, or the words run together ("Forest3 living things"). A shortcut hint is drawn with CSS from a `data-key`
+  attribute, not written as text, so it is not one of the words on the button.
+- Whatever can take the keyboard focus can be seen when it does. A skip link appears when it has the focus; a screen-reader-only mirror of
+  the picture (the Word Builder bubbles) is kept out of the Tab order with `tabindex="-1"`; controls laid over a 3D picture are painted above
+  it. A bar fixed to an edge (Plant Grower's "Next day") or a sticky header (the Matra Mixer chart) never covers the control that has the
+  focus: the scrolling area gets `scroll-padding` as big as the bar.
+- When a screen replaces another (a menu opens a round, a round opens its results) the control that was pressed goes with the old screen, so
+  the focus moves to the new screen's first visible heading (`<h1>`, else `<h2>`; one in a hidden part, like the "Paused" card, does not
+  count): `focusScreenHeading` in `engine/ui/focusScreen.js`, which the `SceneManager` calls once the new scene has entered. The heading gets
+  `tabindex="-1"` (a script can focus it, but it is not a Tab stop) and no ring, since it is not a control. A scene that puts the focus on a
+  control itself keeps it, a screen with no visible heading leaves the focus where it is, and the first screen of a page does not take it at
+  all (a page that has just loaded starts at its top).
+- A control that is a checkbox or radio button is as big as its label, which is what a finger taps.
+- A grid with many cells (the Matra Mixer chart has about 400) is one Tab stop, not hundreds: Tab brings the focus to one cell, and the
+  arrow keys, Home, End and the page keys move it (`nextGridCell` in `engine/utils/gridNav.js`, the ARIA data-grid keys). The cell that
+  last had the focus, by key or by click, is the one Tab comes back to.
 
 **Shared game state shape**
 
@@ -146,6 +171,7 @@ All 16 games run on one tiny engine: a scene manager, a game loop, and injected 
 - [ ] `node --test` passes for its `logic/` tests
 - [ ] Playable with mouse, touch and keyboard
 - [ ] No console errors during a full round
+- [ ] Passes the accessibility checks on its first screen and a round, in 2D and 3D (`e2e/specs/a11y.e2e.mjs` runs them for every game in `e2e/support/games.mjs`)
 - [ ] Listed in the hub with icon, name and learning tag
 
 ## Home page (game hub), player profile & local storage
@@ -211,6 +237,88 @@ All 16 games are reached from one home page (`/index.html`). It greets the child
 - [ ] Every game has a Home button and uses the player name on its results screen
 - [ ] Works when `localStorage` is unavailable (in-memory fallback, no crash)
 - [ ] Reset clears only `kidsgames:*` keys
+
+## 3D versions (Three.js)
+
+Twelve games have a 3D version drawn with three.js. The 2D version of every game stays, and it is what a child gets when the device cannot do 3D, when 3D fails, or when they choose it. The rules and scoring are the same in both: a 3D version replaces scenes, never `logic/`.
+
+**The one library**
+
+- three.js r187 is copied into `src/vendor/three/` (MIT). It is the only third-party code in the site. No CDN, no npm install, no bundler: the site still works offline and the Content-Security-Policy stays same-origin.
+- Games import it only through `src/engine/three/three.js`. To upgrade, follow `src/vendor/three/README.md`.
+- The library is about 2 MB. A game loads its 3D scene with a dynamic `import()` only after choosing the 3D view, so the 2D version and the home page never download it. `tests/site.test.js` enforces this: static imports of three.js are allowed only in files under a `three/` folder or named `*3D.js`.
+
+**Shared 3D layer (`src/engine/three/`)**
+
+| Module | Responsibility |
+| --- | --- |
+| `three.js` | Re-exports the vendored library (single import point) |
+| `support.js` | `hasWebGL2()`, `pickQuality(hints)`, `isWeakDevice(hints)`, `resolveViewMode()`; pure and unit-tested |
+| `view.js` | `createViewChoice({ storage, slug })`: which view to show (the child's pick wins; with none, flat on a device that is weak or was too slow), saving the pick, falling back after an error |
+| `viewPreference.js` | Reads and writes the pick in the game's own save data (`extra.viewMode`) |
+| `Stage3D.js` | Renderer, scene, camera, resize, `pick()` for taps, lost-context handling, the speed check, `dispose()` |
+| `frameWatch.js` | The speed check's decisions (fine, lower the resolution, give up) from the time between frames, and the resolution steps; pure and unit-tested |
+| `deviceVerdict.js` | The device record (`kidsgames:device`): whether 3D was too slow here, and the developer switch that turns the speed check off |
+| `OrbitInput.js` + `orbitMath.js` | Drag to turn, pinch or wheel to zoom, arrow keys and + / -; reports taps |
+| `labels.js` | `makeLabel(text)`: text inside the scene as a camera-facing sprite |
+| `ViewToggle.js` | `createViewToggle()`, the "3D view / 2D view" button, and `createViewSwitch({ view, notes, onChange })`, the toggle with a sentence about the current view that a game's menu shows |
+| `openView.js` | `openScreen({ view, scenes, where, load, make, params, open2d, whileLoading })`: opens a screen in the chosen view, loading the 3D module on demand and falling back to the flat screen (logged, this visit only) when anything goes wrong; pure and unit-tested |
+
+**How a game adds its 3D version**
+
+1. Put 3D scenes in `src/games/<slug>/three/` (for example `three/Play3DScene.js`). They extend the engine `Scene`, build a `Stage3D` in `enter()`, call `stage.render()` from `render()` and `stage.dispose()` from `exit()`.
+2. In `main.js`, create `const view = createViewChoice({ storage, slug })`. Where the 2D play scene is opened, call `openScreen({ view, scenes, where: '<slug>:3d', params, load: () => import('./three/Play3DScene.js'), make: ({ Play3DScene }) => new Play3DScene(services, routes), open2d: () => scenes.replace(new PlayScene(services, routes), params) })`.
+3. `openScreen` already does what a game must: it loads the 3D module only for the 3D view, and on any error (the file will not load, the scene fails to start) it logs, calls `view.fallBack()` and opens the 2D scene, so a child never sees a blank screen. A scene that is already open handles a lost context or a view that is too slow itself, through `Stage3D`'s `onContextLost`, switching to its flat view in place, so a frozen or blank picture is never left on screen.
+4. Show the view toggle (menu or play header) only when `view.supported` is true. Changing it calls `view.choose(mode)` and reopens the play scene.
+5. Keep all rules in the existing `logic/` files. New pure maths for 3D (layouts, paths, camera positions) goes in `logic/` too, with tests. Menu and results scenes stay as they are.
+
+**Mobile rules (phones from 360 px wide)**
+
+- Touch first: one finger turns, two fingers zoom, a tap selects. Nothing depends on a mouse, hover or keyboard. Every game action also has a visible button at least 48 x 48 px.
+- Layout: on a narrow portrait screen the 3D view goes on top (at least 45% of the height) with the controls below; in landscape the controls go beside it. No page scrolling during play.
+- Light scenes: low-poly shapes built in code (no model files), `MeshLambertMaterial` or `MeshBasicMaterial`, at most 3 lights, no shadow maps (use a flat "blob" under objects if needed), textures drawn on a canvas at most 512 px. The one exception is a world-map texture (Flag & Capital Quest): a map with hundreds of countries needs 1024 px (weak devices) or 2048 px (capable ones), drawn once.
+- `pickQuality()` decides pixel ratio and antialiasing; use `stage.quality.detail` to halve segment and object counts on weak devices.
+- Slow devices are looked after by `Stage3D` itself, so a scene does nothing extra beyond passing `onContextLost`. It times its own animation frames: when the typical frame stays slower than about 22 frames a second it lowers the resolution (twice at most, to three quarters and then half), and when that is not enough, or the picture is under about 8 frames a second, it logs `STAGE_TOO_SLOW`, marks the device slow and calls `onContextLost`, so the game's in-place switch to its flat version runs. A device marked slow, and a very weak one (1 GB of memory or less, or two cores or fewer), opens games flat until the child chooses 3D; the child's own choice always wins. "Reset all progress" forgets the mark. To stop the check while developing on a slow machine, set `frameWatch` to `"off"` in the `kidsgames:device` record (the browser tests do).
+- Free what you create: `stage.dispose()` on exit, and `disposeObject()` for anything removed during play.
+- Respect `prefers-reduced-motion`: no camera shake, fly-throughs become cuts, spinning stops.
+- The frame loop already stops in a hidden tab; do not add timers that keep running.
+
+**Accessibility in 3D**
+
+- Whatever the picture says must also be in the DOM: the question, the score, the state of the board, and feedback through a polite live region. The canvas gets a short `aria-label`.
+- Full keyboard play, as in 2D. The orbit camera takes the arrow keys only while the canvas has focus.
+- Colour is never the only signal, in 3D too (add a shape, icon or label).
+
+**The twelve 3D versions**
+
+| Game | 3D idea | What 3D adds to the learning |
+| --- | --- | --- |
+| Planet Hop | Solar system to turn and zoom; rocket hops between planets; a jump on each surface shows gravity; "real size" switch | Scale, order and gravity are seen, not read |
+| Robot Path | Board seen from an angle that the child can turn; robot walks, turns and bumps in 3D | Left and right from the robot's point of view |
+| Flag & Capital Quest | Globe to spin; the plane flies an arc to each country; visited countries are marked | Where countries are on a round Earth |
+| Times-Table Racing | Track seen from behind the car; boost on a correct answer; see-through ghost car | Motivation; same facts |
+| Table Tower | A tower that grows a floor per cleared table, camera climbing; products built from block slabs (17 x 6 = 10 x 6 + 7 x 6) | Splitting a product into parts |
+| Plant Grower | A plant that grows in a pot to turn; the sun moves across the sky; rain and droop are visible | Cause and effect over days |
+| Pizza Fractions | A pizza whose slices lift when chosen; toppings sit on slices | Parts of a whole |
+| Lights Out | Lantern board in 3D; on Hard a cube whose lights wrap around the edges | Neighbour reasoning on a surface |
+| Pattern Detective | Sequences of solids (cube, cone, sphere, cylinder) that can rotate | Shape names; rotation patterns |
+| Number Ninja | Falling 3D stars that split when the answer is right | Motivation; same facts |
+| Simon Says | Pads that press down and glow | Motivation; same sequence memory |
+| Sentence Train | Toy train with word carriages that drives off when the sentence is right | Motivation; same word order |
+
+Each game's README describes its 3D view, its controls and anything that differs from this table.
+
+**Status:** all twelve are built. The differences from this table, each explained in the game's README: **Lights Out** has no cube on Hard (it would change the puzzle's rules, so 2D and 3D would no longer earn the same stars); **Pattern Detective** has no cylinder (no case uses a shape that would become one); **Number Ninja** and **Sentence Train** have a fixed camera (a falling game, and a game of dragging onto slots, must not be turned).
+
+**Definition of done (3D version)**
+
+- [ ] The 2D version still works unchanged and is reachable with the view toggle
+- [ ] With WebGL 2 turned off, or after a simulated context loss, the game opens in 2D with no error screen (the same path handles a view that runs too slowly)
+- [ ] Playable by touch on a 390 x 844 phone screen in portrait, and by keyboard on desktop
+- [ ] No three.js download on the 2D path (static-import rule passes)
+- [ ] Same stars and saved progress as the 2D version for the same play
+- [ ] `npm test` passes, including tests for any new `logic/`
+- [ ] The browser checks pass (`cd e2e && npm test`), with the game's 3D version listed in `e2e/support/games.mjs`
 
 ## Game 1 — Number Ninja (`number-ninja`)
 

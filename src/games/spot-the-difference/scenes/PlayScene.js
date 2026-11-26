@@ -117,7 +117,7 @@ export class PlayScene extends SpotBase {
     this.ui.classList.add('spot');
     this.ui.append(
       this.#hud.el,
-      el('main', { class: 'spot__main' },
+      el('div', { class: 'spot__main' },
         el('div', { class: 'spot__bar' }, this.#placeEl, this.#foundEl, this.#missEl),
         this.#barEl,
         this.#stageEl,

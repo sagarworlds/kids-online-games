@@ -66,6 +66,31 @@ export const syllableId = (consonant, sign) => `${consonant.id}-${sign.id}`;
 /** A sign drawn on its own, on a dotted circle so it can be seen (◌ा). */
 export const signOnItsOwn = (sign) => (sign.char === '' ? sign.vowel : `◌${sign.char}`);
 
+const DEVANAGARI = '\\u0900-\\u097F';
+// A run starts and ends with Devanagari and goes on across what is written between its pieces: spaces, "+", "=", the dotted circle a sign
+// is drawn on and the joiners that glue letters together. So "क + ◌ा = का" is one run, and an English word in the middle ends it.
+const RUN = new RegExp(`[${DEVANAGARI}](?:[${DEVANAGARI}\\s+=\\u25CC\\u200C\\u200D]*[${DEVANAGARI}])?`, 'gu');
+
+/**
+ * Splits text into the parts that are Devanagari and the parts that are not, so a sentence in English that quotes a letter, a syllable
+ * or a word can say which part is Hindi or Marathi. A screen reader reads Devanagari with its English voice unless it is told the
+ * language (WCAG 3.1.2, language of parts), and that is gibberish.
+ *
+ * @param {string} text
+ * @returns {{ text: string, devanagari: boolean }[]} The parts in order, which joined make the text again (an empty text has none).
+ */
+export function splitScript(text) {
+  const parts = [];
+  let end = 0;
+  for (const match of text.matchAll(RUN)) {
+    if (match.index > end) parts.push({ text: text.slice(end, match.index), devanagari: false });
+    parts.push({ text: match[0], devanagari: true });
+    end = match.index + match[0].length;
+  }
+  if (end < text.length) parts.push({ text: text.slice(end), devanagari: false });
+  return parts;
+}
+
 const BY_CHAR = new Map(CONSONANTS.map((c) => [c.char, c]));
 const SIGN_BY_CHAR = new Map(SIGNS.filter((s) => s.char !== '').map((s) => [s.char, s]));
 const INHERENT = SIGNS[0];

@@ -31,7 +31,7 @@ export class QuizScene extends HopScene {
       stats: [{ id: 'question', label: 'Question' }, { id: 'right', label: 'Right' }],
       onSettings: () => services.openSettings(),
     });
-    this.#host = el('main', { class: 'quiz' });
+    this.#host = el('div', { class: 'quiz' });
     this.ui.append(this.#hud.el, this.#host);
     this.#off = services.input.on('key', (event) => this.#panel?.handleKey(event));
     this.#show();

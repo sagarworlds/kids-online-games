@@ -1,7 +1,8 @@
 import { HopScene } from './HopScene.js';
-import { el } from '../../../engine/utils/dom.js';
+import { el, spaced } from '../../../engine/utils/dom.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
+import { createViewSwitch } from '../../../engine/three/ViewToggle.js';
 import { ICONS } from '../../../engine/ui/icons.js';
 import { LEVELS, LEVEL_IDS, MODES, MODE_IDS, levelKey } from '../logic/levels.js';
 import { rankFor } from '../logic/scoring.js';
@@ -23,10 +24,11 @@ export class MenuScene extends HopScene {
           class: 'mode', attrs: { type: 'button', 'aria-label': `${MODES[mode].label}. ${MODES[mode].blurb}. ${earned} of 3 stars at ${LEVELS[levelId].label}.` },
           on: { click: () => { services.audio.play('click'); this.routes.play({ mode, levelId }); } },
         },
-        el('span', { class: 'mode__icon', text: MODES[mode].icon, attrs: { 'aria-hidden': 'true' } }),
-        el('span', { class: 'mode__label', text: MODES[mode].label }),
-        el('span', { class: 'mode__blurb', text: MODES[mode].blurb }),
-        el('span', { class: 'menu__stars', html: ICONS.star.repeat(earned) + ICONS.starEmpty.repeat(3 - earned), attrs: { 'aria-hidden': 'true' } }));
+        ...spaced(
+          el('span', { class: 'mode__icon', text: MODES[mode].icon, attrs: { 'aria-hidden': 'true' } }),
+          el('span', { class: 'mode__label', text: MODES[mode].label }),
+          el('span', { class: 'mode__blurb', text: MODES[mode].blurb }),
+          el('span', { class: 'menu__stars', html: ICONS.star.repeat(earned) + ICONS.starEmpty.repeat(3 - earned), attrs: { 'aria-hidden': 'true' } })));
       }));
     };
     const picker = createLevelPicker({
@@ -36,12 +38,16 @@ export class MenuScene extends HopScene {
     });
     drawModes();
 
+    // Only offered where the device can do 3D. Choosing is remembered for next time (see `createViewChoice`).
+    const { view } = this.routes;
+    const viewEl = createViewSwitch({ view, onChange: () => this.routes.menu(), notes: { '3d': 'In 3D view: Line them up and Weigh-in. The quiz stays flat.', '2d': 'In 2D view: everything is flat.' } });
+
     const total = services.rewards.starsFor(services.game.slug);
     const { rank, next, starsToNext } = rankFor(total);
-    this.ui.append(hud.el, el('main', { class: 'menu' },
+    this.ui.append(hud.el, el('div', { class: 'menu' },
       el('h1', { class: 'menu__title', text: 'Planet Hop' }),
       el('p', { class: 'menu__intro', text: 'Put the planets in order, find out how heavy you would feel on each one, and test what you know!' }),
       el('p', { class: 'menu__rank' }, el('strong', { text: `Rank: ${rank.label}` }), next ? ` (${starsToNext} more ${starsToNext === 1 ? 'star' : 'stars'} to ${next.label})` : ' (the top rank!)'),
-      picker.el, modesEl));
+      picker.el, modesEl, viewEl));
   }
 }

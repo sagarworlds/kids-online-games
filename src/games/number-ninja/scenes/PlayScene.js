@@ -92,6 +92,7 @@ export class PlayScene extends NinjaScene {
   #srList = null;
   #pad = null;
   #skyStars = [];
+  #view = null;
   #offs = [];
 
   /** @param {{ levelId: 'easy'|'medium'|'hard', ops: string[] }} params */
@@ -122,6 +123,18 @@ export class PlayScene extends NinjaScene {
     for (const off of this.#offs) off();
     this.#offs = [];
     this.services.speech.cancel();
+    this.#view?.dispose?.();
+  }
+
+  /**
+   * Makes the picture of the falling stars that replaces the flat sky drawn on the canvas, or nothing. The 3D play overrides this. What it makes has to offer
+   * `el`, `active` (false once it has stopped working: the flat sky is drawn again, from the same round), `tick(dt, problems)`, `hit(problem, points)`,
+   * `landed(problem, text)`, `centre(text)`, `draw()` and `dispose()`. All the rules, input and words stay in this class, so both views play and score the same.
+   * @param {{ lanes: number }} options
+   * @returns {object|null}
+   */
+  createView(options) {
+    return null;
   }
 
   resize(width, height) {
@@ -157,6 +170,9 @@ export class PlayScene extends NinjaScene {
     this.#pauseEl.hidden = true;
 
     const field = el('div', { class: 'play__field' }, this.#bannerEl, this.#pauseEl);
+    // The 3D sky, if there is one, lies under the banner and the pause card, over the game canvas that the flat sky is drawn on.
+    this.#view = this.createView({ lanes: this.#lanes });
+    if (this.#view) field.prepend(this.#view.el);
 
     this.#hintEl = el('p', { class: 'play__hint', attrs: { role: 'status' } });
     this.#hintEl.hidden = true;
@@ -288,6 +304,7 @@ export class PlayScene extends NinjaScene {
     this.#hintTtl = 0;
     this.#hintEl.hidden = true;
     this.#announce(`Correct! Plus ${points} points.`);
+    this.#view?.hit?.(problem, points);
     if (milestone) {
       audio.play('streak');
       this.#bannerEl.textContent = `Ninja streak! ${streak} in a row`;
@@ -314,6 +331,7 @@ export class PlayScene extends NinjaScene {
     const text = `${problemToText(problem)} = ${problem.answer}`;
     this.#reveals.push({ text, x: pos.x, y: pos.y + this.#starRadius() + 8 + PLATE_HEIGHT / 2, ttl: REVEAL_SECONDS });
     this.#announce(`A star landed. ${text}. Shields left: ${this.#round.shields}.`);
+    this.#view?.landed?.(problem, text);
   }
 
   #showFeedback(text, shake) {
@@ -338,6 +356,7 @@ export class PlayScene extends NinjaScene {
     if (this.#paused || this.#flow.is('done')) return;
     this.#time += dt;
     this.#tickTransients(dt);
+    this.#view?.tick?.(dt, this.#round.problems);
 
     this.#sinceMeasure += dt;
     if (this.#sinceMeasure > 0.5) this.#measure(); // fonts and wrapping can change panel height
@@ -408,13 +427,25 @@ export class PlayScene extends NinjaScene {
     }
   }
 
+  /** The big word in the middle of the sky while the round is about to begin ("Ready…", then "Go!"), or null. */
+  #centreText() {
+    return this.#flow.is('ready') && this.#ready > 0 ? (this.#ready > 0.4 ? 'Ready…' : 'Go!') : null;
+  }
+
   render(ctx) {
+    if (this.#view?.active) {
+      // The 3D sky draws itself in its own box; the flat sky on the canvas behind it is not drawn.
+      this.#view.centre(this.#centreText());
+      this.#view.draw();
+      return;
+    }
     if (!ctx || !this.#width) return;
     this.#drawBackground(ctx);
     for (const star of this.#round.problems) this.#drawFalling(ctx, star);
     for (const reveal of this.#reveals) this.#drawReveal(ctx, reveal);
     for (const fx of this.#fx) this.#drawEffect(ctx, fx);
-    if (this.#flow.is('ready') && this.#ready > 0) this.#drawCentreText(ctx, this.#ready > 0.4 ? 'Ready…' : 'Go!');
+    const centre = this.#centreText();
+    if (centre) this.#drawCentreText(ctx, centre);
   }
 
   #drawBackground(ctx) {

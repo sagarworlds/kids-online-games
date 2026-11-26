@@ -4,6 +4,7 @@ import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
 import { createButton } from '../../../engine/ui/Button.js';
 import { ICONS } from '../../../engine/ui/icons.js';
+import { createViewSwitch } from '../../../engine/three/ViewToggle.js';
 import { LEVELS, LEVEL_IDS, CASES_PER_ROUND } from '../logic/levels.js';
 import { generateRound } from '../logic/generatorRegistry.js';
 
@@ -29,10 +30,15 @@ export class MenuScene extends DetectiveScene {
         el('span', { class: 'menu__stars', html: ICONS.star.repeat(earned) + ICONS.starEmpty.repeat(3 - earned) }));
     }));
 
-    this.ui.append(hud.el, el('main', { class: 'menu' },
+    // Only offered where the device can do 3D. The choice is remembered for next time (see `createViewChoice`).
+    const { view } = this.routes;
+    const viewEl = createViewSwitch({ view, onChange: () => this.routes.menu(), notes: { '3d': 'In 3D view the pattern is a row of solids on pedestals: turn them, and tap one to hear its name.', '2d': 'In 2D view the pattern is a flat picture.' } });
+
+    this.ui.append(hud.el, el('div', { class: 'menu' },
       el('h1', { class: 'menu__title', text: 'Pattern Detective' }),
       el('p', { class: 'menu__intro', text: `Every case is a pattern with a piece missing. Work out the rule and pick what comes next! ${CASES_PER_ROUND} cases per round.` }),
       picker.el,
+      viewEl,
       createButton({ label: 'Open the case files', icon: '🔍', variant: 'primary', big: true, onClick: () => {
         services.audio.play('click');
         this.routes.play({ levelId, puzzles: generateRound(levelId, CASES_PER_ROUND, services.rng), index: 0, results: [] });

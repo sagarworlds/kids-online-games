@@ -7,6 +7,7 @@ import { clamp, lerp, distance, pointInRect, pointInCircle, rectsOverlap, circle
 import { Countdown, sleep } from '../../src/engine/utils/timer.js';
 import { starsForAccuracy, praiseFor } from '../../src/engine/utils/stars.js';
 import { createParentQuestion, checkParentAnswer } from '../../src/engine/utils/parentCheck.js';
+import { spaced } from '../../src/engine/utils/dom.js';
 
 test('GameError carries code and context', () => {
   const err = new GameError('INVALID_NAME', 'bad', { reason: 'length' });
@@ -116,4 +117,12 @@ test('parent check asks a 6-9 times question and checks the integer answer', () 
   assert.ok(!checkParentAnswer(q, ''));
   assert.ok(!checkParentAnswer(q, '56.0'));
   assert.ok(!checkParentAnswer(q, 'fifty-six'));
+});
+
+test('spaced puts one space between the pieces of a control and none next to skipped ones', () => {
+  // Separate spans have nothing between them, so a screen reader or voice control would read "Forest3 living things" as one word.
+  assert.deepEqual(spaced('Forest', '3 living things'), ['Forest', ' ', '3 living things']);
+  assert.deepEqual(spaced('a', null, 'b', false, undefined, 'c'), ['a', ' ', 'b', ' ', 'c'], 'a skipped piece leaves no double or leading space');
+  assert.deepEqual(spaced(null, 'only'), ['only']);
+  assert.deepEqual(spaced(), []);
 });

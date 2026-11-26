@@ -15,6 +15,20 @@
 .menu__best li { display: flex; flex-direction: column; align-items: center; gap: 2px; font-weight: 700; }
 .menu__stars { display: inline-flex; font-size: 1.5rem; }
 
+/* ---------- 3D view (three.js) ---------- */
+
+.menu__view { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.menu__viewnote { margin: 0; color: var(--ink-soft); font-size: 0.95rem; }
+
+/* On a short, narrow phone the answer area is tighter in the 3D race, so the picture gets at least its share of the height. */
+@media (max-width: 639px) and (max-height: 760px) {
+  .race--3d .answer-panel { padding: 6px 10px 8px; gap: 4px; }
+  .race--3d .question { font-size: 2rem; }
+  .race--3d .race__feedback { min-height: 1.2em; }
+  .race--3d .options { gap: 8px; }
+  .race--3d .option { min-height: 56px; font-size: 1.5rem; }
+}
+
 /* ---------- Race ---------- */
 
 .race { overflow: hidden; background: transparent; }
@@ -55,6 +69,9 @@
 .option:focus-visible { outline: 4px solid var(--primary); outline-offset: 3px; }
 /* The key number sits in the corner so keyboard players know which key picks which answer. */
 .option__key { position: absolute; top: 4px; left: 8px; font-size: 0.8rem; font-weight: 800; color: var(--ink-soft); }
+/* The key's number is drawn from data-key instead of being text, so the only words on the button are its answer, which the button's
+   name starts with ("12. Key 1"). A name has to contain the words shown on its button, and a digit in front of the answer would not be. */
+.option__key::before { content: attr(data-key); }
 
 .typing { display: flex; align-items: center; justify-content: center; gap: 10px; }
 .typed {

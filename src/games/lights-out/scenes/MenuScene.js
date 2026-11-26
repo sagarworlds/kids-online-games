@@ -4,6 +4,7 @@ import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
 import { ICONS } from '../../../engine/ui/icons.js';
 import { createButton } from '../../../engine/ui/Button.js';
+import { createViewSwitch } from '../../../engine/three/ViewToggle.js';
 import { LEVELS, LEVEL_IDS, PUZZLES_PER_ROUND } from '../logic/levels.js';
 
 /** Menu: choose the grid size (the level), see your best stars, start a round of five puzzles. */
@@ -28,11 +29,16 @@ export class MenuScene extends LightsScene {
         el('span', { class: 'menu__stars', html: ICONS.star.repeat(earned) + ICONS.starEmpty.repeat(3 - earned) }));
     }));
 
-    this.ui.append(hud.el, el('main', { class: 'menu' },
+    // Only offered where the device can do 3D. The choice is remembered for next time (see `createViewChoice`).
+    const { view } = this.routes;
+    const viewEl = createViewSwitch({ view, onChange: () => this.routes.menu(), notes: { '3d': 'In 3D view the jars stand on a table at night: turn it, and the fireflies fly away when you win.', '2d': 'In 2D view the jars are a flat grid.' } });
+
+    this.ui.append(hud.el, el('div', { class: 'menu' },
       el('h1', { class: 'menu__title', text: 'Lights Out' }),
       el('p', { class: 'menu__intro', text: 'Tap a jar to flip it and the jars next to it. Set every firefly free by turning all the lights off!' }),
       picker.el,
       el('p', { class: 'menu__note', text: `${PUZZLES_PER_ROUND} puzzles per round. Fewer taps earn more stars.` }),
+      viewEl,
       createButton({ label: 'Start', icon: '▶', variant: 'primary', big: true, onClick: () => {
         services.audio.play('click');
         this.routes.play({ levelId, index: 0, results: [] });

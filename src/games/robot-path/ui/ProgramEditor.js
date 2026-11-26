@@ -44,9 +44,10 @@ function friendly(error, maxBlocks) {
  *
  * @param {{
  *   level: import('../logic/levels.js').Level,
+ *   initial?: import('../logic/interpreter.js').Program,
  *   onChange: (program: import('../logic/interpreter.js').Program) => void,
  *   onMessage: (text: string) => void
- * }} options
+ * }} options `initial` is a program to start with (for a child who switches between the 3D and 2D views mid-puzzle).
  * @returns {{
  *   el: HTMLElement,
  *   getProgram: () => import('../logic/interpreter.js').Program,
@@ -55,9 +56,9 @@ function friendly(error, maxBlocks) {
  *   setHighlight: (highlight: { active?: string[], failed?: string|null }) => void
  * }}
  */
-export function createProgramEditor({ level, onChange, onMessage }) {
+export function createProgramEditor({ level, initial, onChange, onMessage }) {
   const usesFunction = level.allowed.includes('callF');
-  let program = emptyProgram();
+  let program = initial ?? emptyProgram();
   let target = 'main';
   let locked = false;
   let highlight = { active: [], failed: null };

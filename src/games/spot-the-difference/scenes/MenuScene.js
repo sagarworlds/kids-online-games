@@ -37,7 +37,7 @@ export class MenuScene extends SpotBase {
     });
     drawCards();
 
-    this.ui.append(hud.el, el('main', { class: 'menu' },
+    this.ui.append(hud.el, el('div', { class: 'menu' },
       el('h1', { class: 'menu__title', text: 'Spot the Difference' }),
       el('p', { class: 'menu__intro', text: `Two pictures look the same, but they are not! Tap the differences. Find them all in ${SCENES_PER_ROUND} pictures to win stars.` }),
       picker.el,

@@ -46,7 +46,7 @@ export class LadderScene extends TowerBase {
     form.querySelector('button').type = 'submit';
 
     this.ui.classList.add('ladder-scene');
-    this.ui.append(this.#hud.el, el('main', { class: 'practice' },
+    this.ui.append(this.#hud.el, el('div', { class: 'practice' },
       el('p', { class: 'practice__lead', text: this.#level.id === 'easy' ? `Count up in ${floor}s. Each rung is ${floor} more than the one below.` : `Fill every rung of the ${floor} times table, from the bottom.` }),
       el('div', { class: 'practice__body' }, this.#rungsEl, el('div', { class: 'practice__side' }, form, this.#noteEl))));
     this.#say(hintFor(this.#ladder), 'info');

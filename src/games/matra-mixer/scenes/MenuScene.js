@@ -5,6 +5,9 @@ import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
 import { ICONS } from '../../../engine/ui/icons.js';
 import { LEVELS, LEVEL_IDS, roundKey } from '../logic/levels.js';
 import { LANGS, LANG_IDS, VOWEL_SETS, VOWEL_SET_IDS } from '../logic/devanagari.js';
+import { inLanguage } from '../ui/inLanguage.js';
+
+const INTRO = 'A consonant train pulls into the matra station. Add a vowel sign to a letter and hear the syllable it makes: क + ा = का.';
 
 const ACTIVITIES = Object.freeze([
   { id: 'build', icon: '🔧', title: 'Build the sound', text: 'Hear a sound, then pick the letter and the vowel sign that make it.' },
@@ -22,9 +25,12 @@ export class MenuScene extends MatraBase {
     let levelId = lock ?? 'easy';
     const hud = createHud({ homeHref: services.game.homeHref, title: services.game.title, onSettings: () => services.openSettings() });
     const cardsEl = el('div', { class: 'activities' });
+    const introEl = el('p', { class: 'menu__intro' });
 
     const draw = () => {
       const { lang } = this.prefs();
+      // The sum is the same in Hindi and in Marathi, so it is marked with whichever language is chosen (a grown-up chooses it on this screen).
+      introEl.replaceChildren(...inLanguage(INTRO, lang));
       const { bestStars } = services.rewards.getSave(services.game.slug);
       const card = (icon, title, text, stars, onClick) => el('button', { class: 'activity', attrs: { type: 'button' }, on: { click: () => { services.audio.play('click'); onClick(); } } },
         el('span', { class: 'activity__icon', text: icon, attrs: { 'aria-hidden': 'true' } }),
@@ -43,9 +49,9 @@ export class MenuScene extends MatraBase {
     });
     draw();
 
-    this.ui.append(hud.el, el('main', { class: 'menu' },
+    this.ui.append(hud.el, el('div', { class: 'menu' },
       el('h1', { class: 'menu__title', text: 'Matra Mixer' }),
-      el('p', { class: 'menu__intro', text: 'A consonant train pulls into the matra station. Add a vowel sign to a letter and hear the syllable it makes: क + ा = का.' }),
+      introEl,
       this.#prefsPanel(draw), picker.el, el('h2', { class: 'menu__heading', text: 'Choose an activity' }), cardsEl));
   }
 
@@ -57,16 +63,18 @@ export class MenuScene extends MatraBase {
       services.rewards.update(services.game.slug, (data) => { data.extra = { ...data.extra, prefs: { ...this.prefs(), ...patch } }; });
       onChange();
     };
+    // `labelLang` is the language of the label. A language is named in its own language; बाराखडी and चौदाखडी are written the Marathi way
+    // (the note below says so), and the note under a vowel set quotes its signs.
     const group = (field, legend, options) => el('fieldset', { class: 'prefs__group' },
       el('legend', { text: legend }),
-      ...options.map(({ value, label, note }) => {
+      ...options.map(({ value, label, labelLang, note }) => {
         const input = el('input', { attrs: { type: 'radio', name: `${id}-${field}`, id: `${id}-${field}-${value}`, value, checked: this.prefs()[field] === value }, on: { change: () => save({ [field]: value }) } });
-        return el('div', { class: 'segmented__item' }, input, el('label', { attrs: { for: `${id}-${field}-${value}` } }, el('span', { text: label }), el('small', { text: note })));
+        return el('div', { class: 'segmented__item' }, input, el('label', { attrs: { for: `${id}-${field}-${value}` } }, el('span', { text: label, attrs: { lang: labelLang } }), el('small', {}, ...inLanguage(note, 'mr'))));
       }));
     return el('details', { class: 'prefs' },
       el('summary', { text: '⚙️ Language and vowel signs' }),
-      group('lang', 'Language', LANG_IDS.map((l) => ({ value: l, label: LANGS[l].label, note: l === 'hi' ? 'Hindi words and voice' : 'Marathi words and voice' }))),
-      group('vowelSet', 'Vowel signs', VOWEL_SET_IDS.map((v) => ({ value: v, label: VOWEL_SETS[v].label, note: VOWEL_SETS[v].blurb }))),
-      el('p', { class: 'prefs__note', text: 'Check which one your child\'s school teaches: Marathi बाराखडी and the longer चौदाखडी (which adds ॅ and ॉ) differ.' }));
+      group('lang', 'Language', LANG_IDS.map((l) => ({ value: l, label: LANGS[l].label, labelLang: l, note: l === 'hi' ? 'Hindi words and voice' : 'Marathi words and voice' }))),
+      group('vowelSet', 'Vowel signs', VOWEL_SET_IDS.map((v) => ({ value: v, label: VOWEL_SETS[v].label, labelLang: 'mr', note: VOWEL_SETS[v].blurb }))),
+      el('p', { class: 'prefs__note' }, ...inLanguage('Check which one your child\'s school teaches: Marathi बाराखडी and the longer चौदाखडी (which adds ॅ and ॉ) differ.', 'mr')));
   }
 }

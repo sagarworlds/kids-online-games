@@ -35,6 +35,21 @@ export function clear(node) {
   while (node.firstChild) node.removeChild(node.firstChild);
 }
 
+/**
+ * Puts a plain space between the pieces that make up a control (an icon, a title, a caption, ...). Pieces built as separate
+ * spans have nothing between them, so when the browser joins their text (for a screen reader, for voice control, for copy and
+ * paste) "Forest" and "3 living things" run together as "Forest3 living things" and the control's visible words no longer match
+ * its name. Pieces that are skipped (`null`, `undefined`, `false`) get no space either.
+ *
+ * @param {...(Node|string|null|undefined|false)} pieces
+ * @returns {(Node|string)[]} The pieces with a space between each pair, to spread into `el(tag, props, ...spaced(...))`.
+ */
+export function spaced(...pieces) {
+  return pieces
+    .filter((piece) => piece !== null && piece !== undefined && piece !== false)
+    .flatMap((piece, index) => (index === 0 ? [piece] : [' ', piece]));
+}
+
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
 /**

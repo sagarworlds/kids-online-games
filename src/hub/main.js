@@ -10,6 +10,7 @@ import { showToast } from '../engine/ui/Toast.js';
 import { GAMES } from './gamesRegistry.js';
 import { HubPage } from './HubPage.js';
 import { ProfileService } from './ProfileService.js';
+import { offlineNotice } from './offlineNotice.js';
 import { validateNameLists } from './nameGenerator.js';
 
 /** Composition root for the home page: the only place concrete classes are created. */
@@ -35,6 +36,13 @@ async function boot() {
     new HubPage({ root, games: GAMES, profile, rewards, storage, settings, rng }).mount();
 
     registerServiceWorker();
+
+    // Sent home by the service worker because a game was opened offline that was never saved for it: say so, once.
+    const missed = offlineNotice(location.search, GAMES);
+    if (missed) {
+      showToast(missed, { duration: 10000 });
+      history.replaceState(null, '', location.pathname + location.hash);
+    }
 
     if (storage.notice) showToast(storage.notice);
     storage.onNotice((message) => showToast(message));
