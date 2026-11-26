@@ -2,9 +2,10 @@ import { TraceBase } from './TraceBase.js';
 import { el, spaced } from '../../../engine/utils/dom.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
+import { startingLevel } from '../../../engine/utils/recommendLevel.js';
 import { createButton } from '../../../engine/ui/Button.js';
 import { ICONS } from '../../../engine/ui/icons.js';
-import { LEVELS, LEVEL_IDS, roundKey } from '../logic/levels.js';
+import { LEVELS, LEVEL_IDS, roundKey, starsAtLevel } from '../logic/levels.js';
 import { SETS } from '../logic/glyphs/index.js';
 
 /** Menu: pick a level, then a set of letters to trace. Each set also has a printable worksheet. */
@@ -12,7 +13,9 @@ export class MenuScene extends TraceBase {
   enter() {
     const { services } = this;
     const lock = services.settings.difficultyLock;
-    let levelId = lock ?? 'easy';
+    // Open on the level the child is ready for (a grown-up's lock still decides); the picker points it out.
+    const start = startingLevel({ lock, levels: LEVEL_IDS, starsAt: (id) => starsAtLevel(services.rewards.getSave(services.game.slug).bestStars, id) });
+    let levelId = start.level;
     const hud = createHud({ homeHref: services.game.homeHref, title: services.game.title, onSettings: () => services.openSettings() });
     const setsEl = el('div', { class: 'sets' });
 
@@ -36,6 +39,7 @@ export class MenuScene extends TraceBase {
     };
 
     const picker = createLevelPicker({
+      suggested: start.suggested,
       value: levelId, lock,
       hints: Object.fromEntries(LEVEL_IDS.map((id) => [id, LEVELS[id].blurb])),
       onChange: (level) => { levelId = level; draw(); },

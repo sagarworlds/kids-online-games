@@ -147,3 +147,12 @@ export function validateHabitats(data, organisms) {
 
 /** @param {readonly Habitat[]} habitats @param {string} placeId @param {string} level @returns {Habitat|undefined} */
 export const findHabitat = (habitats, placeId, level) => habitats.find((h) => h.place === placeId && h.level === level);
+
+/**
+ * The most stars a child has at a level in any habitat, for suggesting the level to start on. Stars are saved under the habitat's id.
+ * @param {Record<string, number>} bestStars A save's `bestStars`.
+ * @param {string} level
+ * @param {readonly Habitat[]} habitats
+ * @returns {number} 0 when nothing is saved at that level.
+ */
+export const starsAtLevel = (bestStars, level, habitats) => Math.max(0, ...habitats.filter((h) => h.level === level).map((h) => bestStars[h.id] ?? 0));

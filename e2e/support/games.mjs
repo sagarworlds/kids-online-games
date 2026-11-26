@@ -301,6 +301,36 @@ export const GAMES = Object.freeze([
 ]);
 
 /**
+ * What a game's save holds once a child has done Easy well, written the way the game saves it (`kidsgames:<slug>`, the `bestStars` part):
+ * the stars under the keys that game uses. The menu then has to open on Medium. Most games key stars by the level's own id; the rest key
+ * them by plant, theme, mode, habitat or floor, which is why each says so here. `null` is a game with no Easy, Medium and Hard to choose
+ * from (Robot Path goes by numbered levels). A game missing from this list fails `specs/suggested-level.e2e.mjs`.
+ * @type {Readonly<Record<string, Record<string, 1|2|3>|null>>}
+ */
+export const EASY_DONE = Object.freeze({
+  'number-ninja': { easy: 3 },
+  'pizza-fractions': { easy: 3 },
+  'shop-keeper': { easy: 3 },
+  'times-table-racing': { easy: 3 },
+  'word-builder-bubbles': { easy: 3 },
+  'hindi-english-match': { easy: 3 },
+  'sentence-train': { easy: 3 },
+  'robot-path': null,
+  'pattern-detective': { easy: 3 },
+  'lights-out': { easy: 3 },
+  'flag-capital-quest': { easy: 3 },
+  'planet-hop': { 'lineup-easy': 3 },
+  'food-chain-builder': { 'forest-easy': 3 },
+  'plant-grower': { 'sunflower-easy': 3 },
+  'simon-says': { easy: 3 },
+  'spot-the-difference': { 'mix-easy': 3 },
+  // Floors by the tables, 1 to 10 on Easy: the tower opens where the child got to, so clearing the top Easy floor is Easy done.
+  'table-tower': { 'floor-10': 2 },
+  'matra-mixer': { 'build-hi-easy': 3 },
+  'trace-trail': { 'trace-strokes': 3 },
+});
+
+/**
  * The games to check: all of them, or only those named in E2E_GAMES (comma separated slugs) for a quick run on one game.
  * @param {readonly Game[]} [games]
  * @returns {readonly Game[]}

@@ -2,17 +2,20 @@ import { FoodScene } from './FoodScene.js';
 import { el, spaced } from '../../../engine/utils/dom.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
+import { startingLevel } from '../../../engine/utils/recommendLevel.js';
 import { ICONS } from '../../../engine/ui/icons.js';
 import { LEVELS, LEVEL_IDS } from '../logic/levels.js';
 import { readLearned } from '../logic/learned.js';
-import { findHabitat } from '../logic/habitats.js';
+import { findHabitat, starsAtLevel } from '../logic/habitats.js';
 
 /** Habitat select: choose a level, then a place. Each place shows how many living things it has and your best stars. */
 export class MenuScene extends FoodScene {
   enter() {
     const { services, data } = this;
     const lock = services.settings.difficultyLock;
-    let levelId = lock ?? 'easy';
+    // Open on the level the child is ready for (a grown-up's lock still decides); the picker points it out.
+    const start = startingLevel({ lock, levels: LEVEL_IDS, starsAt: (id) => starsAtLevel(services.rewards.getSave(services.game.slug).bestStars, id, data.habitats) });
+    let levelId = start.level;
     const save = services.rewards.getSave(services.game.slug);
     const learned = readLearned(save.extra, data.organisms.map((o) => o.id));
 
@@ -34,6 +37,7 @@ export class MenuScene extends FoodScene {
       }));
     };
     const picker = createLevelPicker({
+      suggested: start.suggested,
       value: levelId, lock,
       hints: Object.fromEntries(LEVEL_IDS.map((id) => [id, LEVELS[id].blurb])),
       onChange: (level) => { levelId = level; drawPlaces(); },

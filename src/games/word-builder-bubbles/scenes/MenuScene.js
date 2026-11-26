@@ -2,6 +2,7 @@ import { BubblesScene } from './BubblesScene.js';
 import { el, clear } from '../../../engine/utils/dom.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
+import { startingLevel, starsByLevel } from '../../../engine/utils/recommendLevel.js';
 import { createButton } from '../../../engine/ui/Button.js';
 import { ICONS } from '../../../engine/ui/icons.js';
 import { LEVELS, LEVEL_IDS, WORDS_PER_ROUND, HINTS_PER_ROUND } from '../logic/levels.js';
@@ -15,11 +16,14 @@ export class MenuScene extends BubblesScene {
   enter() {
     const { services, data } = this;
     const lock = services.settings.difficultyLock;
-    let levelId = lock ?? 'easy';
+    // Open on the level the child is ready for (a grown-up's lock still decides); the picker points it out.
+    const start = startingLevel({ lock, levels: LEVEL_IDS, starsAt: starsByLevel(services.rewards.getSave(services.game.slug).bestStars) });
+    let levelId = start.level;
     this.#packId = data.packs[0].id;
 
     const hud = createHud({ homeHref: services.game.homeHref, title: services.game.title, onSettings: () => services.openSettings() });
     const picker = createLevelPicker({
+      suggested: start.suggested,
       value: levelId, lock,
       hints: Object.fromEntries(LEVEL_IDS.map((id) => [id, LEVELS[id].blurb])),
       onChange: (level) => { levelId = level; },
