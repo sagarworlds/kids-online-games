@@ -14,7 +14,9 @@ export class MenuScene extends TowerBase {
   enter() {
     const { services } = this;
     const lock = services.settings.difficultyLock;
-    let levelId = lock ?? this.#startLevel();
+    // Table Tower has always opened where the child got to (by floors cleared, not by stars), so that is the level it points out.
+    const startLevel = this.#startLevel();
+    let levelId = lock ?? startLevel;
     const hud = createHud({ homeHref: services.game.homeHref, title: services.game.title, onSettings: () => services.openSettings() });
     const revisionEl = el('div', { class: 'revision' });
     const towerEl = el('ol', { class: 'tower', attrs: { 'aria-label': 'The tower, top floor first' } });
@@ -50,6 +52,7 @@ export class MenuScene extends TowerBase {
     };
 
     const picker = createLevelPicker({
+      suggested: startLevel === LEVEL_IDS[0] ? null : startLevel,
       value: levelId, lock,
       hints: Object.fromEntries(LEVEL_IDS.map((id) => [id, LEVELS[id].blurb])),
       onChange: (level) => { levelId = level; draw(); },

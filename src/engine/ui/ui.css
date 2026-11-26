@@ -192,6 +192,9 @@ p { margin: 0 0 0.75em; }
 .segmented__item label small { font-weight: 500; font-size: 0.75rem; color: var(--ink-soft); }
 .segmented__item input:checked + label { background: var(--primary); color: #fff; }
 .segmented__item input:checked + label small { color: #e8e3ff; }
+/* The level the child is ready for: a small yellow pill under its name, dark on yellow on a chosen level too. */
+.segmented__item label .segmented__suggested { margin-top: 2px; padding: 0 8px; font-size: 0.7rem; font-weight: 800; color: var(--ink); background: var(--star); border-radius: 999px; }
+.segmented__item input:checked + label .segmented__suggested { color: var(--ink); }
 .segmented__item input:focus-visible + label { outline: 4px solid var(--ink); outline-offset: 2px; box-shadow: 0 0 0 7px #fff; }
 .segmented__item input:disabled + label { opacity: 0.5; }
 .segmented__item input:disabled { cursor: not-allowed; }

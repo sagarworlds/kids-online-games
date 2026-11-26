@@ -1,4 +1,4 @@
-import { el } from '../utils/dom.js';
+import { el, spaced } from '../utils/dom.js';
 import { LEVELS } from '../services/schemas.js';
 
 const DEFAULT_LABELS = { easy: 'Easy', medium: 'Medium', hard: 'Hard' };
@@ -16,11 +16,14 @@ let groupId = 0;
  *   value?: 'easy'|'medium'|'hard',
  *   lock?: 'easy'|'medium'|'hard'|null,
  *   hints?: Partial<Record<'easy'|'medium'|'hard', string>>,
+ *   suggested?: 'easy'|'medium'|'hard'|null,
  *   onChange?: (level: 'easy'|'medium'|'hard') => void
- * }} [options] `hints` are the small second lines under each label.
+ * }} [options] `hints` are the small second lines under each label. `suggested` is the level the child is ready for (see
+ *   `startingLevel`), pointed out with a small "Suggested" under its name; it is for the child to take or leave, so it is not shown when a
+ *   grown-up has locked the level.
  * @returns {{ el: HTMLElement, value: 'easy'|'medium'|'hard' }}
  */
-export function createLevelPicker({ value = 'easy', lock = null, hints = {}, onChange } = {}) {
+export function createLevelPicker({ value = 'easy', lock = null, hints = {}, suggested = null, onChange } = {}) {
   const name = `level-${groupId++}`;
   let current = lock ?? value;
 
@@ -35,9 +38,11 @@ export function createLevelPicker({ value = 'easy', lock = null, hints = {}, onC
         },
       },
     });
-    const label = el('label', { attrs: { for: id } },
+    // The pieces of the label are spaced apart so the name read from its text is "Medium Two items... Suggested", not run together.
+    const label = el('label', { attrs: { for: id } }, ...spaced(
       el('span', { text: DEFAULT_LABELS[level] }),
-      hints[level] ? el('small', { text: hints[level] }) : null);
+      hints[level] ? el('small', { text: hints[level] }) : null,
+      lock === null && suggested === level ? el('small', { class: 'segmented__suggested', text: 'Suggested' }) : null));
     return el('div', { class: 'segmented__item' }, input, label);
   });
 

@@ -2,6 +2,7 @@ import { QuestScene } from './QuestScene.js';
 import { el, spaced } from '../../../engine/utils/dom.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
+import { startingLevel, starsByLevel } from '../../../engine/utils/recommendLevel.js';
 import { createButton } from '../../../engine/ui/Button.js';
 import { LEVELS, LEVEL_IDS } from '../logic/levels.js';
 import { CONTINENT_IDS, WORLD_VIEW } from '../logic/continents.js';
@@ -18,12 +19,15 @@ export class WorldScene extends QuestScene {
     const progress = data.progress.load();
     const summary = summarize(progress, data.countries);
     const lock = services.settings.difficultyLock;
-    let levelId = lock ?? 'easy';
+    // Open on the level the child is ready for (a grown-up's lock still decides); the picker points it out.
+    const start = startingLevel({ lock, levels: LEVEL_IDS, starsAt: starsByLevel(services.rewards.getSave(services.game.slug).bestStars) });
+    let levelId = start.level;
 
     const hud = createHud({ homeHref: services.game.homeHref, title: services.game.title, onSettings: () => services.openSettings() });
     this.#map = this.createMap({ world: data.world, label: `World map. You have explored ${summary.world.explored} of ${summary.world.total} countries.` });
 
     const picker = createLevelPicker({
+      suggested: start.suggested,
       value: levelId, lock,
       hints: Object.fromEntries(LEVEL_IDS.map((id) => [id, LEVELS[id].blurb])),
       onChange: (level) => { levelId = level; },

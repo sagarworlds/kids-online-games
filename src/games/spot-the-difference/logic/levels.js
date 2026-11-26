@@ -29,3 +29,12 @@ export const SCENE_HEIGHT = 500;
 
 /** The key under which a theme's best stars at a level are saved. @param {string} themeId @param {string} levelId */
 export const roundKey = (themeId, levelId) => `${themeId}-${levelId}`;
+
+/**
+ * The most stars a child has at a level with any theme (the mix of everything included), for suggesting the level to start on.
+ * @param {Record<string, number>} bestStars A save's `bestStars`.
+ * @param {string} levelId
+ * @param {readonly string[]} themeIds The themes the menu offers, the mix too.
+ * @returns {number} 0 when nothing is saved at that level.
+ */
+export const starsAtLevel = (bestStars, levelId, themeIds) => Math.max(0, ...themeIds.map((themeId) => bestStars[roundKey(themeId, levelId)] ?? 0));

@@ -2,9 +2,10 @@ import { PlantScene } from './PlantScene.js';
 import { el, spaced } from '../../../engine/utils/dom.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
+import { startingLevel } from '../../../engine/utils/recommendLevel.js';
 import { ICONS } from '../../../engine/ui/icons.js';
 import { createViewSwitch } from '../../../engine/three/ViewToggle.js';
-import { LEVELS, LEVEL_IDS, roundKey } from '../logic/levels.js';
+import { LEVELS, LEVEL_IDS, roundKey, starsAtLevel } from '../logic/levels.js';
 import { plantsFor } from '../logic/plants.js';
 
 /** Seed picker: choose a level, then a seed. Seeds that belong to a harder level are shown, but wait for that level. */
@@ -12,7 +13,9 @@ export class MenuScene extends PlantScene {
   enter() {
     const { services, data } = this;
     const lock = services.settings.difficultyLock;
-    let levelId = lock ?? 'easy';
+    // Open on the level the child is ready for (a grown-up's lock still decides); the picker points it out.
+    const start = startingLevel({ lock, levels: LEVEL_IDS, starsAt: (id) => starsAtLevel(services.rewards.getSave(services.game.slug).bestStars, id, data.plants.map((plant) => plant.id)) });
+    let levelId = start.level;
     const { bestStars } = services.rewards.getSave(services.game.slug);
 
     const hud = createHud({ homeHref: services.game.homeHref, title: services.game.title, onSettings: () => services.openSettings() });
@@ -42,6 +45,7 @@ export class MenuScene extends PlantScene {
       }));
     };
     const picker = createLevelPicker({
+      suggested: start.suggested,
       value: levelId, lock,
       hints: Object.fromEntries(LEVEL_IDS.map((id) => [id, LEVELS[id].blurb])),
       onChange: (level) => { levelId = level; drawSeeds(); },

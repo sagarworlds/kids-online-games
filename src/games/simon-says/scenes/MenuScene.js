@@ -3,16 +3,19 @@ import { el, clear } from '../../../engine/utils/dom.js';
 import { createButton } from '../../../engine/ui/Button.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
+import { startingLevel } from '../../../engine/utils/recommendLevel.js';
 import { ICONS } from '../../../engine/ui/icons.js';
 import { createViewSwitch } from '../../../engine/three/ViewToggle.js';
-import { LEVELS, LEVEL_IDS, MODES } from '../logic/levels.js';
+import { LEVELS, LEVEL_IDS, MODES, starsAtLevel } from '../logic/levels.js';
 
 /** Menu: pick a level and a mode (Classic, Reverse on Hard, or Music Maker). */
 export class MenuScene extends SimonScene {
   enter() {
     const { services } = this;
     const lock = services.settings.difficultyLock;
-    let levelId = lock ?? 'easy';
+    // Open on the level the child is ready for (a grown-up's lock still decides); the picker points it out.
+    const start = startingLevel({ lock, levels: LEVEL_IDS, starsAt: (id) => starsAtLevel(services.rewards.getSave(services.game.slug).bestStars, id) });
+    let levelId = start.level;
     let mode = 'classic';
     const modesBox = el('fieldset', { class: 'segmented' });
 
@@ -31,6 +34,7 @@ export class MenuScene extends SimonScene {
 
     const hud = createHud({ homeHref: services.game.homeHref, title: services.game.title, onSettings: () => services.openSettings() });
     const picker = createLevelPicker({
+      suggested: start.suggested,
       value: levelId, lock,
       hints: Object.fromEntries(LEVEL_IDS.map((id) => [id, LEVELS[id].blurb])),
       onChange: (level) => { levelId = level; renderModes(); },

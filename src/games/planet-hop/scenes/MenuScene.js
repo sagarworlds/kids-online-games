@@ -2,9 +2,10 @@ import { HopScene } from './HopScene.js';
 import { el, spaced } from '../../../engine/utils/dom.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
+import { startingLevel } from '../../../engine/utils/recommendLevel.js';
 import { createViewSwitch } from '../../../engine/three/ViewToggle.js';
 import { ICONS } from '../../../engine/ui/icons.js';
-import { LEVELS, LEVEL_IDS, MODES, MODE_IDS, levelKey } from '../logic/levels.js';
+import { LEVELS, LEVEL_IDS, MODES, MODE_IDS, levelKey, starsAtLevel } from '../logic/levels.js';
 import { rankFor } from '../logic/scoring.js';
 
 /** Menu: your rank, a level, and the three ways to play (with the stars you have for each at this level). */
@@ -12,7 +13,9 @@ export class MenuScene extends HopScene {
   enter() {
     const { services } = this;
     const lock = services.settings.difficultyLock;
-    let levelId = lock ?? 'easy';
+    // Open on the level the child is ready for (a grown-up's lock still decides); the picker points it out.
+    const start = startingLevel({ lock, levels: LEVEL_IDS, starsAt: (id) => starsAtLevel(services.rewards.getSave(services.game.slug).bestStars, id) });
+    let levelId = start.level;
 
     const hud = createHud({ homeHref: services.game.homeHref, title: services.game.title, onSettings: () => services.openSettings() });
     const modesEl = el('div', { class: 'modes' });
@@ -32,6 +35,7 @@ export class MenuScene extends HopScene {
       }));
     };
     const picker = createLevelPicker({
+      suggested: start.suggested,
       value: levelId, lock,
       hints: Object.fromEntries(LEVEL_IDS.map((id) => [id, LEVELS[id].blurb])),
       onChange: (level) => { levelId = level; drawModes(); },

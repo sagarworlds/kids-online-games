@@ -58,3 +58,11 @@ export const MIN_STOPS_BEFORE_MYSTERY = 3;
  * @returns {string}
  */
 export const levelKey = (mode, levelId) => `${mode}-${levelId}`;
+
+/**
+ * The most stars a child has at a level in any of the three ways to play, for suggesting the level to start on.
+ * @param {Record<string, number>} bestStars A save's `bestStars`.
+ * @param {'easy'|'medium'|'hard'} levelId
+ * @returns {number} 0 when nothing is saved at that level.
+ */
+export const starsAtLevel = (bestStars, levelId) => Math.max(0, ...MODE_IDS.map((mode) => bestStars[levelKey(mode, levelId)] ?? 0));

@@ -4,6 +4,7 @@ import { createButton } from '../../../engine/ui/Button.js';
 import { createViewSwitch } from '../../../engine/three/ViewToggle.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
+import { startingLevel, starsByLevel } from '../../../engine/utils/recommendLevel.js';
 import { ICONS } from '../../../engine/ui/icons.js';
 import { LEVELS, LEVEL_IDS, OP_NAME, OP_SYMBOL } from '../logic/levels.js';
 
@@ -20,7 +21,9 @@ export class MenuScene extends NinjaScene {
   enter() {
     const { services } = this;
     const lock = services.settings.difficultyLock;
-    this.#levelId = lock ?? 'easy';
+    // Open on the level the child is ready for (a grown-up's lock still decides); the picker points it out.
+    const start = startingLevel({ lock, levels: LEVEL_IDS, starsAt: starsByLevel(services.rewards.getSave(services.game.slug).bestStars) });
+    this.#levelId = start.level;
     this.#ops = new Set(LEVELS[this.#levelId].ops);
 
     const hud = createHud({
@@ -30,6 +33,7 @@ export class MenuScene extends NinjaScene {
     });
 
     const picker = createLevelPicker({
+      suggested: start.suggested,
       value: this.#levelId,
       lock,
       hints: Object.fromEntries(LEVEL_IDS.map((id) => [id, LEVELS[id].blurb])),
