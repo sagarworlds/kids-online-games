@@ -27,6 +27,13 @@ export function recommendLevel(levels, starsAt, { ready = READY_STARS } = {}) {
 }
 
 /**
+ * `starsAt` for a game that saves its stars under the level's own id (`bestStars.easy`): the great majority.
+ * @param {Record<string, number>} bestStars A game's `SaveData.bestStars`.
+ * @returns {(level: string) => number}
+ */
+export const starsByLevel = (bestStars) => (level) => bestStars[level] ?? 0;
+
+/**
  * Which level a menu opens on, and which one (if any) it points out as suggested.
  *
  * A grown-up's lock decides everything. Otherwise the menu opens on `recommendLevel`. Only a level other than the first is pointed out: for

@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { READY_STARS, recommendLevel, startingLevel } from '../../src/engine/utils/recommendLevel.js';
+import { READY_STARS, recommendLevel, startingLevel, starsByLevel } from '../../src/engine/utils/recommendLevel.js';
 
 const LEVELS = ['easy', 'medium', 'hard'];
 /** A child's best stars as a lookup: levels not named have none. */
@@ -55,4 +55,10 @@ test('a menu opens on the recommended level and points it out only when it is no
 test('a grown-up\'s lock decides: that level, and nothing suggested', () => {
   assert.deepEqual(startingLevel({ lock: 'easy', levels: LEVELS, starsAt: stars({ easy: 3, medium: 3 }) }), { level: 'easy', suggested: null });
   assert.deepEqual(startingLevel({ lock: 'hard', levels: LEVELS, starsAt: stars({}) }), { level: 'hard', suggested: null });
+});
+
+test('starsByLevel reads a save that is keyed by the level id, and says none for a level with nothing', () => {
+  const starsAt = starsByLevel({ easy: 3, medium: 1 });
+  assert.deepEqual(LEVELS.map(starsAt), [3, 1, 0]);
+  assert.equal(recommendLevel(LEVELS, starsAt), 'medium', 'Easy done well, Medium at one star');
 });
