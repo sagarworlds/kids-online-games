@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { GameError } from '../../src/engine/utils/errors.js';
-import { LEAST_SCALE, fitScale, unbreakablePieces } from '../../src/games/food-chain-builder/logic/fit.js';
+import { LEAST_SCALE, fitScale, unbreakablePieces } from '../../src/engine/utils/fitText.js';
 
 const throwsCode = (fn, code) => assert.throws(fn, (e) => e instanceof GameError && e.code === code, `expected ${code}`);
 
