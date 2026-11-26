@@ -7,7 +7,7 @@ import { getLevel, CUSTOMERS_PER_ROUND, MAX_TRAY_PIECES, MAX_CHANGE_RETRIES } fr
 import { formatMoney, findDenomination } from '../logic/currency.js';
 import { minBreakdown, sum } from '../logic/change.js';
 import { startCustomer, submitTotal, submitChange, submitNoChange, statusOf } from '../logic/customer.js';
-import { changeMessage, totalMessage } from '../logic/messages.js';
+import { changeMessage, totalMessage, totalRightMessage } from '../logic/messages.js';
 import { saleScore } from '../logic/scoring.js';
 import { createCounter } from '../ui/Counter.js';
 import { createCashDrawer } from '../ui/CashDrawer.js';
@@ -16,7 +16,7 @@ import { createPiece } from '../ui/MoneyPiece.js';
 
 const MOODS = { waiting: '🙂', thinking: '🤔', happy: '😄', unhappy: '😟' };
 
-/** One customer: add up the bill (Medium and Hard), then give the change by dragging money into the tray. */
+/** One customer: add up the bill (Medium and Hard, and every level on Sale day), then give the change by dragging money into the tray. */
 export class ShopScene extends ShopKeeperScene {
   #customer = null;
   #tray = [];
@@ -39,7 +39,7 @@ export class ShopScene extends ShopKeeperScene {
     const { services } = this;
     const { currency } = this.data;
     this.round = round;
-    this.level = getLevel(round.levelId);
+    this.level = getLevel(round.levelId, { saleDay: round.saleDay === true });
     const sale = round.sales[round.index];
     if (!sale) throw new GameError('NO_SALE', `Round has no customer number ${round.index}`, { index: round.index });
     this.#customer = startCustomer(sale, this.level);
@@ -106,7 +106,7 @@ export class ShopScene extends ShopKeeperScene {
     const handlers = {
       invalid: () => { audio.play('boop'); this.#counter.setTotalMessage('Type the total as a number, like 85.'); },
       wrong: () => { audio.play('boop'); this.#counter.setTotalMessage(totalMessage('wrong', sale, result.wrongCount, currency)); },
-      correct: () => { audio.play('ding'); this.#startChange('Yes! That is the total. Now give the change.'); },
+      correct: () => { audio.play('ding'); this.#startChange(totalRightMessage(sale)); },
       revealed: () => { audio.play('boop'); this.#startChange(totalMessage('revealed', sale, 3, currency)); },
     };
     const handle = handlers[result.kind];

@@ -6,6 +6,8 @@
 .menu__title, .result h1 { margin: 4px 0 0; font-size: 2.2rem; }
 .menu__intro { max-width: 32rem; margin: 0; font-size: 1.1rem; }
 .menu__note { margin: 0; color: var(--ink-soft); font-weight: 700; }
+.menu__sale { justify-content: center; }
+.result__mode { margin: 0; font-weight: 700; color: var(--ink-soft); }
 .menu__best { width: 100%; }
 .menu__best h2 { font-size: 1.1rem; margin-bottom: 8px; color: var(--ink-soft); }
 .menu__best ul { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin: 0; padding: 0; list-style: none; }
@@ -31,11 +33,14 @@
 
 .counter { display: flex; flex-direction: column; gap: 12px; }
 .counter__items { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
-.item { display: flex; align-items: center; gap: 12px; min-height: var(--tap); padding: 6px 12px; background: #fff; border: 3px solid var(--line); border-radius: var(--radius); }
+.item { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; min-height: var(--tap); padding: 6px 12px; background: #fff; border: 3px solid var(--line); border-radius: var(--radius); }
 .item__icon { font-size: 1.8rem; line-height: 1; }
-.item__name { flex: 1; font-weight: 700; }
+/* The name takes what is left of the row, and the sticker of Sale day moves to a line of its own when the row is too narrow for both. */
+.item__name { flex: 1 1 5rem; min-width: 0; font-weight: 700; }
 /* The price tag looks like a luggage label: a notched edge, so it reads as a price and not a button. */
 .item__price { padding: 2px 12px; font-weight: 800; background: #ffe9a8; border: 3px solid var(--ink); border-radius: 6px 14px 14px 6px; }
+/* Sale day: the percent off sits beside the price tag, like a sticker. It is words as well as colour, so it does not depend on the red. */
+.item__off { padding: 2px 10px; font-weight: 800; color: #fff; background: #c0262d; border-radius: 999px; white-space: nowrap; }
 
 .till { padding: 12px 14px; background: #1f2544; color: #fff; border-radius: var(--radius); }
 .till__total { margin: 0; font-size: 1.5rem; }

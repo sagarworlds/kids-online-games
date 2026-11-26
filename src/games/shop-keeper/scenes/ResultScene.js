@@ -8,6 +8,7 @@ import { ICONS } from '../../../engine/ui/icons.js';
 import { formatMoney } from '../logic/currency.js';
 import { roundStars } from '../logic/scoring.js';
 import { generateRound } from '../logic/saleGenerator.js';
+import { starsKey } from '../logic/sale.js';
 import { CUSTOMERS_PER_ROUND } from '../logic/levels.js';
 
 const STATUS_NOTE = { first: 'first try', retry: 'after a retry', failed: 'not right' };
@@ -23,7 +24,9 @@ export class ResultScene extends ShopKeeperScene {
     const smart = round.results.filter((r) => r.smart).length;
     const score = round.results.reduce((total, r) => total + r.score, 0);
     const stars = roundStars(round.results.map((r) => r.status), smart);
-    const { improvedStars, improvedScore } = services.rewards.recordRound(services.game.slug, round.levelId, { stars, score });
+    const saleDay = round.saleDay === true;
+    // Sale day's stars are kept apart from the others, so a good round of one does not stand in for the other.
+    const { improvedStars, improvedScore } = services.rewards.recordRound(services.game.slug, starsKey(round.levelId, saleDay), { stars, score });
     const name = services.profile.getProfile().name;
     const praise = praiseFor(stars, services.rng);
 
@@ -42,6 +45,7 @@ export class ResultScene extends ShopKeeperScene {
 
     this.ui.append(hud.el, el('div', { class: 'result' },
       el('h1', { text: stars >= 2 ? `Great job, ${name}!` : `Nice try, ${name}!` }),
+      saleDay ? el('p', { class: 'result__mode', text: 'Sale day: you worked out the bill after every discount.' }) : null,
       el('div', { class: 'result__stars', attrs: { role: 'img', 'aria-label': `${stars} out of 3 stars` }, html: ICONS.star.repeat(stars) + ICONS.starEmpty.repeat(3 - stars) }),
       el('p', { class: 'result__praise', text: improvedStars || improvedScore ? `${praise} New best!` : praise }),
       el('ul', { class: 'result__counts' },
@@ -51,7 +55,7 @@ export class ResultScene extends ShopKeeperScene {
       el('table', { class: 'results' }, el('tbody', {}, ...rows)),
       el('div', { class: 'result__actions' },
         createButton({ label: 'Play again', icon: '↻', variant: 'primary', big: true, onClick: () => this.routes.play({
-          levelId: round.levelId, sales: generateRound(round.levelId, CUSTOMERS_PER_ROUND, services.rng, data), index: 0, results: [] }) }),
+          levelId: round.levelId, saleDay, sales: generateRound(round.levelId, CUSTOMERS_PER_ROUND, services.rng, data, { saleDay }), index: 0, results: [] }) }),
         createButton({ label: 'Change level', onClick: () => this.routes.menu() }),
         createButton({ label: 'Home', icon: '🏠', href: services.game.homeHref }))));
     if (stars === 3) launchConfetti({ rng: services.rng });

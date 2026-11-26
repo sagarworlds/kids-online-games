@@ -24,6 +24,31 @@ coins and notes.
 | Medium | 2 | ₹5–₹150 each | One note, one of the 3 closest above the total | You add it up; tray total shows after "Give change" |
 | Hard | 3 | ₹10–₹450 each (bill at most ₹1000) | 1 or 2 notes (₹500 + ₹100 …), about 1 customer in 5 pays exactly | You add it up |
 
+## Sale day
+
+Tick **Sale day** on the menu and every price tag carries a percent off: the tag shows the price before the discount and a
+"25% off" sticker. The child takes the discount off each price, adds up the **bill** (the prices after their discounts; the
+till never shows it, even on Easy) and types it, then gives the change from that bill. A wrong bill gets a hint about the
+discount ("Take the discount off each price tag first, then add up what is left."), and the second miss works the first tag
+out ("Start with the first one: 25% off ₹40 takes off ₹10, so it costs ₹30."); the third shows the bill, as on other days.
+
+| Level | Items | Discounts | Marked prices (before the discount) |
+| --- | --- | --- | --- |
+| Easy | 1 | half price (50%) | ₹10–₹100 |
+| Medium | 2 | 10%, 25% or 50% | ₹20–₹200 |
+| Hard | 3 | 10%, 20%, 25% or 50% | ₹40–₹400 |
+
+- The discounts are a tenth, a fifth, a quarter and a half (`PERCENTS` in `logic/sale.js`). Money is whole rupees, so a price only
+  gets a discount that comes out whole: a tenth needs a marked price that is a multiple of 10, a fifth of 5, a quarter of 4 and a
+  half of 2 (`priceStep`). The generator picks the percent first, then a marked price that suits it, never rounds, and `amountOff`
+  throws `BAD_DISCOUNT` for anything else.
+- It is the *marked* price that has to be one the item can cost (every price from ₹1 to ₹450 has items), and the customer is
+  charged the price after the discount, so the bill, the payment and the change all work as on other days.
+- No customer pays the exact bill on Sale day (a bill cannot be built backwards from a payment when every price is a discounted
+  one), so there is no "No change needed" button there.
+- The stars of Sale day are kept apart: `sale-easy`, `sale-medium` and `sale-hard`, beside the plain `easy`, `medium` and `hard`.
+  The menu shows and suggests the ones that match the choice.
+
 ## Scoring
 
 - Per customer: **10** points for right with no mistakes, **5** for right after a mistake, **0** if the answer had to
@@ -80,7 +105,8 @@ ui/                               Counter (items, price tags, till), CashDrawer,
 logic/                            Pure rules, no DOM (all unit-tested):
   change.js                       sum, minPieces, minBreakdown, checkChange
   customer.js                     one customer's sale: total step, change step, retries
-  saleGenerator.js                always-completable sales, exact-payment sales built backwards
+  saleGenerator.js                always-completable sales, exact-payment sales built backwards, Sale day sales
+  sale.js                         Sale day: the discounts, whole-rupee prices, the hint sentence, the stars key
   levels.js, scoring.js, messages.js, currency.js, items.js
 data/                             currency.inr.json, items.json (42 items with price ranges)
 ```
