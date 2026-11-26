@@ -184,7 +184,8 @@ All 16 games are reached from one home page (`/index.html`). It greets the child
 - **Subject filter chips:** All, Math, Language, Logic, Science, Memory.
 - **Continue card:** once the child has played, a full-width link under the chips, headed "Continue where you left off", shows the icon and name of the game played last and opens it. It opens the game's start page, not a level (no game keeps a position inside itself). It is not there for a visitor who has not played, after a reset, or for a record the page does not recognise; it is not one of the game cards below it, and the subject filter does not change it.
 - **Game grid:** 16 large cards (min 160 × 160 px), grouped by subject. Each card shows the icon, game name, learning tag (e.g. "Fractions"), stars earned so far, and a "New" badge if never played. Tapping a card opens `src/games/<slug>/index.html`.
-- **Footer:** "Grown-ups" link to the parent area (reset progress, settings lock).
+- **Footer:** "Grown-ups" link to the parent area (the settings, a **Progress** summary, reset progress).
+- **Progress (in the grown-ups' settings):** a grown-up sees what the child has done, read from what the games already save. One sentence gives the totals ("Brave Panda has earned 57 stars and 5 badges, playing 12 of 19 games."); under "Progress by game", folded away until opened, the same numbers for each subject and each game (stars, levels with stars, badges), "Not played yet" for a game with nothing saved. A child who has played nothing gets the sentence only. It is built when the dialog opens, and a reset with the dialog open brings it up to date. The game played last (the one the continue card offers) is marked "Played last". Nothing new is recorded and nothing leaves the device.
 - Every game screen has a Home button that returns here, and results screens use the player name ("Great job, Brave Panda!").
 
 **Game cards by subject**
@@ -213,6 +214,7 @@ All 16 games are reached from one home page (`/index.html`). It greets the child
 - `src/engine/services/LastPlayedService.js` — `record(slug)` and `current()` for the one record of the game played last. `createApp` records it the first time, in a game page, that one screen replaces another (the child went somewhere in the game); a game that is only opened and left records nothing.
 - `src/hub/ProfileService.js` — `getProfile()`, `rename(name)` (validates, throws `GameError('INVALID_NAME')`), `shuffleName()`; depends on the `StorageService` interface.
 - `src/hub/HubPage.js` — renders header, filters and cards; listens to the `storage` event so a rename in another tab updates the page.
+- `src/hub/progressSummary.js` — `summarizeProgress({ games, subjects, saveOf, lastSlug })`, the pure part of the grown-ups' progress summary: totals per game, per subject and overall from the games' saves. A game counts as played by the same rule as the "New" badge; a game in a subject the home page does not list throws `GameError('UNKNOWN_SUBJECT')`. `progressText.js` has its words and `ProgressSection.js` its DOM. The section's CSS classes are `report*`: `.progress` belongs to the thin progress bar in `ui.css`.
 
 **localStorage keys**
 
@@ -241,6 +243,7 @@ All 16 games are reached from one home page (`/index.html`). It greets the child
 - [ ] After playing, the home page offers "Continue where you left off" with the game played last; a visitor who has not played, a game only opened and a reset show no card (unit- and browser-tested)
 - [ ] Every game has a Home button and uses the player name on its results screen
 - [ ] Works when `localStorage` is unavailable (in-memory fallback, no crash)
+- [ ] The grown-ups' Progress section shows the stars and badges the games saved, in total, per subject and per game (the total agrees with the one on the home page), says so plainly when nothing has been played, and is brought up to date by a reset with the dialog open (unit- and browser-tested)
 - [ ] Reset clears only `kidsgames:*` keys
 
 ## 3D versions (Three.js)
