@@ -6,6 +6,7 @@ import { AudioService } from '../engine/services/AudioService.js';
 import { StorageService } from '../engine/services/StorageService.js';
 import { SettingsService } from '../engine/services/SettingsService.js';
 import { RewardService } from '../engine/services/RewardService.js';
+import { LastPlayedService } from '../engine/services/LastPlayedService.js';
 import { SpeechService } from '../engine/services/SpeechService.js';
 import { ProfileService } from '../hub/ProfileService.js';
 import { renderErrorScreen } from '../engine/ui/ErrorScreen.js';
@@ -39,6 +40,7 @@ export function createApp({ slug, title, root, canvas = false, homeHref = '../..
   const storage = new StorageService();
   const settings = new SettingsService({ storage });
   const rewards = new RewardService({ storage });
+  const lastPlayed = new LastPlayedService({ storage });
   const profile = new ProfileService({ storage, rng });
   const audio = new AudioService({ settings });
   const speech = new SpeechService({ settings });
@@ -51,8 +53,18 @@ export function createApp({ slug, title, root, canvas = false, homeHref = '../..
   }
 
   const input = new InputService({ target: root });
-  // When one screen replaces another the pressed control is gone and the focus is lost: put it on the new screen's heading.
-  const scenes = new SceneManager({ uiRoot: root, onScreenChange: focusScreenHeading });
+  // When one screen replaces another the child has gone somewhere in the game (from the menu into a round, say), and:
+  // - the pressed control is gone and the focus is lost, so it is put on the new screen's heading;
+  // - this is the game being played, so the home page can offer to carry on with it. Noting it on every change, not only the first, keeps the
+  //   record right when the browser brings back a game page without starting it again; it writes only when the game differs. A game that is
+  //   only opened and left changes no screen, so it does not take the place of the game that was really being played.
+  const scenes = new SceneManager({
+    uiRoot: root,
+    onScreenChange: (screen) => {
+      focusScreenHeading(screen);
+      lastPlayed.record(slug);
+    },
+  });
   const loop = new GameLoop();
 
   const game = new Game({

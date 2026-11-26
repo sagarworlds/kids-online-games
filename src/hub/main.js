@@ -1,6 +1,7 @@
 import { StorageService } from '../engine/services/StorageService.js';
 import { SettingsService } from '../engine/services/SettingsService.js';
 import { RewardService } from '../engine/services/RewardService.js';
+import { LastPlayedService } from '../engine/services/LastPlayedService.js';
 import { createRng, randomSeed } from '../engine/utils/random.js';
 import { loadJson } from '../engine/utils/data.js';
 import { invalidData, logError } from '../engine/utils/errors.js';
@@ -21,6 +22,7 @@ async function boot() {
     const storage = new StorageService();
     const settings = new SettingsService({ storage });
     const rewards = new RewardService({ storage });
+    const lastPlayed = new LastPlayedService({ storage });
 
     const [names, blocklist] = await Promise.all([
       loadJson(new URL('./data/names.json', import.meta.url), 'names.json', validateNameLists),
@@ -33,7 +35,7 @@ async function boot() {
     ]);
 
     const profile = new ProfileService({ storage, rng, names, blocklist });
-    new HubPage({ root, games: GAMES, profile, rewards, storage, settings, rng }).mount();
+    new HubPage({ root, games: GAMES, profile, rewards, lastPlayed, storage, settings, rng }).mount();
 
     registerServiceWorker();
 
