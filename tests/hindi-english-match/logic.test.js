@@ -14,12 +14,18 @@ const { topics, pairs } = validatePairs(JSON.parse(readFileSync(here('data/pairs
 
 // ---- the shipped vocabulary ------------------------------------------------
 
-test('pairs.json has the six topics, each with at least 12 valid pairs', () => {
-  assert.deepEqual(topics, ['Fruits', 'Animals', 'Colours', 'Body', 'Family', 'Numbers']);
+test('pairs.json has the ten topics, each with at least 12 valid pairs', () => {
+  assert.deepEqual(topics, ['Fruits', 'Animals', 'Colours', 'Body', 'Family', 'Numbers', 'Vegetables', 'Nature', 'Food', 'Home']);
   for (const topic of topics) assert.ok(pairsForTopic(pairs, topic, MIXED).length >= MIN_PAIRS_PER_TOPIC, topic);
   assert.equal(pairsForTopic(pairs, MIXED, MIXED).length, pairs.length);
   assert.equal(new Set(pairs.map((p) => p.pairId)).size, pairs.length, 'pairIds are unique');
   assert.ok(pairs.every((p) => /[ऀ-ॿ]/.test(p.hi) && p.en.trim()), 'every pair has Devanagari and an English meaning');
+});
+
+test('every topic has pictures for at least six pairs, so Easy can show a picture on every card of a round of one topic', () => {
+  for (const topic of topics) {
+    assert.ok(pairsForTopic(pairs, topic, MIXED).filter((p) => p.image).length >= 6, `${topic} has fewer than six pictured pairs`);
+  }
 });
 
 test('the look-alike groups from the spec exist (आम / आँख) and every group has two or more members', () => {

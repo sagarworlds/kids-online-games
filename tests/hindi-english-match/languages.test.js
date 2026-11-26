@@ -83,16 +83,16 @@ test('every pair has a Marathi word except the two maternal grandparents, and no
     assert.equal(new Set(words).size, words.length, `${language}: every word is its own`);
   }
   assert.ok(pairs.every((p) => wordIn(p, 'mr') === null || /[ऀ-ॿ]/.test(p.mr)));
-  assert.equal(pairs.filter((p) => p.mr).length, 89);
+  assert.equal(pairs.filter((p) => p.mr).length, 145);
 });
 
 test('every topic has at least twelve pairs in Marathi, as in Hindi, so any topic can fill a round', () => {
   for (const topic of topics) {
     for (const language of LANGUAGE_IDS) assert.ok(pairsForTopic(pairs, topic, MIXED, language).length >= MIN_PAIRS_PER_TOPIC, `${topic} in ${language}`);
   }
-  assert.equal(pairsForTopic(pairs, MIXED, MIXED, 'hi').length, 91);
-  assert.equal(pairsForTopic(pairs, MIXED, MIXED, 'mr').length, 89);
-  assert.equal(pairsForTopic(pairs, MIXED, MIXED).length, 91, 'Hindi is the default language');
+  assert.equal(pairsForTopic(pairs, MIXED, MIXED, 'hi').length, 147);
+  assert.equal(pairsForTopic(pairs, MIXED, MIXED, 'mr').length, 145);
+  assert.equal(pairsForTopic(pairs, MIXED, MIXED).length, 147, 'Hindi is the default language');
   assert.ok(pairsForTopic(pairs, 'Family', MIXED, 'mr').every((p) => !WITHOUT_MARATHI.includes(p.pairId)));
 });
 

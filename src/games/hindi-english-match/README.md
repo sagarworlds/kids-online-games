@@ -18,7 +18,7 @@ English meaning (सफरचंद ↔ Apple), so children build bilingual voca
 | Medium | 8 pairs (4 × 4) | No pictures, plain cards |
 | Hard | 10 pairs (5 × 4) | Prefers look-alike words: in Hindi आम / आँख, दादा / दादी, हाथ / हाथी; in Marathi हात / हत्ती, आजोबा / आजी, काका / काकू |
 
-Topics: Fruits, Animals, Colours, Body, Family, Numbers (13 to 20 pairs each, 91 in all; 89 in Marathi, see below).
+Topics: Fruits, Animals, Colours, Body, Family, Numbers, Vegetables, Nature, Food, Home (12 to 20 pairs each, 147 in all; 145 in Marathi, see below).
 
 ## Behaviour worth knowing
 
@@ -55,16 +55,20 @@ the files are genuine WOFF2.
 
 The vocabulary in `data/pairs.json` was written by an AI model. **A Hindi speaker should check every spelling and
 meaning**, especially the family words (the English side uses plain descriptions such as "Maternal grandfather" for नाना),
-the colour names (स्लेटी, सुनहरा) and the emoji pictures. **A Marathi speaker should check the 89 Marathi words**, which
+the colour names (स्लेटी, सुनहरा) and the emoji pictures. **A Marathi speaker should check the 145 Marathi words**, which
 are the newest: the colour names (केशरी for orange, तपकिरी, राखाडी, सोनेरी), the fruits (नासपती, पीच, खरबूज), शेळी for goat and
-वडील for father, and the two look-alike groups. The data is validated on load (Devanagari present, unique ids, no word twice in a
+वडील for father, and the look-alike groups. The four topics added last (**Vegetables, Nature, Food, Home**, 56 pairs) need a check
+in both languages: for Hindi the nukta spellings (प्याज़, मेज़, दरवाज़ा, झाड़ू, पहाड़, पेड़, गुड़, घड़ी, खिड़की), चीनी for sugar and
+दीया for lamp; for Marathi the words that are English or Hindi in everyday talk (टोमॅटो, फ्लॉवर, टेबल, पलंग), कांदा, वांगे,
+वाटाणे, ढग, डोंगर, झाड (a tree) against झाडू (a broom), डाळ and पोळी. The pictures are emoji from Unicode 11 or older, so an older
+phone can draw them, which is why some pairs have none (a topic needs at least six with one, so Easy can fill a round). The data is validated on load (Devanagari present, unique ids, no word twice in a
 language, at least 12 pairs per topic in each language), but nothing can check a translation automatically.
 
 ## File map
 
 ```
 index.html, main.js, style.css   Page, composition root (loads and validates pairs.json, builds `routes`), styles + @font-face
-data/pairs.json                  Topics and 91 word pairs: `hi`, `mr` (89 of them) and `en`, + `similar` / `similarMr` tags for look-alike words
+data/pairs.json                  Ten topics and 147 word pairs: `hi`, `mr` (145 of them) and `en`, + `similar` / `similarMr` tags for look-alike words
 assets/fonts/                    Noto Sans Devanagari 400 and 700 (WOFF2) + licence
 scenes/                          MenuScene, BoardScene, ResultScene (+ HindiScene base)
 ui/CardGrid.js                   The cards: CSS 3D flip, arrow-key navigation, a face-up card is tapped to hear it, words shrunk to fit
