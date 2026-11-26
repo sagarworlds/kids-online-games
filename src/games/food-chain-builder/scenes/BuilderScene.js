@@ -15,6 +15,7 @@ import { createOrganismCard } from '../ui/OrganismCard.js';
 import { createInfoPanel } from '../ui/InfoPanel.js';
 import { createArrowLayer } from '../ui/ArrowLayer.js';
 import { attachLinkGesture } from '../ui/LinkGesture.js';
+import { fitCardNames } from '../ui/fitNames.js';
 
 /** A board at least this wide (in pixels) lays the levels out left to right; a narrower one (a phone) bottom to top. */
 const HORIZONTAL_FROM = 620;
@@ -164,6 +165,8 @@ export class BuilderScene extends FoodScene {
         this.#wraps.get(id).style.top = `${point.y}%`;
       }
     }
+    // The cards change size with the board's shape, so how much of each name fits changes with it. Done before the arrows, which are drawn to the cards.
+    fitCardNames(this.#board);
     this.#redraw();
   }
 
