@@ -41,13 +41,14 @@ right order to spell the word.
 
 ## Word data (`data/words.json`)
 
-Five packs of 34 words (170 in all), 12 easy, 12 medium and 10 hard per pack. The file is checked when the game loads:
+Seven packs and 244 words: Animals, Food, Home, School and Nature have 34 each (12 easy, 12 medium and 10 hard), Sports has 38 and
+Transport 36. The file is checked when the game loads:
 lowercase letters only, 3–9 long, no word twice anywhere, a clue and a picture for each, at least 25 words per pack and
 at least 10 per level in each pack (so every pack and level can fill a round). A level comes from the word's length, so
 it is stored nowhere else.
 
 The pictures are emoji, so there are no image files to download or license. Only older, widely supported emoji are
-used. **Needs a human check before release:** that each emoji is a good picture for its word on the devices the
+used (the one exception is the auto-rickshaw 🛺 of 2019, for "rickshaw", which has no older picture). **Needs a human check before release:** that each emoji is a good picture for its word on the devices the
 children use (for example the picture for "torch" is a flashlight, and "garden" is a house with a garden), and that the
 clues read well for 8 to 10 year olds.
 
