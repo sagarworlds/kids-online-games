@@ -39,8 +39,8 @@ Topics: Fruits, Animals, Colours, Body, Family, Numbers (13 to 20 pairs each, 91
   and the ✔ and 🔊 are drawn by the stylesheet (`content: attr(data-text)`), so the button's name holds all the text it shows (WCAG 2.5.3).
 - A word is shrunk to fit its card, by the engine's `fitTexts` (measured in the browser, as the card draws it: its font, its size at that
   screen and its language, because the same Devanagari word is wider in Marathi than in Hindi), down to 45% of the size the stylesheet gives
-  it (`LEAST_WORD_SCALE`, so 10px for English and 13px for Devanagari on a phone). A phrase of two lines beside a picture is shrunk until the
-  card is tall enough. A word that would need less than that is let break at a hyphen, or in the middle as the last thing.
+  it (`LEAST_WORD_SCALE`; on the narrowest phone card the longest English word, "Pomegranate", is 10.5px). A phrase of two lines beside a
+  picture is shrunk until the card is tall enough. A word that would need less than that is let break at a hyphen, or in the middle as the last thing.
 - Every word of Hindi or Marathi on a card, the menu and the results carries its language (`lang="hi"` or `lang="mr"`), so a screen reader says it in the right voice.
 - Colour is never the only signal: a "हिं" / "मरा" / "EN" tag shows the language, and matched cards show a ✔.
 - With `prefers-reduced-motion` the flip and the shake are switched off.

@@ -64,7 +64,7 @@ export class BoardScene extends HindiScene {
 
   exit() {
     this.#offVoices();
-    this.#grid.destroy();
+    this.#grid?.destroy();
     this.services.speech.cancel();
   }
 
