@@ -686,6 +686,7 @@ A memory card-flip game where each pair is a Hindi word and its English meaning 
 - Double-tapping the same card does not count as two flips.
 - Rapid tapping during the 1 s flip-back is ignored.
 - If `speechSynthesis` has no Hindi voice, hide the speaker icon for Hindi cards only.
+- A card is never narrower than 72px (and so is at least 48px each way to tap). A screen that cannot hold the level's columns gets a grid with fewer columns and more rows instead: Hard on a phone is four columns of five rows, so no card is ever off the screen or needs the page slid sideways.
 
 **Acceptance criteria**
 
@@ -694,6 +695,7 @@ A memory card-flip game where each pair is a Hindi word and its English meaning 
 - [ ] Devanagari renders correctly offline
 - [ ] Keyboard: arrow keys move focus on the grid, Enter flips
 - [ ] Results show every pair for review
+- [ ] Every card of every level is on the screen, at least 48px each way and clear of the others, on a desktop, a phone, a small phone and the smallest phone (browser check)
 
 **Stretch ideas:** English ↔ picture mode for younger siblings; add Marathi/Tamil packs via JSON only.
 
