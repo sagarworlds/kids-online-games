@@ -24,6 +24,7 @@ E2E_GAMES=lights-out npm test          # only one game (comma separated slugs)
 E2E_SKIP_BUILD=1 npm test              # reuse the dist/ folder that is already built
 E2E_RETRIES=1 npm test                 # run a failed check once more with fresh state (CI does this)
 E2E_CHROMIUM=/path/to/chrome npm test  # a browser Playwright does not know about
+E2E_CHROMIUM_ARGS=--font-render-hinting=full npm test  # draw text as the CI machine does (whole-pixel glyph widths); use it for any check of text widths
 ```
 
 ## What they check
