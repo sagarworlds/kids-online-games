@@ -613,7 +613,7 @@ Letters float in bubbles around an underwater scene, and the child pops them in 
 
 **Modules**
 
-- `data/words.json` — packs: Animals, Food, Home, School, Nature (at least 25 words each).
+- `data/words.json` — packs: Animals, Food, Home, School, Nature, Sports, Transport (at least 25 words each).
 - `logic/bubbleFactory.js` — `createBubbles(word, decoyCount, bounds, rng)`; bubbles never spawn overlapping.
 - `logic/physics.js` — `step(bubbles, dt, bounds)`, `circleCircle` collision for Hard.
 - `logic/spellingState.js` — tracks filled slots, mistakes, `tryLetter(letter)` returns `'correct'|'wrong'|'complete'`.

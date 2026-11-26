@@ -20,8 +20,8 @@ const inside = (b, { width, height }) => b.x - b.r >= -1e-9 && b.x + b.r <= widt
 
 // ---- word data -----------------------------------------------------------------------
 
-test('there are five packs of at least 25 words, each with a full round at every level', () => {
-  assert.deepEqual(data.packs.map((p) => p.id), ['animals', 'food', 'home', 'school', 'nature']);
+test('there are seven packs of at least 25 words, each with a full round at every level', () => {
+  assert.deepEqual(data.packs.map((p) => p.id), ['animals', 'food', 'home', 'school', 'nature', 'sports', 'transport']);
   for (const pack of data.packs) {
     assert.ok(pack.words.length >= 25, `${pack.id} has ${pack.words.length} words`);
     for (const level of LEVEL_IDS) {

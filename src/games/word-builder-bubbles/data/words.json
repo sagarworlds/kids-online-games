@@ -884,6 +884,390 @@
      "clue": "A huge spinning storm over the sea."
     }
    ]
+  },
+  {
+   "id": "sports",
+   "name": "Sports",
+   "icon": "🏅",
+   "words": [
+    {
+     "word": "goal",
+     "emoji": "🥅",
+     "clue": "You score one when the ball goes into the net."
+    },
+    {
+     "word": "race",
+     "emoji": "🏁",
+     "clue": "The fastest runner wins it."
+    },
+    {
+     "word": "swim",
+     "emoji": "🏊",
+     "clue": "You move through water using your arms and legs."
+    },
+    {
+     "word": "golf",
+     "emoji": "⛳",
+     "clue": "A game where you hit a small ball into a hole."
+    },
+    {
+     "word": "run",
+     "emoji": "🏃",
+     "clue": "You do it with your legs, faster than walking."
+    },
+    {
+     "word": "gym",
+     "emoji": "🏋️",
+     "clue": "A place with weights and machines where people exercise."
+    },
+    {
+     "word": "yoga",
+     "emoji": "🧘",
+     "clue": "Slow stretching and breathing to keep your body calm."
+    },
+    {
+     "word": "bow",
+     "emoji": "🏹",
+     "clue": "You pull its string to shoot an arrow."
+    },
+    {
+     "word": "dart",
+     "emoji": "🎯",
+     "clue": "You throw it at a round board with a bullseye."
+    },
+    {
+     "word": "team",
+     "emoji": "👥",
+     "clue": "A group of players on the same side."
+    },
+    {
+     "word": "ski",
+     "emoji": "🎿",
+     "clue": "You slide down a snowy hill on two long boards."
+    },
+    {
+     "word": "win",
+     "emoji": "🏆",
+     "clue": "What you do when you come first."
+    },
+    {
+     "word": "hockey",
+     "emoji": "🏑",
+     "clue": "Players hit a small ball with a curved stick."
+    },
+    {
+     "word": "tennis",
+     "emoji": "🎾",
+     "clue": "You hit a yellow ball over a net with a racket."
+    },
+    {
+     "word": "rugby",
+     "emoji": "🏉",
+     "clue": "Players carry an oval ball and run with it."
+    },
+    {
+     "word": "skate",
+     "emoji": "⛸️",
+     "clue": "You glide on ice with blades on your shoes."
+    },
+    {
+     "word": "karate",
+     "emoji": "🥋",
+     "clue": "A sport from Japan with kicks, chops and a white uniform."
+    },
+    {
+     "word": "sprint",
+     "emoji": "🏃",
+     "clue": "A very fast run over a short distance."
+    },
+    {
+     "word": "racket",
+     "emoji": "🏸",
+     "clue": "You hit a shuttlecock or a ball with it."
+    },
+    {
+     "word": "helmet",
+     "emoji": "⛑️",
+     "clue": "You wear it on your head to stay safe while riding or playing."
+    },
+    {
+     "word": "chess",
+     "emoji": "♟️",
+     "clue": "A board game of kings, queens and pawns."
+    },
+    {
+     "word": "rowing",
+     "emoji": "🚣",
+     "clue": "Sitting in a boat and pulling long oars."
+    },
+    {
+     "word": "boxing",
+     "emoji": "🥊",
+     "clue": "Two fighters wear big gloves and try to land punches."
+    },
+    {
+     "word": "swimming",
+     "emoji": "🏊",
+     "clue": "Moving through water using your arms and legs."
+    },
+    {
+     "word": "baseball",
+     "emoji": "⚾",
+     "clue": "A game with a bat, a ball and four bases."
+    },
+    {
+     "word": "badminton",
+     "emoji": "🏸",
+     "clue": "You hit a feathered shuttlecock over a net."
+    },
+    {
+     "word": "cycling",
+     "emoji": "🚴",
+     "clue": "Riding a bicycle for sport."
+    },
+    {
+     "word": "archery",
+     "emoji": "🏹",
+     "clue": "Shooting arrows at a round target with a bow."
+    },
+    {
+     "word": "wrestling",
+     "emoji": "🤼",
+     "clue": "Two people try to push each other to the ground."
+    },
+    {
+     "word": "athlete",
+     "emoji": "🏃",
+     "clue": "A person who is very good at sports."
+    },
+    {
+     "word": "stadium",
+     "emoji": "🏟️",
+     "clue": "A big place with rows of seats where people watch matches."
+    },
+    {
+     "word": "champion",
+     "emoji": "🥇",
+     "clue": "The winner of a competition."
+    },
+    {
+     "word": "gymnast",
+     "emoji": "🤸",
+     "clue": "A person who does flips and rolls on mats."
+    },
+    {
+     "word": "handball",
+     "emoji": "🤾",
+     "clue": "A game where you throw the ball into a goal with your hands."
+    },
+    {
+     "word": "snowboard",
+     "emoji": "🏂",
+     "clue": "You stand on one wide board and slide down snow."
+    },
+    {
+     "word": "bowling",
+     "emoji": "🎳",
+     "clue": "You roll a heavy ball to knock down pins."
+    },
+    {
+     "word": "fencing",
+     "emoji": "🤺",
+     "clue": "Two people fight with thin swords, wearing masks and padding."
+    },
+    {
+     "word": "marathon",
+     "emoji": "🏃",
+     "clue": "A very long running race of about forty-two kilometres."
+    }
+   ]
+  },
+  {
+   "id": "transport",
+   "name": "Transport",
+   "icon": "🚗",
+   "words": [
+    {
+     "word": "car",
+     "emoji": "🚗",
+     "clue": "It has four wheels and carries a few people on the road."
+    },
+    {
+     "word": "van",
+     "emoji": "🚐",
+     "clue": "A boxy vehicle that carries people or things."
+    },
+    {
+     "word": "boat",
+     "emoji": "⛵",
+     "clue": "It floats on water and sails along."
+    },
+    {
+     "word": "taxi",
+     "emoji": "🚕",
+     "clue": "A car you pay to take you where you want to go."
+    },
+    {
+     "word": "ship",
+     "emoji": "🚢",
+     "clue": "A very big boat that crosses the sea."
+    },
+    {
+     "word": "tram",
+     "emoji": "🚋",
+     "clue": "A train that runs along the streets of a city."
+    },
+    {
+     "word": "jeep",
+     "emoji": "🚙",
+     "clue": "A strong car that can drive over rough ground."
+    },
+    {
+     "word": "sled",
+     "emoji": "🛷",
+     "clue": "You sit on it to slide down a snowy hill."
+    },
+    {
+     "word": "jet",
+     "emoji": "🛩️",
+     "clue": "A very fast plane."
+    },
+    {
+     "word": "road",
+     "emoji": "🛣️",
+     "clue": "Cars and buses drive along it."
+    },
+    {
+     "word": "rail",
+     "emoji": "🛤️",
+     "clue": "The metal track that a train runs along."
+    },
+    {
+     "word": "train",
+     "emoji": "🚆",
+     "clue": "It runs on rails and pulls many carriages."
+    },
+    {
+     "word": "plane",
+     "emoji": "✈️",
+     "clue": "It flies in the sky and carries people."
+    },
+    {
+     "word": "truck",
+     "emoji": "🚚",
+     "clue": "A big vehicle that carries heavy goods."
+    },
+    {
+     "word": "metro",
+     "emoji": "🚇",
+     "clue": "A train that runs under a city."
+    },
+    {
+     "word": "ferry",
+     "emoji": "⛴️",
+     "clue": "A boat that carries people and cars across water."
+    },
+    {
+     "word": "rocket",
+     "emoji": "🚀",
+     "clue": "It blasts off into space."
+    },
+    {
+     "word": "canoe",
+     "emoji": "🛶",
+     "clue": "A narrow boat you move with a paddle."
+    },
+    {
+     "word": "bridge",
+     "emoji": "🌉",
+     "clue": "It carries a road over a river or another road."
+    },
+    {
+     "word": "engine",
+     "emoji": "🚂",
+     "clue": "The part that makes a train or a car go."
+    },
+    {
+     "word": "anchor",
+     "emoji": "⚓",
+     "clue": "A heavy hook that keeps a ship in one place."
+    },
+    {
+     "word": "cycle",
+     "emoji": "🚲",
+     "clue": "You pedal it with your feet to go along."
+    },
+    {
+     "word": "signal",
+     "emoji": "🚦",
+     "clue": "Red, yellow and green lights that tell traffic when to stop."
+    },
+    {
+     "word": "scooter",
+     "emoji": "🛵",
+     "clue": "A small motorbike with a flat floor for your feet."
+    },
+    {
+     "word": "tractor",
+     "emoji": "🚜",
+     "clue": "A farm vehicle with huge back wheels."
+    },
+    {
+     "word": "bicycle",
+     "emoji": "🚲",
+     "clue": "A two-wheeled vehicle that you pedal."
+    },
+    {
+     "word": "rickshaw",
+     "emoji": "🛺",
+     "clue": "A small taxi on three wheels, common in India."
+    },
+    {
+     "word": "aeroplane",
+     "emoji": "✈️",
+     "clue": "A machine with wings that flies people through the sky."
+    },
+    {
+     "word": "ambulance",
+     "emoji": "🚑",
+     "clue": "A vehicle that rushes sick or hurt people to hospital."
+    },
+    {
+     "word": "motorbike",
+     "emoji": "🏍️",
+     "clue": "A two-wheeled vehicle with an engine."
+    },
+    {
+     "word": "harbour",
+     "emoji": "⚓",
+     "clue": "A safe place by the sea where ships stop."
+    },
+    {
+     "word": "airport",
+     "emoji": "🛫",
+     "clue": "A place where planes take off and land."
+    },
+    {
+     "word": "station",
+     "emoji": "🚉",
+     "clue": "A place where trains stop for people to get on and off."
+    },
+    {
+     "word": "highway",
+     "emoji": "🛣️",
+     "clue": "A wide road for fast traffic."
+    },
+    {
+     "word": "traffic",
+     "emoji": "🚦",
+     "clue": "All the cars, buses and bikes on the road."
+    },
+    {
+     "word": "passenger",
+     "emoji": "🧳",
+     "clue": "A person who travels in a vehicle but does not drive it."
+    }
+   ]
   }
  ]
 }
