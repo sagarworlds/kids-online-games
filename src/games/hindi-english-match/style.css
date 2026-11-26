@@ -16,14 +16,14 @@
   src: url('assets/fonts/NotoSansDevanagari-700.woff2') format('woff2');
   unicode-range: U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+25CC, U+A830-A839, U+A8E0-A8FF;
 }
-.hi, [lang='hi'] { font-family: 'Noto Sans Devanagari', 'Mangal', 'Nirmala UI', system-ui, sans-serif; }
+.indic, [lang='hi'], [lang='mr'] { font-family: 'Noto Sans Devanagari', 'Mangal', 'Nirmala UI', system-ui, sans-serif; }
 
 .scene { background: var(--bg); }
 
 .menu, .result { width: min(100%, 760px); margin: 0 auto; padding: 8px 16px 32px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
 .menu__title, .result h1 { margin: 4px 0 0; font-size: 2.2rem; }
 .menu__intro { max-width: 32rem; margin: 0; font-size: 1.1rem; }
-.menu__intro .hi { font-size: 1.3rem; font-weight: 700; }
+.menu__intro .indic { font-size: 1.3rem; font-weight: 700; }
 .menu__peek { justify-content: center; }
 .menu__best { width: 100%; }
 .menu__best h2 { font-size: 1.1rem; margin-bottom: 8px; color: var(--ink-soft); }
@@ -63,11 +63,12 @@
 .card3d.is-up .card3d__front { visibility: visible; }
 /* With reduced motion the card turns at once, so the faces must not wait half a flip to swap. */
 @media (prefers-reduced-motion: reduce) { .card3d__face { transition-delay: 0s; } }
-.is-hindi .card3d__front { background: #ffe2bd; }
+.is-indic .card3d__front { background: #ffe2bd; }
 .is-english .card3d__front { background: #d4e8ff; }
-.card3d__tag { position: absolute; left: 8px; top: 4px; font-size: 0.8rem; font-weight: 800; color: var(--ink-soft); }
+/* The tag is part of the card's column (not laid over it), so a tall word such as आजोबा never runs into it, whatever the language or the screen. */
+.card3d__tag { align-self: flex-start; margin-left: 4px; font-size: 0.8rem; font-weight: 800; line-height: 1.1; color: var(--ink-soft); }
 .card3d__text { font-size: clamp(1.15rem, 3.4vw, 1.9rem); font-weight: 800; line-height: 1.2; overflow-wrap: anywhere; }
-.card3d__text.hi { font-size: clamp(1.4rem, 4vw, 2.3rem); }
+.card3d__text.indic { font-size: clamp(1.4rem, 4vw, 2.3rem); }
 .card3d__image { font-size: clamp(1.2rem, 3.4vw, 1.9rem); line-height: 1; }
 .card3d__ok { display: none; position: absolute; right: 8px; top: 2px; font-size: 1.3rem; font-weight: 800; color: var(--good); }
 .card3d.is-matched .card3d__front { background: var(--good-bg); border-color: var(--good); box-shadow: 0 0 18px 3px rgba(27, 127, 59, 0.55); }
@@ -93,5 +94,5 @@
 .review__item { display: flex; align-items: center; gap: 6px; padding: 4px 10px; background: #fff; border: 3px solid var(--ink); border-radius: 12px; }
 .review__image { min-width: 1.8rem; font-size: 1.5rem; text-align: center; }
 .review__word { font-weight: 700; }
-.review__word.hi { font-size: 1.3rem; }
+.review__word.indic { font-size: 1.3rem; }
 .menu__stars svg, .result__stars svg, .hud__value svg { width: 1em; height: 1em; }

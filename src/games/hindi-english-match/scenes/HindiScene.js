@@ -3,8 +3,8 @@ import { Scene } from '../../../engine/Scene.js';
 /**
  * @typedef {{
  *   menu: () => void,
- *   play: (params: { levelId: 'easy'|'medium'|'hard', topic: string, peek: boolean }) => void,
- *   results: (params: { levelId: string, topic: string, peek: boolean, moves: number, seconds: number, pairs: object[] }) => void
+ *   play: (params: { levelId: 'easy'|'medium'|'hard', topic: string, peek: boolean, language: import('../logic/languages.js').LanguageId }) => void,
+ *   results: (params: { levelId: string, topic: string, peek: boolean, language: string, moves: number, seconds: number, pairs: object[] }) => void
  * }} Routes
  * Navigation between this game's scenes, built in `main.js` so scenes never import each other.
  *

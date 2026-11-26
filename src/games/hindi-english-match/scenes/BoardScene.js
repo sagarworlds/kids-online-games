@@ -4,11 +4,11 @@ import { createHud } from '../../../engine/ui/Hud.js';
 import { getLevel, MIXED, PEEK_SECONDS, FLIP_BACK_SECONDS } from '../logic/levels.js';
 import { pairsForTopic } from '../logic/pairs.js';
 import { buildDeck } from '../logic/deck.js';
+import { DEFAULT_LANGUAGE, ENGLISH, getLanguage, voiceOf, wordIn } from '../logic/languages.js';
 import { MatchGame } from '../logic/matchState.js';
 import { createCardGrid } from '../ui/CardGrid.js';
 
 const FINISH_DELAY_SECONDS = 1.1;
-const LANG = { hi: 'hi-IN', en: 'en-IN' };
 
 /** The board: flip two cards at a time. The rules live in {@link MatchGame}; this scene shows and times them. */
 export class BoardScene extends HindiScene {
@@ -23,15 +23,16 @@ export class BoardScene extends HindiScene {
   #pairs = [];
   #offVoices = () => {};
 
-  /** @param {{ levelId: 'easy'|'medium'|'hard', topic: string, peek: boolean }} params */
-  enter({ levelId, topic, peek }) {
+  /** @param {{ levelId: 'easy'|'medium'|'hard', topic: string, peek: boolean, language?: import('../logic/languages.js').LanguageId }} params */
+  enter({ levelId, topic, peek, language = DEFAULT_LANGUAGE }) {
     const { services, data } = this;
     this.levelId = levelId;
     this.topic = topic;
     this.peek = peek;
+    this.language = getLanguage(language);
     const level = getLevel(levelId);
-    const pool = pairsForTopic(data.pairs, topic, MIXED);
-    const deck = buildDeck(pool, level.pairs, services.rng, { preferSimilar: level.similarWords, needImages: level.pictures });
+    const pool = pairsForTopic(data.pairs, topic, MIXED, language);
+    const deck = buildDeck(pool, level.pairs, services.rng, { preferSimilar: level.similarWords, needImages: level.pictures, language });
     this.#game = new MatchGame(deck);
     this.#pairs = [...new Set(deck.map((c) => c.pairId))].map((id) => data.pairs.find((p) => p.pairId === id));
 
@@ -43,9 +44,9 @@ export class BoardScene extends HindiScene {
     this.#grid = createCardGrid({
       cards: deck, cols: level.cols, pictures: level.pictures, tinted: level.tinted, speech: services.speech,
       onFlip: (id) => this.#onFlip(id),
-      onSpeak: (card) => services.speech.speak(card.text, { lang: LANG[card.lang], force: true }),
+      onSpeak: (card) => services.speech.speak(card.text, { lang: voiceOf(card.lang), force: true }),
     });
-    // Voices load after the page does, so a Hindi speaker icon may need to appear (or stay hidden) later.
+    // Voices load after the page does, so a speaker icon for Hindi or Marathi may need to appear (or stay hidden) later.
     this.#offVoices = services.speech.onVoicesChanged(() => this.#grid.refreshSpeakers());
     this.#statusEl = el('p', { class: 'board__status', attrs: { role: 'status' } });
 
@@ -56,7 +57,7 @@ export class BoardScene extends HindiScene {
       this.#grid.update(this.#game.cards, { showAll: true });
       this.#statusEl.textContent = `Remember the cards! ${PEEK_SECONDS}`;
     } else {
-      this.#statusEl.textContent = 'Find a Hindi word and its English match.';
+      this.#statusEl.textContent = this.#findText();
     }
     this.#grid.focusCard(0);
   }
@@ -78,8 +79,9 @@ export class BoardScene extends HindiScene {
     if (result.type === 'matched') {
       audio.play('chime');
       const pair = this.#pairs.find((p) => p.pairId === result.pairId);
-      speech.speakSequence([{ text: pair.hi, lang: LANG.hi }, { text: pair.en, lang: LANG.en }]); // only if read-aloud is on
-      this.#statusEl.textContent = `✔ ${pair.hi} = ${pair.en}`;
+      const word = /** @type {string} */ (wordIn(pair, this.language.id));
+      speech.speakSequence([{ text: word, lang: this.language.voice }, { text: pair.en, lang: ENGLISH.voice }]); // only if read-aloud is on
+      this.#statusEl.textContent = `✔ ${word} = ${pair.en}`;
     } else if (result.type === 'mismatch') {
       audio.play('boop');
       this.#grid.shake(result.ids);
@@ -88,6 +90,11 @@ export class BoardScene extends HindiScene {
     }
     this.#syncHud();
     if (this.#game.done) this.#finishIn = FINISH_DELAY_SECONDS;
+  }
+
+  /** What to do, in the words of the language being played. */
+  #findText() {
+    return `Find a ${this.language.name} word and its English match.`;
   }
 
   #syncHud() {
@@ -104,7 +111,7 @@ export class BoardScene extends HindiScene {
       if (this.#peekLeft <= 0) {
         this.#peekLeft = 0;
         this.#grid.update(this.#game.cards);
-        this.#statusEl.textContent = 'Go! Find a Hindi word and its English match.';
+        this.#statusEl.textContent = `Go! ${this.#findText()}`;
       } else if (Math.ceil(this.#peekLeft) !== before) {
         this.#statusEl.textContent = `Remember the cards! ${Math.ceil(this.#peekLeft)}`;
       }
@@ -113,7 +120,7 @@ export class BoardScene extends HindiScene {
     if (this.#finishIn > 0) {
       this.#finishIn -= dt;
       if (this.#finishIn <= 0) {
-        this.routes.results({ levelId: this.levelId, topic: this.topic, peek: this.peek, moves: this.#game.moves, seconds: Math.round(this.#seconds), pairs: this.#pairs });
+        this.routes.results({ levelId: this.levelId, topic: this.topic, peek: this.peek, language: this.language.id, moves: this.#game.moves, seconds: Math.round(this.#seconds), pairs: this.#pairs });
       }
       return;
     }
