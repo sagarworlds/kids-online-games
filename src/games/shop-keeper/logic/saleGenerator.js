@@ -4,11 +4,13 @@ import { noteValues } from './currency.js';
 import { sum } from './change.js';
 import { itemsAtPrice } from './items.js';
 import { getLevel } from './levels.js';
+import { pickMarkedPrice, salePrice } from './sale.js';
 
 /**
- * @typedef {{ name: string, icon: string, price: number }} SaleItem
- * @typedef {{ items: SaleItem[], total: number, paid: number[], paidTotal: number, changeDue: number }} Sale
- * `paid` lists the value of each note the customer hands over.
+ * @typedef {{ name: string, icon: string, price: number, sale?: import('./sale.js').Discount }} SaleItem
+ * `price` is what the customer is charged. On Sale day an item also has `sale`: the price on its tag (`marked`) and the percent off it.
+ * @typedef {{ items: SaleItem[], total: number, paid: number[], paidTotal: number, changeDue: number, saleDay?: boolean }} Sale
+ * `paid` lists the value of each note the customer hands over. `total` is the bill, after any discounts.
  */
 
 const MAX_ATTEMPTS = 300;
@@ -62,13 +64,32 @@ export function splitTotal(total, parts, min, max, rng) {
 }
 
 /** Picks an item that can cost `price`, preferring ones not already in this sale. */
-function itemFor(price, items, rng, used) {
+function chooseItem(price, items, rng, used) {
   const fits = itemsAtPrice(items, price);
   if (fits.length === 0) throw new GameError('NO_ITEM_FOR_PRICE', `No item can cost ${price}`, { price });
   const fresh = fits.filter((item) => !used.has(item.name));
   const chosen = pick(rng, fresh.length ? fresh : fits);
   used.add(chosen.name);
-  return { name: chosen.name, icon: chosen.icon, price };
+  return chosen;
+}
+
+/** An item for the sale at a price. */
+function itemFor(price, items, rng, used) {
+  const { name, icon } = chooseItem(price, items, rng, used);
+  return { name, icon, price };
+}
+
+/** A price tag for Sale day: a discount, a marked price it comes out whole for, and the price after it. */
+function saleTag(sale, rng) {
+  const percentOff = pick(rng, sale.percents);
+  const marked = pickMarkedPrice(percentOff, sale.markedMin, sale.markedMax, rng);
+  return { marked, percentOff, price: salePrice(marked, percentOff) };
+}
+
+/** An item for Sale day. It is the marked price that has to be one the item can cost; the customer is charged the price after the discount. */
+function discountedItem({ marked, percentOff, price }, items, rng, used) {
+  const { name, icon } = chooseItem(marked, items, rng, used);
+  return { name, icon, price, sale: { marked, percentOff } };
 }
 
 /**
@@ -87,14 +108,18 @@ function chooseUpTo(level, total, options, rng) {
  * On levels with `exactChance` (Hard) some customers pay the exact total. Those sales are built backwards, from a
  * payment to a split into prices, because a random bill is almost never a sum of two notes.
  *
+ * On Sale day every item has a percent off. The bill is the sum of the discounted prices, and the payment is chosen above that bill as
+ * usual. There are no exact payments then (see `getLevel`).
+ *
  * @param {'easy'|'medium'|'hard'} levelId
  * @param {() => number} rng
  * @param {{ currency: import('./currency.js').Currency, items: readonly import('./items.js').Item[] }} data
+ * @param {{ saleDay?: boolean }} [options]
  * @returns {Sale}
  * @throws {GameError} 'UNKNOWN_LEVEL', or 'SALE_GENERATION_FAILED' if the data cannot make any sale for the level.
  */
-export function generateSale(levelId, rng, { currency, items }) {
-  const level = getLevel(levelId);
+export function generateSale(levelId, rng, { currency, items }, { saleDay = false } = {}) {
+  const level = getLevel(levelId, { saleDay });
   const allowed = noteValues(currency).filter((v) => !level.paymentNotes || level.paymentNotes.includes(v));
   const notes = allowed.length ? allowed : noteValues(currency);
   const options = paymentOptions(notes, level.maxPaymentNotes);
@@ -102,11 +127,17 @@ export function generateSale(levelId, rng, { currency, items }) {
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     let prices;
     let payment;
+    let tags = null;
     if (level.exactChance > 0 && rng() < level.exactChance) {
       const fitting = options.filter((o) => o.sum >= level.items * level.priceMin && o.sum <= Math.min(level.maxTotal, level.items * level.priceMax));
       if (fitting.length === 0) continue;
       payment = pick(rng, fitting);
       prices = splitTotal(payment.sum, level.items, level.priceMin, level.priceMax, rng);
+    } else if (saleDay) {
+      tags = Array.from({ length: level.items }, () => saleTag(level.sale, rng));
+      prices = tags.map((tag) => tag.price);
+      const total = sum(prices);
+      payment = total <= level.maxTotal ? chooseUpTo(level, total, options, rng) : null;
     } else {
       prices = Array.from({ length: level.items }, () => randInt(rng, level.priceMin, level.priceMax));
       const total = sum(prices);
@@ -117,8 +148,9 @@ export function generateSale(levelId, rng, { currency, items }) {
     const used = new Set();
     const total = sum(prices);
     return {
-      items: prices.map((price) => itemFor(price, items, rng, used)),
+      items: tags ? tags.map((tag) => discountedItem(tag, items, rng, used)) : prices.map((price) => itemFor(price, items, rng, used)),
       total, paid: payment.notes.slice().sort((a, b) => b - a), paidTotal: payment.sum, changeDue: payment.sum - total,
+      ...(saleDay ? { saleDay: true } : {}),
     };
   }
   throw new GameError('SALE_GENERATION_FAILED', `Could not make a ${levelId} sale from this currency and item list`, { levelId });
@@ -130,9 +162,10 @@ export function generateSale(levelId, rng, { currency, items }) {
  * @param {number} count
  * @param {() => number} rng
  * @param {Parameters<typeof generateSale>[2]} data
+ * @param {{ saleDay?: boolean }} [options]
  * @returns {Sale[]}
  */
-export function generateRound(levelId, count, rng, data) {
+export function generateRound(levelId, count, rng, data, options = {}) {
   if (!Number.isInteger(count) || count < 1) throw new GameError('BAD_COUNT', 'count must be a whole number of 1 or more', { count });
-  return Array.from({ length: count }, () => generateSale(levelId, rng, data));
+  return Array.from({ length: count }, () => generateSale(levelId, rng, data, options));
 }
