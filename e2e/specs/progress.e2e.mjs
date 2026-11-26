@@ -65,6 +65,14 @@ describe('the grown-ups\' progress summary', () => {
     const games = GAMES.length;
     assert.equal(await textOf(section.locator('.report__total')), `${name} has earned 9 stars and 2 badges, playing 4 of ${games} games.`);
 
+    // The text has to be seen, not only be in the page: a section that took the class of the thin progress bar once had all of it squeezed
+    // into the height of a bar, with every check passing. Each part must lie inside the section's own box.
+    const inside = async (part) => {
+      const [outer, inner] = [await section.boundingBox(), await part.boundingBox()];
+      return inner !== null && inner.y >= outer.y - 1 && inner.y + inner.height <= outer.y + outer.height + 1;
+    };
+    assert.ok(await inside(section.locator('h3')) && await inside(section.locator('.report__total')), 'the heading and the sentence are not squeezed out of the section');
+
     // The list is folded away until it is asked for.
     const details = section.locator('details');
     assert.equal(await details.evaluate((element) => element.open), false, 'the list starts folded');
@@ -84,6 +92,7 @@ describe('the grown-ups\' progress summary', () => {
     assert.equal(await textOf(subject('Math').locator('.report__subtotal')), `6 stars, 2 of ${await listed('Math')} games played`, 'Number Ninja 5 + Pizza Fractions 1');
     assert.equal(await textOf(subject('Memory & focus').locator('.report__subtotal')), `3 stars, 1 of ${await listed('Memory & focus')} games played`);
     assert.equal(await section.locator('.report__game').count(), games, 'every game is listed once');
+    assert.ok(await inside(section.locator('.report__game').last()), 'and the last of them is inside the section too');
   }));
 
   it('passes the accessibility checks with the list open, on a phone', TIMEOUT, () => scenario(env, 'progress a11y', { screen: 'phone', prepare: withSaves }, async ({ page, site }) => {
