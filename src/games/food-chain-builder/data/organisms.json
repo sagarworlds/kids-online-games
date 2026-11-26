@@ -296,6 +296,129 @@
       "icon": "🦂",
       "fact": "Scorpions glow bright blue-green under a special light.",
       "diet": "Scorpions eat insects and spiders."
+    },
+    {
+      "id": "mangrove",
+      "name": "Mangrove tree",
+      "plural": "mangrove trees",
+      "role": "producer",
+      "icon": "🌳",
+      "fact": "A mangrove's roots poke up out of the mud like straws, so the tree can breathe in the water. The Sundarbans is the biggest mangrove forest in the world."
+    },
+    {
+      "id": "mudalgae",
+      "name": "Mud algae",
+      "plural": "mud algae",
+      "role": "producer",
+      "icon": "🌱",
+      "fact": "Mud algae are tiny plants that cover the mud with a green film when the tide goes out. They make their own food from sunlight."
+    },
+    {
+      "id": "chital",
+      "name": "Spotted deer",
+      "plural": "spotted deer",
+      "role": "herbivore",
+      "icon": "🦌",
+      "fact": "A spotted deer, also called a chital, keeps its white spots all its life. It barks to warn the herd when a tiger is near.",
+      "diet": "Spotted deer eat grass, leaves and fallen fruit."
+    },
+    {
+      "id": "fiddlercrab",
+      "name": "Fiddler crab",
+      "plural": "fiddler crabs",
+      "role": "omnivore",
+      "icon": "🦀",
+      "fact": "A male fiddler crab has one giant claw, which he waves to show off. His small claw does the eating.",
+      "diet": "Fiddler crabs eat algae and tiny bits of leaves that they scoop up from the mud."
+    },
+    {
+      "id": "mudskipper",
+      "name": "Mudskipper",
+      "plural": "mudskippers",
+      "role": "carnivore",
+      "icon": "🐟",
+      "fact": "A mudskipper is a fish that hops and walks over the mud on its strong front fins. It can breathe through its skin when it is out of the water.",
+      "diet": "Mudskippers eat small crabs, insects and worms."
+    },
+    {
+      "id": "kingfisher",
+      "name": "Kingfisher",
+      "plural": "kingfishers",
+      "role": "carnivore",
+      "icon": "🐦",
+      "fact": "A kingfisher sits very still on a branch, then dives headfirst into the water to catch a fish.",
+      "diet": "Kingfishers eat fish, crabs and mudskippers."
+    },
+    {
+      "id": "crocodile",
+      "name": "Saltwater crocodile",
+      "plural": "saltwater crocodiles",
+      "role": "carnivore",
+      "icon": "🐊",
+      "fact": "The saltwater crocodile is the biggest reptile in the world. It lives in the salty rivers and creeks of the Sundarbans.",
+      "diet": "Saltwater crocodiles eat fish, crabs, deer and other animals."
+    },
+    {
+      "id": "tiger",
+      "name": "Tiger",
+      "plural": "tigers",
+      "role": "carnivore",
+      "icon": "🐅",
+      "fact": "The tigers of the Sundarbans are very good swimmers. They swim across the salty rivers from island to island.",
+      "diet": "Tigers eat deer, wild boar and fish."
+    },
+    {
+      "id": "fig",
+      "name": "Fig tree",
+      "plural": "fig trees",
+      "role": "producer",
+      "icon": "🌳",
+      "fact": "Monkeys, squirrels, bats and hornbills all come to eat the fruit of a fig tree, so it is food for many animals of the forest."
+    },
+    {
+      "id": "tahr",
+      "name": "Tahr",
+      "plural": "tahr",
+      "role": "herbivore",
+      "icon": "🐐",
+      "fact": "The Nilgiri tahr is a wild goat that climbs steep cliffs with ease. It lives only in the Western Ghats.",
+      "diet": "Tahr eat grass on steep, rocky hills."
+    },
+    {
+      "id": "giantsquirrel",
+      "name": "Giant squirrel",
+      "plural": "giant squirrels",
+      "role": "herbivore",
+      "icon": "🐿️",
+      "fact": "The Malabar giant squirrel is a colourful squirrel with a tail longer than its body. It leaps from treetop to treetop.",
+      "diet": "Giant squirrels eat fruit, flowers, nuts and bark."
+    },
+    {
+      "id": "macaque",
+      "name": "Lion-tailed macaque",
+      "plural": "lion-tailed macaques",
+      "role": "omnivore",
+      "icon": "🐒",
+      "fact": "The lion-tailed macaque has a silver-white mane and a tuft at the end of its tail, like a lion's. It lives only in the rainforests of the Western Ghats.",
+      "diet": "Lion-tailed macaques eat fruit, flowers, leaves and insects."
+    },
+    {
+      "id": "hornbill",
+      "name": "Hornbill",
+      "plural": "hornbills",
+      "role": "omnivore",
+      "icon": "🦜",
+      "fact": "A hornbill has a big curved beak. It swallows fruit whole and drops the seeds far away, so new trees grow.",
+      "diet": "Hornbills eat figs and other fruit, and also insects and small lizards."
+    },
+    {
+      "id": "leopard",
+      "name": "Leopard",
+      "plural": "leopards",
+      "role": "carnivore",
+      "icon": "🐆",
+      "fact": "A leopard can carry its food up into a tree, so other hunters cannot steal it.",
+      "diet": "Leopards eat deer, wild goats, monkeys and other animals."
     }
   ]
 }

@@ -1,5 +1,6 @@
 import { invalidData } from '../../../engine/utils/errors.js';
 import { LEVELS, LEVEL_IDS } from './levels.js';
+import { MAX_CARDS_ACROSS, widestLevel } from './layout.js';
 import { byId, canEat } from './organisms.js';
 import { deriveEffects } from './whatIf.js';
 
@@ -72,11 +73,23 @@ function checkStructure(habitat) {
 }
 
 /**
+ * Cards of one level of the food chain share a row on a phone, so a level can only hold as many as fit across it. Caught here, when the data
+ * is loaded, rather than as cards drawn on top of each other that nobody notices until a child does.
+ */
+function checkFitsOnPhone(habitat) {
+  const { ids } = widestLevel(habitat);
+  if (ids.length > MAX_CARDS_ACROSS) {
+    invalidData(FILE, `habitats.${habitat.id}.required`, `${ids.length} living things (${ids.join(', ')}) sit at the same step of the food chain, but a phone's board fits ${MAX_CARDS_ACROSS} side by side`);
+  }
+}
+
+/**
  * Checks the habitats against the organisms. Besides the shape, it proves what the spec asks for and more: every link
  * only joins organisms of its own habitat; every link makes sense for the roles (herbivores eat only producers,
  * carnivores no plants, producers eat nothing); food only flows one way; every organism is part of the required
- * links; each level has the right number of organisms and the right structure; each place has all three levels; and the
- * "What if?" answers are exactly what the one-step rule gives.
+ * links; each level has the right number of organisms and the right structure; no step of the food chain has more
+ * living things than fit across a phone; each place has all three levels; and the "What if?" answers are exactly what
+ * the one-step rule gives.
  *
  * @param {any} data
  * @param {readonly import('./organisms.js').Organism[]} organisms
@@ -121,6 +134,7 @@ export function validateHabitats(data, organisms) {
       if (!h.required.some((l) => l.from === id || l.to === id)) invalidData(FILE, `${at}.organisms`, `"${id}" is in no required link`);
     }
     checkStructure(h);
+    checkFitsOnPhone(h);
 
     if (LEVELS[h.level].whatIf) {
       const w = h.whatIf;

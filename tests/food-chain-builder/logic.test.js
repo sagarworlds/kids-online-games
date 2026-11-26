@@ -7,7 +7,7 @@ import { validateOrganisms, byId, canEat, ROLES } from '../../src/games/food-cha
 import { validateHabitats, findHabitat } from '../../src/games/food-chain-builder/logic/habitats.js';
 import { addLink, removeLink, check, linkKey, sameLink } from '../../src/games/food-chain-builder/logic/linkChecker.js';
 import { deriveEffects, scorePrediction, explainEffect } from '../../src/games/food-chain-builder/logic/whatIf.js';
-import { trophicLevels, computeLayout } from '../../src/games/food-chain-builder/logic/layout.js';
+import { trophicLevels, computeLayout, widestLevel, MAX_CARDS_ACROSS } from '../../src/games/food-chain-builder/logic/layout.js';
 import { wrongMessage, missingHint, checkSummary } from '../../src/games/food-chain-builder/logic/messages.js';
 import { builderStars, combinedStars, habitatScore } from '../../src/games/food-chain-builder/logic/scoring.js';
 import { readLearned, withLearned, introSeen, withIntroSeen } from '../../src/games/food-chain-builder/logic/learned.js';
@@ -23,10 +23,27 @@ const L = (from, to) => ({ from, to });
 
 // ---- data --------------------------------------------------------------------------------------
 
-test('the data has 5 places, each with an Easy, Medium and Hard habitat', () => {
-  assert.deepEqual(places.map((p) => p.name), ['Forest', 'Ocean', 'Pond', 'Grassland', 'Desert']);
-  assert.equal(habitats.length, 15);
+test('the data has 7 places, each with an Easy, Medium and Hard habitat', () => {
+  assert.deepEqual(places.map((p) => p.name), ['Forest', 'Ocean', 'Pond', 'Grassland', 'Desert', 'Sundarbans', 'Western Ghats']);
+  assert.equal(habitats.length, 21);
   for (const place of places) for (const level of LEVEL_IDS) assert.ok(findHabitat(habitats, place.id, level), `${place.id} ${level}`);
+});
+
+test('the Indian habitats hold the living things each place is known for, at every level', () => {
+  const living = (placeId, level) => findHabitat(habitats, placeId, level).organisms;
+  for (const level of LEVEL_IDS) {
+    assert.ok(living('sundarbans', level).includes('mangrove'), `the Sundarbans at ${level} starts from the mangrove`);
+    assert.ok(living('ghats', level).includes('leopard'), `the Western Ghats at ${level} has the leopard at the end of its chain`);
+  }
+  assert.deepEqual(living('sundarbans', 'easy'), ['mangrove', 'chital', 'tiger'], 'the easy chain is the one children know: mangrove leaves, spotted deer, tiger');
+  assert.ok(living('sundarbans', 'medium').includes('mudskipper') && living('sundarbans', 'medium').includes('kingfisher'));
+  assert.ok(living('sundarbans', 'hard').includes('crocodile') && living('sundarbans', 'hard').includes('mudalgae'), 'the web has two plants, so what shrimp and crabs eat is on the board');
+  assert.ok(living('ghats', 'hard').includes('macaque') && living('ghats', 'hard').includes('hornbill') && living('ghats', 'hard').includes('giantsquirrel'));
+});
+
+test('every living thing is in at least one habitat, so no card is written and never shown', () => {
+  const used = new Set(habitats.flatMap((h) => h.organisms));
+  assert.deepEqual(organisms.filter((o) => !used.has(o.id)).map((o) => o.id), []);
 });
 
 test('every habitat\'s required and allowed links only use organisms of that habitat (spec acceptance)', () => {
@@ -101,6 +118,10 @@ test('validateHabitats names the file and field for each kind of mistake', () =>
     ['an organism in no required link', (d) => { d.habitats[1].required = d.habitats[1].required.filter((l) => l.to !== 'snake'); }, /"snake" is in no required link/],
     ['too many organisms for Easy', (d) => { d.habitats[0].organisms = ['grass', 'rabbit', 'fox', 'cricket', 'frog']; }, /3 to 4 organisms/],
     ['an Easy habitat that branches', (d) => { d.habitats[0].required = [L('grass', 'rabbit'), L('grass', 'fox')]; }, /single chain/],
+    ['four living things at one step of the food chain (too wide for a phone)', (d) => {
+      const h = d.habitats.find((x) => x.id === 'forest-hard');
+      h.required = h.required.filter((l) => !(l.from === 'caterpillar' && l.to === 'mouse'));
+    }, /habitats\.forest-hard\.required.*4 living things \(.*\) sit at the same step.*fits 3 side by side/],
     ['a Hard web with too few links', (d) => { const h = d.habitats.find((x) => x.id === 'pond-hard'); h.required = h.required.filter((l) => !(l.from === 'frog' && l.to === 'otter')); }, /at least as many links as organisms \(8\)/],
     ['a wrong id', (d) => { d.habitats[0].id = 'forest-easy'; }, /must be "grassland-easy"/],
     ['an unknown place', (d) => { d.habitats[0].place = 'moon'; }, /"moon" is not in places/],
@@ -285,7 +306,7 @@ test('the one-step rule: eaters go down, foods go up, the rest stay the same', (
 
 test('every Hard habitat has a What if that matches the rule and asks something worth asking', () => {
   const hard = habitats.filter((h) => h.level === 'hard');
-  assert.equal(hard.length, 5);
+  assert.equal(hard.length, places.length, 'one Hard habitat for each place');
   for (const h of hard) {
     assert.deepEqual(h.whatIf.effects, deriveEffects(h, h.whatIf.removed), h.id);
     const values = Object.values(h.whatIf.effects);
@@ -315,6 +336,19 @@ test('each right answer has a sentence that says why, in the same simple rule', 
 test('trophic levels: grass 0, rabbit 1, fox 2', () => {
   const levels = trophicLevels(findHabitat(habitats, 'grassland', 'easy'));
   assert.deepEqual([...levels], [['grass', 0], ['rabbit', 1], ['fox', 2]]);
+});
+
+test('no step of the food chain has more living things than fit across a phone', () => {
+  assert.equal(MAX_CARDS_ACROSS, 3);
+  for (const h of habitats) {
+    const { ids } = widestLevel(h);
+    assert.ok(ids.length <= MAX_CARDS_ACROSS, `${h.id}: ${ids.join(', ')}`);
+  }
+  // Forest Hard: caterpillar, squirrel and rabbit all feed on plants, so they stand at the same step, and that is the widest.
+  const forest = widestLevel(findHabitat(habitats, 'forest', 'hard'));
+  assert.equal(forest.level, 1);
+  assert.deepEqual([...forest.ids].sort(), ['caterpillar', 'rabbit', 'squirrel']);
+  assert.deepEqual(widestLevel({ organisms: [], required: [] }), { level: 0, ids: [] });
 });
 
 test('layout: every card is on the board, no two overlap, and every arrow points the way food flows', () => {

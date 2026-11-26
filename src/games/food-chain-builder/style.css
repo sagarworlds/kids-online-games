@@ -28,6 +28,8 @@
 .place--pond, .board--pond { background: linear-gradient(#dcf4ec, #86cdbd); }
 .place--grassland, .board--grassland { background: linear-gradient(#f8f2c2, #bfe085); }
 .place--desert, .board--desert { background: linear-gradient(#fde8b8, #f2bb73); }
+.place--sundarbans, .board--sundarbans { background: linear-gradient(#f0ecd0, #b9c98f); }
+.place--ghats, .board--ghats { background: linear-gradient(#efecf9, #b7c6ec); }
 
 /* ---------- Builder ---------- */
 
