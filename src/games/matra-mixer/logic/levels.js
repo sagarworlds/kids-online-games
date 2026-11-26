@@ -52,3 +52,14 @@ export function levelContent(levelId, lang, vowelSet) {
 
 /** The key under which the stars for an activity are saved. @param {string} activity @param {string} lang @param {string} levelId */
 export const roundKey = (activity, lang, levelId) => `${activity}-${lang}-${levelId}`;
+
+/**
+ * The most stars a child has at a level in any activity, in the language being learned, for suggesting the level to start on. Hindi and
+ * Marathi keep separate bests, so a child who has done well in one is not pushed on in the other.
+ * @param {Record<string, number>} bestStars A save's `bestStars`.
+ * @param {string} levelId
+ * @param {string} lang The language chosen in the menu.
+ * @param {readonly string[]} activityIds The activities that save stars.
+ * @returns {number} 0 when nothing is saved at that level.
+ */
+export const starsAtLevel = (bestStars, levelId, lang, activityIds) => Math.max(0, ...activityIds.map((activity) => bestStars[roundKey(activity, lang, levelId)] ?? 0));

@@ -2,8 +2,9 @@ import { MatraBase } from './MatraBase.js';
 import { el } from '../../../engine/utils/dom.js';
 import { createHud } from '../../../engine/ui/Hud.js';
 import { createLevelPicker } from '../../../engine/ui/LevelPicker.js';
+import { startingLevel } from '../../../engine/utils/recommendLevel.js';
 import { ICONS } from '../../../engine/ui/icons.js';
-import { LEVELS, LEVEL_IDS, roundKey } from '../logic/levels.js';
+import { LEVELS, LEVEL_IDS, roundKey, starsAtLevel } from '../logic/levels.js';
 import { LANGS, LANG_IDS, VOWEL_SETS, VOWEL_SET_IDS } from '../logic/devanagari.js';
 import { inLanguage } from '../ui/inLanguage.js';
 
@@ -22,7 +23,9 @@ export class MenuScene extends MatraBase {
   enter() {
     const { services } = this;
     const lock = services.settings.difficultyLock;
-    let levelId = lock ?? 'easy';
+    // Open on the level the child is ready for (a grown-up's lock still decides); the picker points it out.
+    const start = startingLevel({ lock, levels: LEVEL_IDS, starsAt: (id) => starsAtLevel(services.rewards.getSave(services.game.slug).bestStars, id, this.prefs().lang, ACTIVITIES.map((activity) => activity.id)) });
+    let levelId = start.level;
     const hud = createHud({ homeHref: services.game.homeHref, title: services.game.title, onSettings: () => services.openSettings() });
     const cardsEl = el('div', { class: 'activities' });
     const introEl = el('p', { class: 'menu__intro' });
@@ -43,6 +46,7 @@ export class MenuScene extends MatraBase {
     };
 
     const picker = createLevelPicker({
+      suggested: start.suggested,
       value: levelId, lock,
       hints: Object.fromEntries(LEVEL_IDS.map((id) => [id, LEVELS[id].blurb])),
       onChange: (level) => { levelId = level; draw(); },

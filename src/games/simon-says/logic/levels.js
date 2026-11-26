@@ -42,3 +42,11 @@ export function getLevel(id) {
  * @returns {string}
  */
 export const saveKey = (levelId, mode) => (mode === 'reverse' ? `${levelId}-reverse` : levelId);
+
+/**
+ * The most stars a child has at a level in either the classic game or reverse, for suggesting the level to start on.
+ * @param {Record<string, number>} bestStars A save's `bestStars`.
+ * @param {'easy'|'medium'|'hard'} levelId
+ * @returns {number} 0 when nothing is saved at that level.
+ */
+export const starsAtLevel = (bestStars, levelId) => Math.max(0, bestStars[saveKey(levelId, 'classic')] ?? 0, bestStars[saveKey(levelId, 'reverse')] ?? 0);

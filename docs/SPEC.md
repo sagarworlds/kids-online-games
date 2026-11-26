@@ -61,7 +61,7 @@ All 16 games run on one tiny engine: a scene manager, a game loop, and injected 
     ui/
         Button.js, Modal.js, Confetti.js, ProgressBar.js, Hud.js
     utils/
-        random.js (seeded RNG, shuffle), geometry.js, timer.js, errors.js, gridNav.js (arrow-key moves in a grid)
+        random.js (seeded RNG, shuffle), geometry.js, timer.js, errors.js, gridNav.js (arrow-key moves in a grid), recommendLevel.js (the level a child is ready for)
 /src/games/<game-slug>/
     index.html              Thin page that boots the game
     main.js                 Composition root: wires services into scenes
@@ -114,6 +114,7 @@ All 16 games run on one tiny engine: a scene manager, a game loop, and injected 
 - No "Game Over". Mistakes show "Try again!" plus a hint after 2 wrong tries.
 - Results screen always shows 1–3 stars and one positive message; stars save per level.
 - Every game has three difficulty levels (Easy / Medium / Hard) and a parent settings panel: sound on/off, read-aloud on/off, difficulty lock, and "Save all games for offline play" (which games are saved for offline use, and a button that saves every one at once).
+- A game's menu opens on the level the child is ready for, not always on Easy: the level after the highest one they have done well on (two stars or more), with a small "Suggested" under its name in the level picker. A child who has played nothing, or who is still working on Easy (one star), sees Easy and nothing extra; one who did well on Medium without ever finishing Easy is offered Hard; doing well on Hard stays on Hard. A grown-up's difficulty lock decides everything, and nothing is suggested then. The rule is `startingLevel` in `engine/utils/recommendLevel.js`; a game tells it how many stars the child has at a level with `starsByLevel(bestStars)` when it saves stars under the level's id, or its own `starsAtLevel` in `logic/` where it saves them under a plant, theme, mode, habitat or set (Table Tower, which has always opened where the child got to by floors cleared, passes that level on as the suggestion). Robot Path has numbered levels and no picker.
 - No ads, no external links, no data leaves the device, no personal data collected.
 
 **Accessibility**
@@ -172,6 +173,7 @@ All 16 games run on one tiny engine: a scene manager, a game loop, and injected 
 - [ ] Playable with mouse, touch and keyboard
 - [ ] No console errors during a full round
 - [ ] Passes the accessibility checks on its first screen and a round, in 2D and 3D (`e2e/specs/a11y.e2e.mjs` runs them for every game in `e2e/support/games.mjs`)
+- [ ] A game with an Easy / Medium / Hard picker opens on the level the child is ready for (`startingLevel`) and has an entry in `EASY_DONE` in `e2e/support/games.mjs` saying what its save looks like once Easy is done
 - [ ] Listed in the hub with icon, name and learning tag
 
 ## Home page (game hub), player profile & local storage

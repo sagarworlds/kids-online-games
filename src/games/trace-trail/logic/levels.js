@@ -22,6 +22,14 @@ export const LEVEL_IDS = Object.freeze(Object.keys(LEVELS));
 export const roundKey = (setId) => `trace-${setId}`;
 
 /**
+ * The most stars a child has in any of a level's sets, for suggesting the level to start on.
+ * @param {Record<string, number>} bestStars A save's `bestStars`.
+ * @param {LevelId} levelId
+ * @returns {number} 0 when nothing is saved at that level.
+ */
+export const starsAtLevel = (bestStars, levelId) => Math.max(0, ...LEVELS[levelId].setIds.map((setId) => bestStars[roundKey(setId)] ?? 0));
+
+/**
  * The glyphs of a round: different ones from the set, in a random order.
  * @param {string} setId
  * @param {number} count

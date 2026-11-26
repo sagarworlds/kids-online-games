@@ -22,3 +22,12 @@ export const LEVEL_IDS = Object.freeze(Object.keys(LEVELS));
 
 /** Stars are saved per plant and level, so Easy sunflower and Hard sunflower keep separate bests. */
 export const roundKey = (plantId, levelId) => `${plantId}-${levelId}`;
+
+/**
+ * The most stars a child has at a level with any plant, for suggesting the level to start on.
+ * @param {Record<string, number>} bestStars A save's `bestStars`.
+ * @param {LevelId} levelId
+ * @param {readonly string[]} plantIds The plants the game has.
+ * @returns {number} 0 when nothing is saved at that level.
+ */
+export const starsAtLevel = (bestStars, levelId, plantIds) => Math.max(0, ...plantIds.map((plantId) => bestStars[roundKey(plantId, levelId)] ?? 0));
