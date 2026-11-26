@@ -183,7 +183,8 @@ All 16 games are reached from one home page (`/index.html`). It greets the child
 - **Header:** avatar + greeting ("Hi, Brave Panda!") with a pencil button to edit the name, total stars earned across all games, and a gear button for settings.
 - **Subject filter chips:** All, Math, Language, Logic, Science, Memory.
 - **Game grid:** 16 large cards (min 160 × 160 px), grouped by subject. Each card shows the icon, game name, learning tag (e.g. "Fractions"), stars earned so far, and a "New" badge if never played. Tapping a card opens `src/games/<slug>/index.html`.
-- **Footer:** "Grown-ups" link to the parent area (reset progress, settings lock).
+- **Footer:** "Grown-ups" link to the parent area (the settings, a **Progress** summary, reset progress).
+- **Progress (in the grown-ups' settings):** a grown-up sees what the child has done, read from what the games already save. One sentence gives the totals ("Brave Panda has earned 57 stars and 5 badges, playing 12 of 19 games."); under "Progress by game", folded away until opened, the same numbers for each subject and each game (stars, levels with stars, badges), "Not played yet" for a game with nothing saved. A child who has played nothing gets the sentence only. It is built when the dialog opens, and a reset with the dialog open brings it up to date. Nothing new is recorded and nothing leaves the device.
 - Every game screen has a Home button that returns here, and results screens use the player name ("Great job, Brave Panda!").
 
 **Game cards by subject**
@@ -210,6 +211,7 @@ All 16 games are reached from one home page (`/index.html`). It greets the child
 - `src/hub/nameGenerator.js` — `randomName(rng)` returns `{ name, avatar }`.
 - `src/hub/ProfileService.js` — `getProfile()`, `rename(name)` (validates, throws `GameError('INVALID_NAME')`), `shuffleName()`; depends on the `StorageService` interface.
 - `src/hub/HubPage.js` — renders header, filters and cards; listens to the `storage` event so a rename in another tab updates the page.
+- `src/hub/progressSummary.js` — `summarizeProgress({ games, subjects, saveOf, lastSlug })`, the pure part of the grown-ups' progress summary: totals per game, per subject and overall from the games' saves. A game counts as played by the same rule as the "New" badge; a game in a subject the home page does not list throws `GameError('UNKNOWN_SUBJECT')`. `progressText.js` has its words and `ProgressSection.js` its DOM. The section's CSS classes are `report*`: `.progress` belongs to the thin progress bar in `ui.css`.
 
 **localStorage keys**
 
@@ -236,6 +238,7 @@ All 16 games are reached from one home page (`/index.html`). It greets the child
 - [ ] Stars on each card and the total match each game's saved data
 - [ ] Every game has a Home button and uses the player name on its results screen
 - [ ] Works when `localStorage` is unavailable (in-memory fallback, no crash)
+- [ ] The grown-ups' Progress section shows the stars and badges the games saved, in total, per subject and per game (the total agrees with the one on the home page), says so plainly when nothing has been played, and is brought up to date by a reset with the dialog open (unit- and browser-tested)
 - [ ] Reset clears only `kidsgames:*` keys
 
 ## 3D versions (Three.js)
