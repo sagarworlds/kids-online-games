@@ -18,6 +18,14 @@ export const SCREENS = Object.freeze({
 });
 
 /**
+ * Extra Chromium flags from the environment, for reproducing a machine that is not this one. The one that matters most is
+ * `E2E_CHROMIUM_ARGS=--font-render-hinting=full`: the CI machine draws text with hinting, which rounds every glyph's width to whole pixels, so
+ * the width of a word does not grow in step with its font size (a word that is 83px at 25px is 67px at 19.6px, not 65). A machine that does not
+ * hint draws it in step, and a check of text widths can pass there and fail on CI.
+ */
+const EXTRA_ARGS = (process.env.E2E_CHROMIUM_ARGS ?? '').split(/\s+/).filter(Boolean);
+
+/**
  * Starts Chromium.
  *
  * @param {{ webgl?: boolean }} [options] `webgl: false` starts a browser that has no WebGL at all.
@@ -25,7 +33,7 @@ export const SCREENS = Object.freeze({
  */
 export function launchBrowser({ webgl = true } = {}) {
   return chromium.launch({
-    args: webgl ? WEBGL_ARGS : NO_WEBGL_ARGS,
+    args: [...(webgl ? WEBGL_ARGS : NO_WEBGL_ARGS), ...EXTRA_ARGS],
     // Only for machines where the browser lives somewhere Playwright does not look.
     executablePath: process.env.E2E_CHROMIUM || undefined,
   });

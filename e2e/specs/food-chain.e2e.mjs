@@ -5,7 +5,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { after, before, describe, it } from 'node:test';
-import { LEAST_SCALE } from '../../src/games/food-chain-builder/logic/fit.js';
+import { LEAST_SCALE } from '../../src/engine/utils/fitText.js';
 import { problemsOnScreen } from '../support/a11y.mjs';
 import { launchBrowser } from '../support/browser.mjs';
 import { scenario } from '../support/scenario.mjs';
