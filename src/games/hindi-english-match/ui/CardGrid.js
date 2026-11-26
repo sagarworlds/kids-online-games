@@ -1,11 +1,13 @@
 import { el } from '../../../engine/utils/dom.js';
+import { ENGLISH, LANGUAGES } from '../logic/languages.js';
 
 /**
  * The grid of flip cards (DOM buttons with a CSS 3D flip).
  *
  * Accessibility: every card is a real button with a label that says what it shows ("Hindi card: सेब"), arrow keys
  * move between cards (one card is in the Tab order, like a grid widget), Enter or Space flips. Language is shown by
- * a "हिं" / "EN" tag as well as by tint, and a matched card shows a ✔, so nothing depends on colour alone.
+ * a "हिं" / "मरा" / "EN" tag as well as by tint, and a matched card shows a ✔, so nothing depends on colour alone. The
+ * word on a card of Hindi or Marathi carries that language, so a screen reader says it in the right voice.
  *
  * Re-rendering only toggles classes and labels, never rebuilds the cards, so the flip transition can play.
  *
@@ -41,9 +43,10 @@ export function createCardGrid({ cards, cols, pictures, tinted, speech, onFlip, 
   };
 
   cards.forEach((card, index) => {
-    const isHindi = card.lang === 'hi';
+    const indic = card.lang !== 'en';
+    const language = indic ? LANGUAGES[card.lang] : ENGLISH;
     const button = el('button', {
-      class: `card3d${tinted ? (isHindi ? ' is-hindi' : ' is-english') : ''}`,
+      class: `card3d${tinted ? (indic ? ' is-indic' : ' is-english') : ''}`,
       attrs: { type: 'button', 'data-id': card.id, tabindex: index === 0 ? 0 : -1 },
       on: {
         click: () => { roving = index; onFlip(card.id); },
@@ -58,8 +61,8 @@ export function createCardGrid({ cards, cols, pictures, tinted, speech, onFlip, 
     el('span', { class: 'card3d__inner' },
       el('span', { class: 'card3d__face card3d__back', attrs: { 'aria-hidden': 'true' } }, el('span', { text: '?' })),
       el('span', { class: 'card3d__face card3d__front', attrs: { 'aria-hidden': 'true' } },
-        el('span', { class: 'card3d__tag', text: isHindi ? 'हिं' : 'EN', attrs: isHindi ? { lang: 'hi' } : {} }),
-        el('span', { class: `card3d__text${isHindi ? ' hi' : ''}`, text: card.text, attrs: isHindi ? { lang: 'hi' } : {} }),
+        el('span', { class: 'card3d__tag', text: language.tag, attrs: indic ? { lang: card.lang } : {} }),
+        el('span', { class: `card3d__text${indic ? ' indic' : ''}`, text: card.text, attrs: indic ? { lang: card.lang } : {} }),
         pictures && card.image ? el('span', { class: 'card3d__image', text: card.image }) : null,
         el('span', { class: 'card3d__ok', text: '✔' }))));
 
@@ -73,8 +76,8 @@ export function createCardGrid({ cards, cols, pictures, tinted, speech, onFlip, 
     root.append(el('div', { class: 'cell' }, button, speak));
   });
 
-  /** A speaker is shown on a face-up card, except Hindi cards when this device has no Hindi voice. */
-  const speakerAllowed = (card) => speech.supported && (card.lang === 'en' || speech.hasVoice('hi-IN'));
+  /** A speaker is shown on a face-up card, except cards of Hindi or Marathi when this device has no voice for the language. */
+  const speakerAllowed = (card) => speech.supported && (card.lang === 'en' || speech.hasVoice(LANGUAGES[card.lang].voice));
 
   function render() {
     cells.forEach((cell, i) => {
@@ -83,8 +86,8 @@ export function createCardGrid({ cards, cols, pictures, tinted, speech, onFlip, 
       const matched = card.state === 'matched';
       cell.button.classList.toggle('is-up', up);
       cell.button.classList.toggle('is-matched', matched);
-      const language = card.lang === 'hi' ? 'Hindi' : 'English';
-      cell.button.setAttribute('aria-label', up ? `${language} card: ${card.text}${matched ? ', matched' : ''}` : `Card ${i + 1}, face down`);
+      const language = card.lang === 'en' ? ENGLISH : LANGUAGES[card.lang];
+      cell.button.setAttribute('aria-label', up ? `${language.name} card: ${card.text}${matched ? ', matched' : ''}` : `Card ${i + 1}, face down`);
       cell.button.setAttribute('aria-disabled', String(matched));
       cell.speak.hidden = !(up && speakerAllowed(card));
     });
