@@ -186,8 +186,9 @@ All 16 games are reached from one home page (`/index.html`). It greets the child
 - **Subject filter chips:** All, Math, Language, Logic, Science, Memory.
 - **Continue card:** once the child has played, a full-width link under the chips, headed "Continue where you left off", shows the icon and name of the game played last and opens it. It opens the game's start page, not a level (no game keeps a position inside itself). It is not there for a visitor who has not played, after a reset, or for a record the page does not recognise; it is not one of the game cards below it, and the subject filter does not change it.
 - **Game grid:** 16 large cards (min 160 × 160 px), grouped by subject. Each card shows the icon, game name, learning tag (e.g. "Fractions"), stars earned so far, and a "New" badge if never played. Tapping a card opens `src/games/<slug>/index.html`.
-- **Footer:** "Grown-ups" link to the parent area (the settings, a **Progress** summary, reset progress).
+- **Footer:** "Grown-ups" link to the parent area (the settings, a **Progress** summary, **Back up progress**, reset progress).
 - **Progress (in the grown-ups' settings):** a grown-up sees what the child has done, read from what the games already save. One sentence gives the totals ("Brave Panda has earned 57 stars and 5 badges, playing 12 of 19 games."); under "Progress by game", folded away until opened, the same numbers for each subject and each game (stars, levels with stars, badges), "Not played yet" for a game with nothing saved. A child who has played nothing gets the sentence only. It is built when the dialog opens, and a reset with the dialog open brings it up to date. The game played last (the one the continue card offers) is marked "Played last". Nothing new is recorded and nothing leaves the device.
+- **Back up progress (in the grown-ups' settings):** progress lives in one browser's storage, so a new tablet or cleared site data would lose every star. "Save a copy" downloads one JSON file (`kids-games-progress-<date>.json`) with the child's name, the settings, the game played last and each played game's save, and not the device record (how fast this tablet is says nothing about the child). "Restore from a copy" reads a file the grown-up picks, checks every entry as the storage service would and refuses the whole file if any entry, key or version is wrong (nothing is ever half-applied; a game this version does not list is skipped and said so), then shows a plain description of what the copy holds and asks before it replaces the progress on this device. The file stays with the grown-up: nothing is sent anywhere.
 - Every game screen has a Home button that returns here, and results screens use the player name ("Great job, Brave Panda!").
 
 **Game cards by subject**
@@ -217,6 +218,7 @@ All 16 games are reached from one home page (`/index.html`). It greets the child
 - `src/hub/ProfileService.js` — `getProfile()`, `rename(name)` (validates, throws `GameError('INVALID_NAME')`), `shuffleName()`; depends on the `StorageService` interface.
 - `src/hub/HubPage.js` — renders header, filters and cards; listens to the `storage` event so a rename in another tab updates the page.
 - `src/hub/progressSummary.js` — `summarizeProgress({ games, subjects, saveOf, lastSlug })`, the pure part of the grown-ups' progress summary: totals per game, per subject and overall from the games' saves. A game counts as played by the same rule as the "New" badge; a game in a subject the home page does not list throws `GameError('UNKNOWN_SUBJECT')`. `progressText.js` has its words and `ProgressSection.js` its DOM. The section's CSS classes are `report*`: `.progress` belongs to the thin progress bar in `ui.css`.
+- `src/hub/backup.js` — `createBackup`, `serializeBackup`, `parseBackup` (strict: it throws `GameError` with `BACKUP_TOO_BIG`, `BACKUP_NOT_JSON`, `BACKUP_NOT_OURS`, `BACKUP_NEWER`, `BACKUP_UNKNOWN_KEY` or `BACKUP_BAD_ENTRY`), `restoreBackup` (replaces what is stored, keeping the device record and a name the copy lacks) and `describeBackupProblem` (the words for each). `BackupSection.js` is the section of the settings dialog (buttons, the hidden file chooser, the confirmation).
 
 **localStorage keys**
 
@@ -246,6 +248,7 @@ All 16 games are reached from one home page (`/index.html`). It greets the child
 - [ ] Every game has a Home button and uses the player name on its results screen
 - [ ] Works when `localStorage` is unavailable (in-memory fallback, no crash)
 - [ ] The grown-ups' Progress section shows the stars and badges the games saved, in total, per subject and per game (the total agrees with the one on the home page), says so plainly when nothing has been played, and is brought up to date by a reset with the dialog open (unit- and browser-tested)
+- [ ] A grown-up can save a copy of the progress as a file and restore it on another device or after a reset: the copy has the progress, the name, the settings and the game played last, and not the device record; a file that is not a copy, is damaged, has a key it should not hold or is from a newer version changes nothing and says so; the grown-up is told what a copy holds and asked before it replaces anything (unit- and browser-tested, the browser test downloads in one browser and restores in another)
 - [ ] Reset clears only `kidsgames:*` keys
 
 ## 3D versions (Three.js)
