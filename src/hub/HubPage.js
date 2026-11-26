@@ -6,6 +6,8 @@ import { openParentArea } from '../engine/ui/SettingsPanel.js';
 import { showToast } from '../engine/ui/Toast.js';
 import { ICONS } from '../engine/ui/icons.js';
 import { SUBJECTS } from './gamesRegistry.js';
+import { buildProgressSection } from './ProgressSection.js';
+import { summarizeProgress } from './progressSummary.js';
 import { resetAllProgress } from './resetProgress.js';
 
 /**
@@ -26,6 +28,7 @@ export class HubPage {
   #editing = false;
   #header = null;
   #filters = null;
+  #progress = null;
   #grid = null;
   #disposers = [];
 
@@ -238,8 +241,35 @@ export class HubPage {
     return openParentArea({
       settings: this.#settings,
       rng: this.#rng,
-      extraSections: [this.#buildResetSection()],
+      // What the child has done comes before the one thing here that cannot be undone.
+      extraSections: [this.#buildProgressSection(), this.#buildResetSection()].filter(Boolean),
     }).catch((error) => logError(error, 'hub:grown-ups'));
+  }
+
+  /**
+   * The grown-ups' summary of what the child has done, read from the saves when the dialog opens so it is up to date. It is a nicety: if it
+   * cannot be made (a mistake in the registry, a save that cannot be read) that is logged and the settings and the reset still open.
+   * @returns {HTMLElement|null}
+   */
+  #buildProgressSection() {
+    try {
+      const summary = summarizeProgress({ games: this.#games, subjects: SUBJECTS, saveOf: (slug) => this.#rewards.getSave(slug) });
+      this.#progress = buildProgressSection(summary, { name: this.#profile.getProfile().name });
+      return this.#progress;
+    } catch (error) {
+      logError(error, 'hub:progress');
+      this.#progress = null;
+      return null;
+    }
+  }
+
+  /** After a reset the dialog is still open: make its numbers say so, in place. */
+  #refreshProgress() {
+    const old = this.#progress;
+    if (!old?.isConnected) return;
+    const fresh = this.#buildProgressSection();
+    if (fresh) old.replaceWith(fresh);
+    else old.remove(); // better nothing than numbers that are no longer true
   }
 
   #buildResetSection() {
@@ -258,6 +288,7 @@ export class HubPage {
         this.#settings.reload();
         this.#editing = false;
         this.#renderAll();
+        this.#refreshProgress();
         showToast('Progress cleared.');
       },
     });

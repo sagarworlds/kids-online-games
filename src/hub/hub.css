@@ -58,3 +58,18 @@ a.card:active { transform: translateY(1px); }
 
 .hub__footer { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 32px; }
 .hub__privacy { margin: 0; color: var(--ink-soft); font-size: 0.9rem; }
+
+/* ---------- The grown-ups' progress summary (a section of the settings dialog) ---------- */
+
+.progress__total { margin: 0 0 4px; font-weight: 700; }
+.progress__details > summary { display: flex; align-items: center; min-height: var(--tap); font-weight: 800; cursor: pointer; }
+.progress__subject { margin-top: 8px; }
+.progress__heading { margin: 8px 0 0; font-size: 1.1rem; }
+.progress__subtotal { margin: 0 0 4px; font-size: 0.85rem; font-weight: 700; color: var(--ink-soft); }
+.progress__games { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+.progress__game { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; padding: 6px 0; border-top: 1px solid var(--line); }
+.progress__icon { flex: none; }
+.progress__title { font-weight: 700; }
+.progress__facts { margin-left: auto; font-size: 0.9rem; color: var(--ink-soft); }
+.progress__game.is-unplayed .progress__title { color: var(--ink-soft); }
+.progress__last { padding: 0 8px; font-size: 0.75rem; font-weight: 800; color: var(--primary-ink); background: var(--primary); border-radius: 999px; }
