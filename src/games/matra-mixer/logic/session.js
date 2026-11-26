@@ -1,5 +1,7 @@
 import { GameError } from '../../../engine/utils/errors.js';
 import { starsForAccuracy } from '../../../engine/utils/stars.js';
+import { createMachine } from '../../../engine/utils/stateMachine.js';
+import { ROUND_SESSION_MACHINE } from './roundSession.machine.js';
 
 /** After this many wrong tries in one round the answer is shown, so nobody is stuck on one round for ever. */
 export const MAX_TRIES = 2;
@@ -14,7 +16,8 @@ export class RoundSession {
   #rounds;
   #index = 0;
   #tries = 0;
-  #answered = false;
+  /** Whether a round is open, finished and on show, or the run is over; the legal moves are in `roundSession.machine.js`. */
+  #machine = createMachine(ROUND_SESSION_MACHINE);
   #firstTry = [];
   #missed = [];
 
@@ -39,7 +42,7 @@ export class RoundSession {
   }
 
   get over() {
-    return this.#index >= this.#rounds.length;
+    return this.#machine.is('over');
   }
 
   /**
@@ -50,23 +53,23 @@ export class RoundSession {
    *   Null if the round is already finished (call `advance`) or the run is over.
    */
   answer(correct) {
-    if (this.over || this.#answered) return null;
+    if (!this.#machine.is('asking')) return null;
     this.#tries += 1;
     const reveal = correct || this.#tries >= MAX_TRIES;
     if (this.#tries === 1) {
       this.#firstTry.push(correct);
       if (!correct) this.#missed.push(this.#rounds[this.#index]);
     }
-    if (reveal) this.#answered = true;
+    if (reveal) this.#machine.must('REVEAL');
     return { correct, tries: this.#tries, reveal };
   }
 
   /** Moves on to the next round once this one is finished. */
   advance() {
-    if (!this.#answered) return;
-    this.#answered = false;
+    if (!this.#machine.is('revealed')) return;
     this.#tries = 0;
     this.#index += 1;
+    this.#machine.must(this.#index >= this.#rounds.length ? 'FINISH' : 'NEXT_ROUND');
   }
 
   /**

@@ -369,6 +369,40 @@ test('RoundSession: first tries count; a wrong try can be repeated; after two wr
   assert.deepEqual(summary.missed, ['b', 'c']);
 });
 
+// Pinned down before RoundSession was made an explicit machine: these describe what it has always done.
+
+test('RoundSession: the run is over only once the last round has been advanced past, not when its answer is shown', () => {
+  const session = new RoundSession(['a', 'b']);
+  session.answer(true); session.advance();
+  session.answer(true);
+  assert.equal(session.over, false, 'the last answer is on show but the run is not over yet');
+  assert.equal(session.current, 'b');
+  assert.equal(session.position, 2);
+  session.advance();
+  assert.equal(session.over, true);
+  assert.equal(session.current, null);
+  assert.equal(session.position, 2, 'the position stays on the last number');
+});
+
+test('RoundSession: once over, nothing moves: answers are refused and further advances do nothing', () => {
+  const session = new RoundSession(['a']);
+  session.answer(false); session.answer(false); // two wrong tries show the answer
+  session.advance();
+  assert.equal(session.over, true);
+  assert.equal(session.answer(true), null);
+  session.advance(); session.advance();
+  assert.equal(session.over, true);
+  assert.deepEqual(session.summary(), { total: 1, correct: 0, answered: 1, stars: session.summary().stars, missed: ['a'] });
+});
+
+test('RoundSession: a wrong try that does not yet show the answer leaves the round open and cannot be advanced past', () => {
+  const session = new RoundSession(['a', 'b']);
+  assert.deepEqual(session.answer(false), { correct: false, tries: 1, reveal: false });
+  session.advance();
+  assert.equal(session.current, 'a', 'advance is refused while the round is still open');
+  assert.equal(session.position, 1);
+});
+
 test('RoundSession: stars by first-try accuracy, and rounds never reached count as wrong', () => {
   const run = (rights, total) => {
     const s = new RoundSession(Array.from({ length: total }, (_, i) => i));
