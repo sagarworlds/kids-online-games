@@ -18,8 +18,10 @@ function widthsOf(label, pieces) {
   if (!parent) throw new GameError('NO_PLACE', 'a text that is not in the page cannot be measured', { text: label.textContent });
   const probes = pieces.map((piece) => {
     const probe = /** @type {HTMLElement} */ (label.cloneNode(false));
-    // `cssText` replaces the size an earlier fit left on the label, so a piece is measured at the stylesheet's size.
-    probe.style.cssText = 'position: absolute; visibility: hidden; white-space: nowrap; width: auto; height: auto; inset: 0 auto auto 0;';
+    // `cssText` replaces the size an earlier fit left on the label, so a piece is measured at the stylesheet's size. The width is max-content: a
+    // box sized "to fit" is held to the room it has (the card), so a word wider than the card would be measured as exactly the card's width.
+    probe.style.cssText = 'position: absolute; visibility: hidden; white-space: nowrap; width: max-content; min-width: 0; max-width: none; height: auto; '
+      + 'margin: 0; padding: 0; border: 0; box-sizing: content-box; inset: 0 auto auto 0;';
     probe.removeAttribute('id');
     probe.textContent = piece;
     return probe;
