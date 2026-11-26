@@ -1073,6 +1073,7 @@ Verify these values against the NASA Planetary Fact Sheet before release, and ke
 - [ ] Weight is not written to storage
 - [ ] Drag-and-drop works with touch, mouse and keyboard
 - [ ] All three modes reachable and each ends on Results
+- [ ] Each level has at least twenty quiz questions, so a round of ten is not the same ten every time (unit test), and a full round at every level can be played in the browser
 
 **Stretch ideas:** "Jump height" on each planet; build-your-own solar system sandbox.
 

@@ -288,6 +288,28 @@ test('quiz answers that follow from the planet data really do', () => {
   assert.ok(quizItems.filter((q) => q.basedOn).length >= 12, 'most planet questions are tied to the data');
 });
 
+test('each level has at least twenty questions, so two rounds in a row are not the same ten', () => {
+  for (const level of LEVEL_IDS) assert.ok(quizItems.filter((q) => q.level === level).length >= 20, level);
+});
+
+test('the answers that can be worked out from the planet data are the ones the data gives', () => {
+  const lookup = byId(planets);
+  const answer = (id) => quizItems.find((q) => q.id === id).answerId;
+  // Uranus and Neptune are the smallest giants, at about 25,000 km across the middle; the biggest rocky planet, Earth, is 6,371.
+  const GIANT_FROM_KM = 20000;
+  const giants = planets.filter((p) => p.radiusKm > GIANT_FROM_KM);
+  assert.equal(answer('secondbiggest'), [...planets].sort((a, b) => b.radiusKm - a.radiusKm)[1].id);
+  assert.equal(answer('closerthanearth'), String(planets.filter((p) => p.distanceAU < lookup.get('earth').distanceAU).length));
+  assert.equal(answer('giantcount'), String(giants.length));
+  assert.equal(answer('nearestgiant'), [...giants].sort((a, b) => a.order - b.order)[0].id);
+  assert.equal(answer('moonaround'), bonus.find((body) => body.id === 'moon').orbits);
+  // "Which of these is a giant ball of gas?" has one right answer: only the answer among its options is a giant.
+  const gas = quizItems.find((q) => q.id === 'gasgiant');
+  assert.deepEqual(gas.optionIds.filter((id) => lookup.get(id).radiusKm > GIANT_FROM_KM), [gas.answerId]);
+  // "Which of the four giant planets is the closest?" offers the four giants and nothing else.
+  assert.deepEqual([...quizItems.find((q) => q.id === 'nearestgiant').optionIds].sort(), giants.map((g) => g.id).sort());
+});
+
 test('the Pluto question is there and its answer is "A dwarf planet"', () => {
   const pluto = quizItems.find((q) => /Pluto/.test(q.q));
   assert.ok(pluto);
