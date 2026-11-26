@@ -64,6 +64,7 @@ export class BoardScene extends HindiScene {
 
   exit() {
     this.#offVoices();
+    this.#grid.destroy();
     this.services.speech.cancel();
   }
 
@@ -81,7 +82,7 @@ export class BoardScene extends HindiScene {
       const pair = this.#pairs.find((p) => p.pairId === result.pairId);
       const word = /** @type {string} */ (wordIn(pair, this.language.id));
       speech.speakSequence([{ text: word, lang: this.language.voice }, { text: pair.en, lang: ENGLISH.voice }]); // only if read-aloud is on
-      this.#statusEl.textContent = `✔ ${word} = ${pair.en}`;
+      this.#sayMatch(word, pair.en);
     } else if (result.type === 'mismatch') {
       audio.play('boop');
       this.#grid.shake(result.ids);
@@ -90,6 +91,11 @@ export class BoardScene extends HindiScene {
     }
     this.#syncHud();
     if (this.#game.done) this.#finishIn = FINISH_DELAY_SECONDS;
+  }
+
+  /** The status line after a match. The word of Hindi or Marathi in it says which it is (WCAG 3.1.2), so a screen reader reads it in the right voice. */
+  #sayMatch(word, english) {
+    this.#statusEl.replaceChildren('✔ ', el('span', { class: 'indic', text: word, attrs: { lang: this.language.id } }), ` = ${english}`);
   }
 
   /** What to do, in the words of the language being played. */

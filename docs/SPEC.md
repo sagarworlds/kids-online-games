@@ -114,6 +114,7 @@ All 16 games run on one tiny engine: a scene manager, a game loop, and injected 
 - No "Game Over". Mistakes show "Try again!" plus a hint after 2 wrong tries.
 - Results screen always shows 1–3 stars and one positive message; stars save per level.
 - Every game has three difficulty levels (Easy / Medium / Hard) and a parent settings panel: sound on/off, read-aloud on/off, difficulty lock, and "Save all games for offline play" (which games are saved for offline use, and a button that saves every one at once).
+- A word or a name that has to fit a card of a fixed size is shrunk to fit, not left to break in the middle of a word: `fitTexts` in `engine/ui/fitText.js` measures each text where it is drawn (a hidden copy of it, so its font, its size at that screen and its language count: the same Devanagari word is wider in Marathi than in Hindi) and `fitScale` in `engine/utils/fitText.js` is the arithmetic. The caller says how small a text may become (`least`; the default is 70% of its size) and whether a card that is too tall counts as too small as well (`height`). Food Chain Builder and Hindi–English Match use it; run it again whenever the cards are laid out or a font arrives.
 - A game's menu opens on the level the child is ready for, not always on Easy: the level after the highest one they have done well on (two stars or more), with a small "Suggested" under its name in the level picker. A child who has played nothing, or who is still working on Easy (one star), sees Easy and nothing extra; one who did well on Medium without ever finishing Easy is offered Hard; doing well on Hard stays on Hard. A grown-up's difficulty lock decides everything, and nothing is suggested then. The rule is `startingLevel` in `engine/utils/recommendLevel.js`; a game tells it how many stars the child has at a level with `starsByLevel(bestStars)` when it saves stars under the level's id, or its own `starsAtLevel` in `logic/` where it saves them under a plant, theme, mode, habitat or set (Table Tower, which has always opened where the child got to by floors cleared, passes that level on as the suggestion). Robot Path has numbered levels and no picker.
 - No ads, no external links, no data leaves the device, no personal data collected.
 
@@ -686,7 +687,7 @@ A memory card-flip game where each pair is a Hindi word and its English meaning 
 
 - Double-tapping the same card does not count as two flips.
 - Rapid tapping during the 1 s flip-back is ignored.
-- If `speechSynthesis` has no Hindi voice, hide the speaker icon for Hindi cards only.
+- A face-up card is tapped (or pressed) to hear its word, in the card's language; there is no speaker button on a card, which on a phone would cover the word. A 🔊 in the card's corner says so (✔ once it is matched). If `speechSynthesis` has no voice for the language, a Hindi or Marathi card shows no 🔊 and says nothing, and English cards still do.
 - A card is never narrower than 72px (and so is at least 48px each way to tap). A screen that cannot hold the level's columns gets a grid with fewer columns and more rows instead: Hard on a phone is four columns of five rows, so no card is ever off the screen or needs the page slid sideways.
 
 **Acceptance criteria**
@@ -698,6 +699,9 @@ A memory card-flip game where each pair is a Hindi word and its English meaning 
 - [ ] Results show every pair for review
 - [ ] The game can be played in Marathi: the language is chosen on the menu and remembered, Marathi cards carry `lang="mr"`, and Marathi stars are kept apart from Hindi's (unit and browser checks)
 - [ ] Every card of every level is on the screen, at least 48px each way and clear of the others, on a desktop, a phone, a small phone and the smallest phone (browser check)
+- [ ] Every word of the game, in every language, fits inside its card on those screens: it is shrunk to fit (never below 45% of its size) and not broken in the middle unless it is already that small; the tag, the word and the picture stay inside the card (browser check on every word of `pairs.json`)
+- [ ] The only text on a card is its word (the tag, the picture, the "?" and the ✔ and 🔊 are drawn by the stylesheet), so a card's name holds all the text it shows (WCAG 2.5.3); the board passes axe with every card face up and with a pair matched
+- [ ] A face-up card says its word when tapped or pressed; a card in a language with no voice shows no 🔊 and says nothing
 
 **Marathi:** the menu has a language choice, Hindi or Marathi (remembered in the save). Each pair has a `mr` word beside its `hi` word (89 of 91 do: Marathi has no separate words for the two maternal grandparents), the cards show "मरा" and the word with `lang="mr"`, speech uses `mr-IN`, and stars are kept per language (Hindi under the plain level ids, Marathi under `mr-<level>`). `logic/languages.js` holds what differs between languages.
 
@@ -1126,7 +1130,7 @@ The child draws arrows between living things in a habitat (grass → rabbit → 
 - `logic/whatIf.js` — scores predictions against `effects`.
 - `ui/ArrowLayer.js` — SVG overlay; pointer-drag draws a live line; drop on a card creates a link; tap an arrow + Eraser removes it.
 - `scenes/BuilderScene.js` — card layout positions from habitat data.
-- `logic/fit.js` and `ui/fitNames.js` — a card is a fixed size and names differ ("Fig tree", "Mudskipper"), so each name is measured in the browser and shrunk, never below 70%, until its longest word fits; `fitScale` is the arithmetic, `fitCardNames` runs on every layout.
+- `ui/fitNames.js` — a card is a fixed size and names differ ("Fig tree", "Mudskipper"), so each name is measured in the browser and shrunk, never below 70%, until its longest word fits; the engine's `utils/fitText.js` (`fitScale`) is the arithmetic and `ui/fitText.js` (`fitTexts`) the measuring, shared with other games; `fitCardNames` runs on every layout.
 
 **Feedback:** green arrows animate a flowing dot (energy moving); red arrows wiggle with a short reason; completed web plays a habitat ambient sound.
 

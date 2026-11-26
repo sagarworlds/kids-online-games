@@ -24,15 +24,23 @@ Topics: Fruits, Animals, Colours, Body, Family, Numbers (13 to 20 pairs each, 91
 
 - Cards match by `pairId`, never by text, so the same English word can appear in different topics.
 - While two wrong cards are showing, taps are ignored (not queued); tapping the same card twice never counts.
-- Read-aloud (Hindi `hi-IN`, Marathi `mr-IN`, English `en-IN`) follows the parent setting for matches. The 🔊 buttons always work when the
-  browser can speak; the Hindi or Marathi one is hidden on devices with no voice for that language, and the English one stays.
+- Read-aloud (Hindi `hi-IN`, Marathi `mr-IN`, English `en-IN`) follows the parent setting for matches. A face-up card is tapped (or pressed)
+  to hear its word whatever that setting says, when the browser can speak. There is no button for it on a card: on a phone a card is as small
+  as 76px, and a button of at least 48px would cover the word. A 🔊 in the corner of a face-up card says it can be tapped (✔ once matched);
+  on a device with no voice for Hindi or Marathi those cards show no 🔊 and say nothing, and the English ones stay.
 - The language is a choice on the menu and is kept in the game's save (`extra.language`). Stars are kept per language: Hindi under
   the plain level ids (`easy`, `medium`, `hard`), as every save made before Marathi has them, and Marathi under `mr-easy`,
   `mr-medium` and `mr-hard`. What the menu suggests and shows follows the language.
 - Two pairs have no Marathi word and are left out of Marathi games: Marathi says आजोबा and आजी for both grandfathers and both
   grandmothers, so "Maternal grandfather" and "Maternal grandmother" would be two cards that read the same. The data check refuses
   two cards with the same word in a language.
-- Keyboard: arrow keys move between cards, Enter or Space flips. Cards are real buttons with labels like "Hindi card: सेब" or "Marathi card: सफरचंद".
+- Keyboard: arrow keys move between cards, Enter or Space flips a face-down card and says the word of a face-up one. Cards are real buttons
+  with labels like "Hindi card: सेब" or "Marathi card: सफरचंद". The only text on a card is its word: the tag, the picture, the "?" on the back
+  and the ✔ and 🔊 are drawn by the stylesheet (`content: attr(data-text)`), so the button's name holds all the text it shows (WCAG 2.5.3).
+- A word is shrunk to fit its card, by the engine's `fitTexts` (measured in the browser, as the card draws it: its font, its size at that
+  screen and its language, because the same Devanagari word is wider in Marathi than in Hindi), down to 45% of the size the stylesheet gives
+  it (`LEAST_WORD_SCALE`, so 10px for English and 13px for Devanagari on a phone). A phrase of two lines beside a picture is shrunk until the
+  card is tall enough. A word that would need less than that is let break at a hyphen, or in the middle as the last thing.
 - Every word of Hindi or Marathi on a card, the menu and the results carries its language (`lang="hi"` or `lang="mr"`), so a screen reader says it in the right voice.
 - Colour is never the only signal: a "हिं" / "मरा" / "EN" tag shows the language, and matched cards show a ✔.
 - With `prefers-reduced-motion` the flip and the shake are switched off.
@@ -59,7 +67,7 @@ index.html, main.js, style.css   Page, composition root (loads and validates pai
 data/pairs.json                  Topics and 91 word pairs: `hi`, `mr` (89 of them) and `en`, + `similar` / `similarMr` tags for look-alike words
 assets/fonts/                    Noto Sans Devanagari 400 and 700 (WOFF2) + licence
 scenes/                          MenuScene, BoardScene, ResultScene (+ HindiScene base)
-ui/CardGrid.js                   The cards: CSS 3D flip, arrow-key navigation, speaker buttons
+ui/CardGrid.js                   The cards: CSS 3D flip, arrow-key navigation, a face-up card is tapped to hear it, words shrunk to fit
 logic/                           Pure rules, no DOM (all unit-tested)
   matchState.js                  idle -> oneUp -> twoUp -> (matched | mismatch) -> idle
   deck.js                        Two cards per pair, Fisher–Yates shuffle, look-alike preference

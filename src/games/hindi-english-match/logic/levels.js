@@ -23,6 +23,13 @@ export const MIXED = 'Mixed';
 export const PEEK_SECONDS = 5;
 /** A wrong pair stays visible this long before flipping back. */
 export const FLIP_BACK_SECONDS = 1;
+/**
+ * The smallest a word may be made, as a share of its size in the stylesheet, to fit its card. The stylesheet's sizes are large (23px and 28px
+ * on a phone), so 45% of that is still 10px for English and 13px for Devanagari, and it is just enough for the longest word ("Pomegranate",
+ * "Grandmother") on the narrowest card that has four columns. A word that would need less is let break at a hyphen, or last of all in the
+ * middle, rather than made smaller.
+ */
+export const LEAST_WORD_SCALE = 0.45;
 
 /**
  * @param {string} id
