@@ -251,6 +251,30 @@ stateDiagram-v2
 ```
 <!-- machine:matra-mixer/round-session:end -->
 
+### `table-tower/quiz-session`: a run of questions
+
+`src/games/table-tower/logic/quizSession.machine.js`, used by `QuizSession` (not to be confused with `table-tower/quiz-flow`,
+which is the *screen*). Replaces `#answeredCurrent`, `#timedOut` and the derived test `#index >= queue`. A run ends in one of
+two final states, `finished` (the last question was moved past) or `timedOut` (the clock ran out), both tagged `over`;
+`summary().timedOut` is read from which one it is. The clock can end the run while an answer is on show: the screen only
+ticks it while a question waits, but the session itself has always accepted it, and that is kept. The queue, the repeats and the
+seconds left stay plain data. Three tests were added to `tests/table-tower/logic.test.js` first, and pass on the old code and
+the new unchanged.
+
+<!-- machine:table-tower/quiz-session:start -->
+```mermaid
+stateDiagram-v2
+  [*] --> asking
+  asking --> answered: ANSWER
+  asking --> timedOut: TIME_UP
+  answered --> asking: NEXT
+  answered --> finished: FINISH
+  answered --> timedOut: TIME_UP
+  finished --> [*]
+  timedOut --> [*]
+```
+<!-- machine:table-tower/quiz-session:end -->
+
 ### `number-ninja/play-flow`: the falling-stars screen
 
 `src/games/number-ninja/logic/playFlow.machine.js`, used by `PlayScene`. Replaces `#finishing`, `#done` and the test
@@ -363,7 +387,6 @@ ones that looked like more than a latch. Nothing here is known to be broken; thi
 
 | Where | What it hides | Suggested states |
 | --- | --- | --- |
-| `table-tower/logic/session.js` `QuizSession` | `#answeredCurrent` and `#timedOut` | `asking → answered`, `timedOut` |
 | `engine/ui/ParentGate` | wrong answer re-asks inside a modal | `asking → (wrong → asking) → passed / cancelled` |
 | `hub/HubPage` | `#editing` plus the draft name and avatar | `viewing → editing → saving` |
 
