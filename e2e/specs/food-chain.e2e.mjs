@@ -1,13 +1,15 @@
-// Food Chain Builder's board, checked in the browser for every habitat the game has (the list is read from the game's own data, so a habitat that
-// is added later is checked too). A card is a fixed size and the names in it differ, so a long word could be broken in the middle of the word
-// ("Mudskippe" and "r"): the names are measured in the browser and shrunk to fit, which these checks keep honest.
+// Food Chain Builder, checked in the browser for every habitat the game has (the list is read from the game's own data, so a habitat that is
+// added later is checked too): each one can be solved through the real screens, its cards stand clear of each other on a small phone, and its
+// board passes the accessibility checks. A card is a fixed size and the names in it differ, so a long word could be broken in the middle of the
+// word ("Mudskippe" and "r"): the names are measured in the browser and shrunk to fit, which these checks keep honest.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { after, before, describe, it } from 'node:test';
+import { problemsOnScreen } from '../support/a11y.mjs';
 import { launchBrowser } from '../support/browser.mjs';
 import { scenario } from '../support/scenario.mjs';
 import { startSite } from '../support/site.mjs';
-import { eventually } from '../support/ui.mjs';
+import { button, eventually, textOf } from '../support/ui.mjs';
 
 const TIMEOUT = { timeout: 240_000 };
 const HABITATS = JSON.parse(readFileSync(new URL('../../src/games/food-chain-builder/data/habitats.json', import.meta.url), 'utf8')).habitats;
@@ -96,5 +98,65 @@ describe('the cards on the board', () => {
     await eventually(() => page.locator('.board').evaluate((board) => board.classList.contains('board--vertical')), { message: 'the board to turn to the phone layout' });
     await settle(page);
     assert.deepEqual(await page.evaluate(wordsThatDoNotFit), [], 'and fits on the phone layout, where the cards and the text are smaller');
+  }));
+
+  it('every habitat can be solved by drawing its arrows, and a Hard one by answering its What if', TIMEOUT, () => scenario(env, 'food chain solve all', { screen: 'desktop' }, async ({ page, site }) => {
+    for (const habitat of HABITATS) {
+      const where = habitat.id;
+      await openHabitat(page, site, habitat);
+      // Tap the food, then the one that eats it: the way a keyboard does it, and the same arrows a drag draws.
+      for (const { from, to } of habitat.required) {
+        await page.locator(`.cardwrap[data-id="${from}"] .card`).click();
+        await page.locator(`.cardwrap[data-id="${to}"] .card`).click();
+      }
+      assert.match(await textOf(page.locator('.build__count')), new RegExp(`Arrows drawn: ${habitat.required.length} of ${habitat.required.length}`), where);
+      await button(page, /Check/).click();
+      await page.locator('.board.is-alive').waitFor();
+      assert.equal(await textOf(page.locator('.build__status')), 'The food web is complete and it comes alive!', where);
+      await page.locator('.build__after button').click();
+
+      if (habitat.whatIf) {
+        // The answers the data gives (the unit tests prove they follow the one-step rule); the screen has to take them all.
+        for (const [id, effect] of Object.entries(habitat.whatIf.effects)) await page.locator(`input[name="predict-${id}"][value="${effect}"]`).check({ force: true });
+        await button(page, /Check my answers/).click();
+        const asked = Object.keys(habitat.whatIf.effects).length;
+        assert.equal(await textOf(page.locator('.whatif__score')), `${asked} of ${asked} right.`, where);
+        await button(page, /See my results/).click();
+      }
+      await page.locator('.result').waitFor();
+      assert.equal(await page.locator('.result__stars').getAttribute('aria-label'), '3 out of 3 stars', `${where}: nothing wrong at the first check, so three stars`);
+      const save = JSON.parse(await page.evaluate(() => localStorage.getItem('kidsgames:food-chain-builder')));
+      assert.equal(save.bestStars[habitat.id], 3, `${where}: the stars are saved under the habitat's id`);
+    }
+  }));
+
+  it('the cards of every habitat stand inside the board and clear of each other on a small phone', TIMEOUT, () => scenario(env, 'food chain cards clear', { screen: 'smallPhone' }, async ({ page, site }) => {
+    const problems = [];
+    for (const habitat of HABITATS) {
+      await openHabitat(page, site, habitat);
+      const { board, cards } = await page.evaluate(() => {
+        const box = (element) => { const r = element.getBoundingClientRect(); return { left: r.left, right: r.right, top: r.top, bottom: r.bottom }; };
+        return { board: box(document.querySelector('.board')), cards: [...document.querySelectorAll('.board .card')].map((card) => ({ name: card.querySelector('.card__name').textContent.trim(), ...box(card) })) };
+      });
+      for (const card of cards) {
+        if (card.left < board.left || card.right > board.right || card.top < board.top || card.bottom > board.bottom) problems.push(`${habitat.id}: ${card.name} sticks out of the board`);
+      }
+      for (let i = 0; i < cards.length; i++) {
+        for (let j = i + 1; j < cards.length; j++) {
+          const across = Math.min(cards[i].right, cards[j].right) - Math.max(cards[i].left, cards[j].left);
+          const down = Math.min(cards[i].bottom, cards[j].bottom) - Math.max(cards[i].top, cards[j].top);
+          if (across > 1 && down > 1) problems.push(`${habitat.id}: ${cards[i].name} and ${cards[j].name} overlap`);
+        }
+      }
+    }
+    assert.deepEqual(problems, [], `cards on top of each other or off the board:\n${problems.join('\n')}`);
+  }));
+
+  it('the busiest board of each place (its Hard habitat) passes the accessibility checks on a phone', TIMEOUT, () => scenario(env, 'food chain a11y', { screen: 'phone' }, async ({ page, site }) => {
+    for (const habitat of HABITATS.filter((candidate) => candidate.level === 'hard')) {
+      await openHabitat(page, site, habitat);
+      const problems = await problemsOnScreen(page);
+      assert.equal(problems.length, 0, `${habitat.id}: accessibility problems:\n${problems.join('\n')}`);
+    }
   }));
 });
