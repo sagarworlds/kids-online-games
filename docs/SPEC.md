@@ -1119,12 +1119,14 @@ The child draws arrows between living things in a habitat (grass → rabbit → 
 - `logic/whatIf.js` — scores predictions against `effects`.
 - `ui/ArrowLayer.js` — SVG overlay; pointer-drag draws a live line; drop on a card creates a link; tap an arrow + Eraser removes it.
 - `scenes/BuilderScene.js` — card layout positions from habitat data.
+- `logic/fit.js` and `ui/fitNames.js` — a card is a fixed size and names differ ("Fig tree", "Mudskipper"), so each name is measured in the browser and shrunk, never below 70%, until its longest word fits; `fitScale` is the arithmetic, `fitCardNames` runs on every layout.
 
 **Feedback:** green arrows animate a flowing dot (energy moving); red arrows wiggle with a short reason; completed web plays a habitat ambient sound.
 
 **Edge cases**
 
 - Self-links and duplicate links are rejected silently.
+- A long name is shrunk to fit its card, never broken in the middle of a word ("Mudskippe" / "r"); if the browser cannot measure text the problem is logged and the names stay as the stylesheet draws them.
 - Arrow dropped on empty space is cancelled.
 - Keyboard: select a source card with Enter, then a target card with Enter to create a link; Delete removes the focused arrow.
 
@@ -1135,6 +1137,7 @@ The child draws arrows between living things in a habitat (grass → rabbit → 
 - [ ] Arrows can be drawn and erased with touch, mouse and keyboard
 - [ ] "What if?" works on Hard habitats
 - [ ] Each card's Info shows role and fact
+- [ ] No word on a card is broken in the middle, in any habitat, on a desktop, a phone or a small phone (browser check)
 
 **Stretch ideas:** decomposers bonus (mushrooms, worms) closing the loop; Indian habitats pack (Sundarbans, Western Ghats).
 

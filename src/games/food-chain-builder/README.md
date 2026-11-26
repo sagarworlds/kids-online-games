@@ -38,6 +38,8 @@ fewer (↓). The rule is one step: what eats the missing thing goes down, what i
   if answer equals what the one-step rule gives (so the data cannot disagree with the rule).
 - `logic/` is pure: `linkChecker` (correct, reversed, invalid, missing, duplicate), `whatIf`, `layout` (cards are placed
   by how far each is from the sun, left to right on a wide board and bottom to top on a phone), `messages`, `scoring`.
+- `ui/fitNames.js` measures each card's name in the browser and shrinks it (`logic/fit.js` does the arithmetic) until its longest word fits,
+  so no word is broken in the middle, whatever the device's font; it runs each time the board is laid out.
 - `ui/ArrowLayer.js` draws the arrows as SVG under the cards; `ui/LinkGesture.js` turns a drag between two cards into a link.
   Every arrow is focusable. `scenes/` has one scene each for the menu, the builder, the What if challenge and the results.
 - The game remembers your stars, which living things you have met, and that you have read the arrows note, on this device only.
