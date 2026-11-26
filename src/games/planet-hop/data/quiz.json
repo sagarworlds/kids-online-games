@@ -183,6 +183,166 @@
       "explain": "Jupiter's stripes are clouds of gas pulled into bands by its fast spin."
     },
     {
+      "id": "fifth",
+      "level": "easy",
+      "kind": "planet",
+      "q": "Which planet is the fifth from the Sun?",
+      "answerId": "jupiter",
+      "optionIds": [
+        "jupiter",
+        "saturn",
+        "mars",
+        "earth"
+      ],
+      "explain": "Count out from the Sun: Mercury, Venus, Earth, Mars, Jupiter. Jupiter is the fifth.",
+      "basedOn": {
+        "field": "order",
+        "equals": 5
+      }
+    },
+    {
+      "id": "eighth",
+      "level": "easy",
+      "kind": "planet",
+      "q": "Which planet is the eighth, and the last, from the Sun?",
+      "answerId": "neptune",
+      "optionIds": [
+        "neptune",
+        "uranus",
+        "saturn",
+        "jupiter"
+      ],
+      "explain": "Neptune is the last planet. It is so far from the Sun that it is dark and very cold there.",
+      "basedOn": {
+        "field": "order",
+        "equals": 8
+      }
+    },
+    {
+      "id": "betweenvm",
+      "level": "easy",
+      "kind": "planet",
+      "q": "Which planet is between Venus and Mars?",
+      "answerId": "earth",
+      "optionIds": [
+        "earth",
+        "mercury",
+        "jupiter",
+        "saturn"
+      ],
+      "explain": "Our home, Earth, is the third planet. Venus comes before it and Mars comes after it.",
+      "basedOn": {
+        "field": "order",
+        "equals": 3
+      }
+    },
+    {
+      "id": "beforejupiter",
+      "level": "easy",
+      "kind": "planet",
+      "q": "Which planet comes just before Jupiter?",
+      "answerId": "mars",
+      "optionIds": [
+        "mars",
+        "earth",
+        "saturn",
+        "venus"
+      ],
+      "explain": "Mars is the fourth planet and Jupiter is the fifth.",
+      "basedOn": {
+        "field": "order",
+        "equals": 4
+      }
+    },
+    {
+      "id": "nextsaturn",
+      "level": "easy",
+      "kind": "planet",
+      "q": "Which planet comes just after Saturn?",
+      "answerId": "uranus",
+      "optionIds": [
+        "uranus",
+        "neptune",
+        "jupiter",
+        "mars"
+      ],
+      "explain": "Uranus is the seventh planet, right after Saturn.",
+      "basedOn": {
+        "field": "order",
+        "equals": 7
+      }
+    },
+    {
+      "id": "oceans",
+      "level": "easy",
+      "kind": "planet",
+      "q": "Which planet has oceans of water on its surface?",
+      "answerId": "earth",
+      "optionIds": [
+        "earth",
+        "mars",
+        "venus",
+        "mercury"
+      ],
+      "explain": "Earth is the only planet we know with oceans of liquid water. That is one reason plants and animals can live here."
+    },
+    {
+      "id": "moonaround",
+      "level": "easy",
+      "kind": "planet",
+      "q": "Which planet does our Moon travel around?",
+      "answerId": "earth",
+      "optionIds": [
+        "earth",
+        "mars",
+        "venus",
+        "jupiter"
+      ],
+      "explain": "The Moon goes around Earth once about every month."
+    },
+    {
+      "id": "sunstar",
+      "level": "easy",
+      "kind": "text",
+      "q": "What is the Sun?",
+      "answerId": "A star",
+      "optionIds": [
+        "A star",
+        "A planet",
+        "A moon",
+        "A comet"
+      ],
+      "explain": "The Sun is a star: a giant ball of hot, glowing gas. It gives us light and warmth."
+    },
+    {
+      "id": "middle",
+      "level": "easy",
+      "kind": "text",
+      "q": "What is in the middle of our solar system?",
+      "answerId": "The Sun",
+      "optionIds": [
+        "The Sun",
+        "The Moon",
+        "Jupiter",
+        "Earth"
+      ],
+      "explain": "All the planets travel around the Sun."
+    },
+    {
+      "id": "moonlight",
+      "level": "easy",
+      "kind": "text",
+      "q": "Where does the Moon's light come from?",
+      "answerId": "The Sun",
+      "optionIds": [
+        "The Sun",
+        "The Moon itself",
+        "Earth",
+        "Jupiter"
+      ],
+      "explain": "The Moon makes no light of its own. It shines because sunlight bounces off it."
+    },
+    {
       "id": "redspot",
       "level": "medium",
       "kind": "planet",
@@ -339,6 +499,174 @@
       }
     },
     {
+      "id": "closerthanearth",
+      "level": "medium",
+      "kind": "text",
+      "q": "How many planets are closer to the Sun than Earth?",
+      "answerId": "2",
+      "optionIds": [
+        "2",
+        "1",
+        "3",
+        "4"
+      ],
+      "explain": "Mercury and Venus are closer to the Sun than Earth is."
+    },
+    {
+      "id": "secondbiggest",
+      "level": "medium",
+      "kind": "planet",
+      "q": "Which planet is the second biggest?",
+      "answerId": "saturn",
+      "optionIds": [
+        "saturn",
+        "uranus",
+        "neptune",
+        "earth"
+      ],
+      "explain": "Only Jupiter is bigger than Saturn."
+    },
+    {
+      "id": "earthmoons",
+      "level": "medium",
+      "kind": "text",
+      "q": "How many moons does Earth have?",
+      "answerId": "One",
+      "optionIds": [
+        "One",
+        "Two",
+        "Four",
+        "None"
+      ],
+      "explain": "Earth has one Moon. Mars has two, and some of the giant planets have dozens."
+    },
+    {
+      "id": "orbit",
+      "level": "medium",
+      "kind": "text",
+      "q": "What do we call the path a planet takes around the Sun?",
+      "answerId": "An orbit",
+      "optionIds": [
+        "An orbit",
+        "A crater",
+        "A comet",
+        "An eclipse"
+      ],
+      "explain": "Every planet travels around the Sun on its own path. That path is called an orbit."
+    },
+    {
+      "id": "galaxy",
+      "level": "medium",
+      "kind": "text",
+      "q": "What is the name of the galaxy our solar system is in?",
+      "answerId": "The Milky Way",
+      "optionIds": [
+        "The Milky Way",
+        "Andromeda",
+        "The Big Dipper",
+        "The Solar Belt"
+      ],
+      "explain": "Our Sun is one of billions of stars in the Milky Way galaxy."
+    },
+    {
+      "id": "comet",
+      "level": "medium",
+      "kind": "text",
+      "q": "What do we call a ball of ice and dust that grows a glowing tail near the Sun?",
+      "answerId": "A comet",
+      "optionIds": [
+        "A comet",
+        "A planet",
+        "A moon",
+        "A star"
+      ],
+      "explain": "Near the Sun a comet's ice turns to gas and streams out behind it as a long, glowing tail."
+    },
+    {
+      "id": "meteor",
+      "level": "medium",
+      "kind": "text",
+      "q": "What do we call a space rock that burns up in the sky and makes a streak of light?",
+      "answerId": "A meteor",
+      "optionIds": [
+        "A meteor",
+        "A planet",
+        "A moon",
+        "A comet"
+      ],
+      "explain": "A meteor glows as it burns up in Earth's air. People often call it a shooting star, but it is a rock, not a star."
+    },
+    {
+      "id": "saturnrings",
+      "level": "medium",
+      "kind": "text",
+      "q": "What are Saturn's rings made of?",
+      "answerId": "Chunks of ice and rock",
+      "optionIds": [
+        "Chunks of ice and rock",
+        "Hot gas",
+        "Liquid water",
+        "Solid gold"
+      ],
+      "explain": "The rings are made of countless pieces of ice and rock, from tiny grains to big boulders, all going around Saturn."
+    },
+    {
+      "id": "marsday",
+      "level": "medium",
+      "kind": "planet",
+      "q": "Which planet has a day almost as long as a day on Earth?",
+      "answerId": "mars",
+      "optionIds": [
+        "mars",
+        "jupiter",
+        "mercury",
+        "venus"
+      ],
+      "explain": "A day on Mars is about 24 and a half hours. A day on Jupiter is less than 10 hours, and a day on Venus lasts for months."
+    },
+    {
+      "id": "earthyear",
+      "level": "medium",
+      "kind": "text",
+      "q": "About how many days does Earth take to go once around the Sun?",
+      "answerId": "About 365 days",
+      "optionIds": [
+        "About 365 days",
+        "About 30 days",
+        "About 100 days",
+        "About 24 hours"
+      ],
+      "explain": "That trip is one year: about 365 days."
+    },
+    {
+      "id": "gasgiant",
+      "level": "medium",
+      "kind": "planet",
+      "q": "Which of these planets is a giant ball of gas?",
+      "answerId": "jupiter",
+      "optionIds": [
+        "jupiter",
+        "mars",
+        "earth",
+        "venus"
+      ],
+      "explain": "Jupiter has no solid ground to stand on. Mars, Earth and Venus are rocky."
+    },
+    {
+      "id": "nearestgiant",
+      "level": "medium",
+      "kind": "planet",
+      "q": "Which of the four giant planets is the closest to the Sun?",
+      "answerId": "jupiter",
+      "optionIds": [
+        "jupiter",
+        "saturn",
+        "uranus",
+        "neptune"
+      ],
+      "explain": "Jupiter is the closest giant. Saturn, Uranus and Neptune come after it."
+    },
+    {
       "id": "pluto",
       "level": "hard",
       "kind": "text",
@@ -488,6 +816,182 @@
         "neptune"
       ],
       "explain": "Mars is a small rocky planet; Jupiter and Saturn are gas giants, Neptune an ice giant."
+    },
+    {
+      "id": "distance5",
+      "level": "hard",
+      "kind": "planet",
+      "q": "Which planet is about five times farther from the Sun than Earth is?",
+      "answerId": "jupiter",
+      "optionIds": [
+        "jupiter",
+        "saturn",
+        "mars",
+        "uranus"
+      ],
+      "explain": "Jupiter is about 5.2 times as far from the Sun as Earth is.",
+      "basedOn": {
+        "field": "distanceAU",
+        "equals": 5.2
+      }
+    },
+    {
+      "id": "distance30",
+      "level": "hard",
+      "kind": "planet",
+      "q": "Which planet is about thirty times farther from the Sun than Earth is?",
+      "answerId": "neptune",
+      "optionIds": [
+        "neptune",
+        "uranus",
+        "saturn",
+        "jupiter"
+      ],
+      "explain": "Neptune is about 30 times as far from the Sun as Earth, which is why it is so cold.",
+      "basedOn": {
+        "field": "distanceAU",
+        "equals": 30.05
+      }
+    },
+    {
+      "id": "lighttime",
+      "level": "hard",
+      "kind": "text",
+      "q": "About how long does sunlight take to reach Earth?",
+      "answerId": "About 8 minutes",
+      "optionIds": [
+        "About 8 minutes",
+        "About 8 seconds",
+        "About 8 hours",
+        "About 8 days"
+      ],
+      "explain": "Light is very fast, but the Sun is very far away, so its light takes about 8 minutes to get here."
+    },
+    {
+      "id": "moonsmars",
+      "level": "hard",
+      "kind": "planet",
+      "q": "Which planet has two small moons called Phobos and Deimos?",
+      "answerId": "mars",
+      "optionIds": [
+        "mars",
+        "venus",
+        "mercury",
+        "earth"
+      ],
+      "explain": "Phobos and Deimos are small, lumpy moons that go around Mars."
+    },
+    {
+      "id": "acidclouds",
+      "level": "hard",
+      "kind": "planet",
+      "q": "Which planet is wrapped in thick clouds of acid?",
+      "answerId": "venus",
+      "optionIds": [
+        "venus",
+        "mars",
+        "mercury",
+        "earth"
+      ],
+      "explain": "Venus has thick clouds of acid, and its air traps heat, which makes it the hottest planet."
+    },
+    {
+      "id": "mercurynothottest",
+      "level": "hard",
+      "kind": "planet",
+      "q": "Which planet is the closest to the Sun, but is not the hottest?",
+      "answerId": "mercury",
+      "optionIds": [
+        "mercury",
+        "venus",
+        "earth",
+        "mars"
+      ],
+      "explain": "Venus is hotter than Mercury because its thick air traps the heat."
+    },
+    {
+      "id": "neptuneyear",
+      "level": "hard",
+      "kind": "planet",
+      "q": "Which planet takes about 165 Earth years to go once around the Sun?",
+      "answerId": "neptune",
+      "optionIds": [
+        "neptune",
+        "uranus",
+        "saturn",
+        "jupiter"
+      ],
+      "explain": "Neptune is so far away that one of its years lasts about 165 Earth years."
+    },
+    {
+      "id": "jupiteryear",
+      "level": "hard",
+      "kind": "text",
+      "q": "About how many Earth years does Jupiter take to go once around the Sun?",
+      "answerId": "About 12 years",
+      "optionIds": [
+        "About 12 years",
+        "About 1 year",
+        "About 100 years",
+        "About 12 days"
+      ],
+      "explain": "Jupiter's year is about 12 Earth years long."
+    },
+    {
+      "id": "marsyear",
+      "level": "hard",
+      "kind": "text",
+      "q": "How long is a year on Mars?",
+      "answerId": "Nearly 2 Earth years",
+      "optionIds": [
+        "Nearly 2 Earth years",
+        "About 2 months",
+        "The same as on Earth",
+        "About 12 Earth years"
+      ],
+      "explain": "Mars is farther from the Sun than Earth, so its trip around the Sun takes 687 days, nearly two Earth years."
+    },
+    {
+      "id": "giantcount",
+      "level": "hard",
+      "kind": "text",
+      "q": "How many of the eight planets are giants made of gas or ice?",
+      "answerId": "4",
+      "optionIds": [
+        "4",
+        "2",
+        "3",
+        "5"
+      ],
+      "explain": "Jupiter, Saturn, Uranus and Neptune are the four giants. The other four are rocky."
+    },
+    {
+      "id": "titan",
+      "level": "hard",
+      "kind": "planet",
+      "q": "Which planet has a big moon called Titan, with thick air of its own?",
+      "answerId": "saturn",
+      "optionIds": [
+        "saturn",
+        "jupiter",
+        "uranus",
+        "neptune"
+      ],
+      "explain": "Titan is Saturn's biggest moon, and it is the only moon with a thick atmosphere."
+    },
+    {
+      "id": "europa",
+      "level": "hard",
+      "kind": "planet",
+      "q": "Which planet has an icy moon called Europa that may hide an ocean under its ice?",
+      "answerId": "jupiter",
+      "optionIds": [
+        "jupiter",
+        "saturn",
+        "mars",
+        "neptune"
+      ],
+      "explain": "Europa is one of Jupiter's moons. Scientists think a deep ocean of water lies under its icy crust."
     }
   ]
 }

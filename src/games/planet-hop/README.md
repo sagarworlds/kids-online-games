@@ -82,7 +82,8 @@ scene opens, so the 2D game and the home page never download it. Tests: `tests/p
   Sheet before release; that could not be done from the build environment (no network access to it). Venus (0.91) and
   Uranus (0.90) are the closest calls: the fact sheet lists both at about 8.87 m/s², which is about 0.90 of Earth's.
   Edit `data/planets.json` if they should change; nothing else needs to.
-- The planet facts, the 31 quiz questions and their explanations were written for this game. Please read them through
+- The planet facts, the 65 quiz questions (21 Easy, 22 Medium and 22 Hard, so a round of ten is not the same ten each time) and their
+  explanations were written for this game. Please read them through
   before classroom use. The quiz explains Pluto as a dwarf planet.
 - Mercury and Mars have the same gravity (0.38), as do, within a hundredth, Venus and Uranus. The mystery questions never
   offer such look-alikes together, so every question has exactly one right answer.
