@@ -2,58 +2,21 @@
 // the tag and the language the page declares), a pair found in Marathi matches, a whole round is played from the word file, the stars are kept
 // apart from Hindi's (which keep the plain level ids earlier saves have), and the screens pass the accessibility checks on a phone.
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
 import { after, before, describe, it } from 'node:test';
-import { problemsOnScreen, unmarkedHindi } from '../support/a11y.mjs';
+import { problemsOnScreen } from '../support/a11y.mjs';
 import { launchBrowser } from '../support/browser.mjs';
+import { PAIRS, chooseLanguage, expectFaceUpBoardAccessible, faces, openMatchMenu, pairsOnBoard, startWithPeek, waitForGo } from '../support/matchBoard.mjs';
 import { scenario } from '../support/scenario.mjs';
 import { startSite } from '../support/site.mjs';
 import { eventually, textOf } from '../support/ui.mjs';
 
 const TIMEOUT = { timeout: 180_000 };
-const PAIRS = JSON.parse(readFileSync(new URL('../../src/games/hindi-english-match/data/pairs.json', import.meta.url), 'utf8')).pairs;
-const GAME = '/src/games/hindi-english-match/index.html';
 const SAVE_KEY = 'kidsgames:hindi-english-match';
-const MARATHI_PAIR_FOR = new Map(PAIRS.filter((pair) => pair.mr).map((pair) => [pair.mr, pair]));
+const MARATHI_WORDS = new Set(PAIRS.map((pair) => pair.mr).filter(Boolean));
 
 const save = (bestStars, extra = {}) => JSON.stringify({ version: 1, bestStars, bestScore: 0, badges: [], extra });
 /** Puts a save in the browser before any page runs, as if it had been played on this device. Only when there is none yet, so a reload keeps what the child changed. */
 const saved = (value) => (context) => context.addInitScript(([key, text]) => { if (localStorage.getItem(key) === null) localStorage.setItem(key, text); }, [SAVE_KEY, value]);
-
-async function openMenu(page, site) {
-  await page.goto(`${site.url}${GAME}`);
-  await page.locator('.menu').waitFor();
-}
-
-const chooseLanguage = (page, name) => page.getByRole('radio', { name: new RegExp(`^${name}`) }).check({ force: true });
-
-/** From the menu to a board with Practice on, so every card shows its face for a few seconds. */
-async function startWithPeek(page, level = 'easy') {
-  await page.locator(`fieldset.segmented input[value="${level}"]`).check({ force: true });
-  await page.locator('#peek').check();
-  await page.getByRole('button', { name: /Start/ }).click();
-  await page.locator('.card3d').first().waitFor();
-}
-
-/** What each card shows right now, in board order (read while every face is up). */
-const faces = (page) => page.evaluate(() => [...document.querySelectorAll('.card3d')].map((button, index) => {
-  const tag = button.querySelector('.card3d__tag');
-  const text = button.querySelector('.card3d__text');
-  return { index, label: button.getAttribute('aria-label'), tag: tag.textContent, tagLang: tag.getAttribute('lang'), text: text.textContent, textLang: text.getAttribute('lang') };
-}));
-
-/** The board's cards paired up, from what the faces show and the word file: the Marathi card and the English card of each pair. */
-function pairsOnBoard(cards) {
-  return cards.filter((card) => card.textLang === 'mr').map((card) => {
-    const pair = MARATHI_PAIR_FOR.get(card.text);
-    assert.ok(pair, `"${card.text}" is a Marathi word in the word file`);
-    const english = cards.find((candidate) => candidate.textLang === null && candidate.text === pair.en);
-    assert.ok(english, `the English card "${pair.en}" is on the board`);
-    return { pair, marathi: card, english };
-  });
-}
-
-const waitForGo = (page) => page.locator('.board__status').filter({ hasText: 'Go!' }).waitFor({ timeout: 20_000 });
 
 describe('Hindi–English Match in Marathi', () => {
   const env = /** @type {{ site: Awaited<ReturnType<typeof startSite>>, browser: import('playwright').Browser }} */ ({});
@@ -68,7 +31,7 @@ describe('Hindi–English Match in Marathi', () => {
   });
 
   it('is Hindi until a language is chosen, and Marathi changes what the menu says and what the cards show', TIMEOUT, () => scenario(env, 'marathi cards', { screen: 'desktop' }, async ({ page, site }) => {
-    await openMenu(page, site);
+    await openMatchMenu(page, site);
     assert.equal(await page.getByRole('radio', { name: /^Hindi/ }).isChecked(), true, 'a new child gets Hindi');
     assert.match(await textOf(page.locator('.menu__intro')), /Hindi word.*सेब and Apple/);
 
@@ -86,25 +49,25 @@ describe('Hindi–English Match in Marathi', () => {
       assert.equal(card.tag, 'मरा');
       assert.equal(card.tagLang, 'mr', 'the tag carries the language too');
       assert.equal(card.label, `Marathi card: ${card.text}`, 'the card is named for the language it shows');
-      assert.ok(MARATHI_PAIR_FOR.has(card.text), `"${card.text}" is a Marathi word of the file`);
+      assert.ok(MARATHI_WORDS.has(card.text), `"${card.text}" is a Marathi word of the file`);
     }
     for (const card of cards.filter((candidate) => candidate.textLang === null)) {
       assert.equal(card.tag, 'EN');
       assert.match(card.label, /^English card: /);
     }
-    assert.equal(pairsOnBoard(cards).length, 6, 'every Marathi card has its English card on the board');
+    assert.equal(pairsOnBoard(cards, 'mr').length, 6, 'every Marathi card has its English card on the board');
     await waitForGo(page);
     assert.match(await textOf(page.locator('.board__status')), /Find a Marathi word and its English match/);
   }));
 
   it('a Marathi card and its English card match, with the pair said in the status', TIMEOUT, () => scenario(env, 'marathi match', { screen: 'desktop' }, async ({ page, site }) => {
-    await openMenu(page, site);
+    await openMatchMenu(page, site);
     await chooseLanguage(page, 'Marathi');
     await startWithPeek(page);
-    const [{ pair, marathi, english }] = pairsOnBoard(await faces(page));
+    const [{ pair, indic, english }] = pairsOnBoard(await faces(page), 'mr');
     await waitForGo(page);
 
-    await page.locator('.card3d').nth(marathi.index).click();
+    await page.locator('.card3d').nth(indic.index).click();
     await page.locator('.card3d').nth(english.index).click();
     await eventually(async () => (await page.locator('.card3d.is-matched').count()) === 2, { message: 'the two cards to be matched' });
     assert.equal(await textOf(page.locator('.board__status')), `✔ ${pair.mr} = ${pair.en}`);
@@ -112,13 +75,13 @@ describe('Hindi–English Match in Marathi', () => {
   }));
 
   it('a whole round in Marathi ends on three stars, listed in Marathi, with the stars kept under their own key', TIMEOUT, () => scenario(env, 'marathi round', { screen: 'desktop' }, async ({ page, site }) => {
-    await openMenu(page, site);
+    await openMatchMenu(page, site);
     await chooseLanguage(page, 'Marathi');
     await startWithPeek(page);
-    const found = pairsOnBoard(await faces(page));
+    const found = pairsOnBoard(await faces(page), 'mr');
     await waitForGo(page);
-    for (const [done, { marathi, english }] of found.entries()) {
-      await page.locator('.card3d').nth(marathi.index).click();
+    for (const [done, { indic, english }] of found.entries()) {
+      await page.locator('.card3d').nth(indic.index).click();
       await page.locator('.card3d').nth(english.index).click();
       await eventually(async () => (await page.locator('.card3d.is-matched').count()) === (done + 1) * 2, { message: `pair ${done + 1} to be matched` });
     }
@@ -129,7 +92,7 @@ describe('Hindi–English Match in Marathi', () => {
     assert.equal(listed.length, 6);
     for (const word of listed) {
       assert.equal(word.lang, 'mr', 'the review says each word is Marathi');
-      assert.ok(MARATHI_PAIR_FOR.has(word.text), `"${word.text}" is a Marathi word of the file`);
+      assert.ok(MARATHI_WORDS.has(word.text), `"${word.text}" is a Marathi word of the file`);
     }
 
     const stored = JSON.parse(await page.evaluate((key) => localStorage.getItem(key), SAVE_KEY));
@@ -145,7 +108,7 @@ describe('Hindi–English Match in Marathi', () => {
   }));
 
   it('remembers the language, and keeps Hindi\'s stars and Marathi\'s apart (Hindi under the plain level ids, as every earlier save has them)', TIMEOUT, () => scenario(env, 'marathi remembered', { screen: 'desktop', prepare: saved(save({ easy: 3, 'mr-easy': 2, 'mr-hard': 1 }, { language: 'mr', learned: ['kept'] })) }, async ({ page, site }) => {
-    await openMenu(page, site);
+    await openMatchMenu(page, site);
     assert.equal(await page.getByRole('radio', { name: /^Marathi/ }).isChecked(), true, 'the language chosen last time is chosen again');
     assert.match(await textOf(page.locator('.menu__intro')), /Marathi word/);
 
@@ -171,19 +134,18 @@ describe('Hindi–English Match in Marathi', () => {
       const problems = await problemsOnScreen(page);
       assert.equal(problems.length, 0, `${where}: accessibility problems:\n${problems.join('\n')}`);
     };
-    await openMenu(page, site);
+    await openMatchMenu(page, site);
     await chooseLanguage(page, 'Marathi');
     await report('the menu');
 
     await startWithPeek(page);
-    // With every face up, what is checked is that each Marathi word is marked as Marathi (WCAG 3.1.2). The other checks are on the board
-    // with its cards face down, below: the face-up cards have two older problems of their own that are not about language.
-    assert.deepEqual(await unmarkedHindi(page), [], 'every Marathi word on the cards declares its language');
-    const found = pairsOnBoard(await faces(page));
+    // With every face up this includes that each Marathi word says it is Marathi (WCAG 3.1.2), and that each card is named by its word.
+    const found = pairsOnBoard(await faces(page), 'mr');
+    await expectFaceUpBoardAccessible(page, 'the board with every card face up');
     await waitForGo(page);
     await report('the board with its cards face down');
-    for (const [done, { marathi, english }] of found.entries()) {
-      await page.locator('.card3d').nth(marathi.index).click();
+    for (const [done, { indic, english }] of found.entries()) {
+      await page.locator('.card3d').nth(indic.index).click();
       await page.locator('.card3d').nth(english.index).click();
       await eventually(async () => (await page.locator('.card3d.is-matched').count()) === (done + 1) * 2, { message: `pair ${done + 1} to be matched` });
     }
