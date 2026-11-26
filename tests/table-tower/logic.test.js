@@ -656,6 +656,40 @@ test('QuizSession: the clock counts down only when asked and ends the run at zer
   assert.equal(new QuizSession({ questions: qs }).tick(5), false, 'no limit, no timeout');
 });
 
+// Pinned down before QuizSession was made an explicit machine: these describe what it has always done.
+
+test('QuizSession: time that runs out while an answer is on show still ends the run, and nothing more is accepted', () => {
+  const qs = questionsFor(4, 4);
+  const session = new QuizSession({ questions: qs, seconds: 5 });
+  session.answer(qs[0].answer); // the answer is on show; advance has not been called
+  assert.equal(session.tick(6), true, 'the clock does not care that an answer is showing');
+  assert.equal(session.over, true);
+  assert.equal(session.current, null);
+  assert.equal(session.answer(qs[1].answer), null);
+  const summary = session.summary();
+  assert.deepEqual({ answered: summary.answered, correct: summary.correct, unanswered: summary.unanswered, timedOut: summary.timedOut }, { answered: 1, correct: 1, unanswered: 3, timedOut: true });
+});
+
+test('QuizSession: once the clock has ended the run, advancing changes nothing that can be seen', () => {
+  const qs = questionsFor(4, 4);
+  const session = new QuizSession({ questions: qs, seconds: 5 });
+  session.answer(qs[0].answer);
+  session.tick(6);
+  const before = { position: session.position, over: session.over, current: session.current, summary: session.summary() };
+  session.advance(); session.advance();
+  assert.deepEqual({ position: session.position, over: session.over, current: session.current, summary: session.summary() }, before);
+});
+
+test('QuizSession: the position of a question that is still open does not count it twice', () => {
+  const qs = questionsFor(4, 3);
+  const session = new QuizSession({ questions: qs });
+  assert.equal(session.position, 1);
+  session.answer(qs[0].answer);
+  assert.equal(session.position, 1, 'answered: it is counted once, as answered');
+  session.advance();
+  assert.equal(session.position, 2, 'the next question is counted as soon as it is reached');
+});
+
 // ---- stars and score --------------------------------------------------------------------------
 
 test('quizStars: 90% or more is 3, 70% or more is 2, otherwise 1; unanswered counts wrong', () => {

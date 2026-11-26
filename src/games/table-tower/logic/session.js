@@ -3,6 +3,8 @@ import { shuffle } from '../../../engine/utils/random.js';
 import { factsForFloor, parseFactKey, floorsOfFact } from './facts.js';
 import { makeQuestion, pickHide } from './questions.js';
 import { weightOf, dueKeys } from './memory.js';
+import { createMachine } from '../../../engine/utils/stateMachine.js';
+import { QUIZ_SESSION_MACHINE } from './quizSession.machine.js';
 
 /** A fact that was missed in a Revision comes back after this many other questions. */
 export const REQUEUE_GAP = 3;
@@ -98,10 +100,10 @@ export class QuizSession {
   #answers = [];
   #missed = [];
   #requeues = new Map();
-  #answeredCurrent = false;
+  /** Whether a question is waiting, answered, or the run is over (and why); the legal moves are in `quizSession.machine.js`. */
+  #machine = createMachine(QUIZ_SESSION_MACHINE);
   #secondsLeft;
   #requeue;
-  #timedOut = false;
 
   /**
    * @param {{ questions: import('./questions.js').Question[], seconds?: number|null, requeue?: boolean }} options
@@ -123,7 +125,7 @@ export class QuizSession {
   /** How many scored questions have been reached, counting the one on screen, for "Question 3 of 12". */
   get position() {
     const entry = this.over ? null : this.#queue[this.#index];
-    return Math.min(this.#total, this.#answers.length + (entry && !entry.copy && !this.#answeredCurrent ? 1 : 0));
+    return Math.min(this.#total, this.#answers.length + (entry && !entry.copy && this.#machine.is('asking') ? 1 : 0));
   }
 
   get total() {
@@ -136,7 +138,7 @@ export class QuizSession {
   }
 
   get over() {
-    return this.#timedOut || this.#index >= this.#queue.length;
+    return this.#machine.hasTag('over');
   }
 
   /**
@@ -147,9 +149,9 @@ export class QuizSession {
    *   put back after a miss: it is practice, so it is not scored.
    */
   answer(value) {
-    if (this.over || this.#answeredCurrent) return null;
+    if (!this.#machine.is('asking')) return null;
     const { question, copy } = this.#queue[this.#index];
-    this.#answeredCurrent = true;
+    this.#machine.must('ANSWER');
     const correct = value === question.answer;
     if (!copy) {
       this.#answers.push({ key: question.key, correct });
@@ -169,9 +171,9 @@ export class QuizSession {
 
   /** Moves on to the next question (after the answer has been shown). */
   advance() {
-    if (!this.#answeredCurrent) return;
-    this.#answeredCurrent = false;
+    if (!this.#machine.is('answered')) return;
     this.#index += 1;
+    this.#machine.must(this.#index >= this.#queue.length ? 'FINISH' : 'NEXT');
   }
 
   /**
@@ -183,7 +185,7 @@ export class QuizSession {
     if (this.#secondsLeft === null || this.over) return false;
     this.#secondsLeft = Math.max(0, this.#secondsLeft - dt);
     if (this.#secondsLeft === 0) {
-      this.#timedOut = true;
+      this.#machine.must('TIME_UP');
       return true;
     }
     return false;
@@ -206,7 +208,7 @@ export class QuizSession {
       total: this.#total,
       correct: this.#answers.filter((a) => a.correct).length,
       answered: this.#answers.length,
-      timedOut: this.#timedOut,
+      timedOut: this.#machine.is('timedOut'),
       secondsLeft: this.#secondsLeft ?? 0,
       firstResults,
       missed,
