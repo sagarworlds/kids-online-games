@@ -232,6 +232,25 @@ stateDiagram-v2
 ```
 <!-- machine:trace-trail/glyph-flow:end -->
 
+### `matra-mixer/round-session`: a run of rounds
+
+`src/games/matra-mixer/logic/roundSession.machine.js`, used by `RoundSession`, which every Matra Mixer activity (build the
+sound, bubble pop, read words) plays through. Replaces the `#answered` flag and the test `#index >= rounds`. A round is
+`asking` until it is right or out of tries, then `revealed` until the run moves on; `over` comes only once the *last* round
+has been moved past, not when its answer is shown. The number of tries stays a plain count: it says *how many*, not
+*what is allowed*. Three tests were added to `tests/matra-mixer/logic.test.js` first, and pass on the old code and the new unchanged.
+
+<!-- machine:matra-mixer/round-session:start -->
+```mermaid
+stateDiagram-v2
+  [*] --> asking
+  asking --> revealed: REVEAL
+  revealed --> asking: NEXT_ROUND
+  revealed --> over: FINISH
+  over --> [*]
+```
+<!-- machine:matra-mixer/round-session:end -->
+
 ### `number-ninja/play-flow`: the falling-stars screen
 
 `src/games/number-ninja/logic/playFlow.machine.js`, used by `PlayScene`. Replaces `#finishing`, `#done` and the test
@@ -344,7 +363,6 @@ ones that looked like more than a latch. Nothing here is known to be broken; thi
 
 | Where | What it hides | Suggested states |
 | --- | --- | --- |
-| `matra-mixer/logic/session.js` `RoundSession` | `#tries` and `#answered` | `asking → (retry) → revealed → over` |
 | `table-tower/logic/session.js` `QuizSession` | `#answeredCurrent` and `#timedOut` | `asking → answered`, `timedOut` |
 | `engine/ui/ParentGate` | wrong answer re-asks inside a modal | `asking → (wrong → asking) → passed / cancelled` |
 | `hub/HubPage` | `#editing` plus the draft name and avatar | `viewing → editing → saving` |
