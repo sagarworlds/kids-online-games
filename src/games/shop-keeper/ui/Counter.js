@@ -5,6 +5,8 @@ import { formatMoney } from '../logic/currency.js';
 /**
  * The counter: the customer's items with their price tags, and the till.
  * Easy shows the total. Medium and Hard show a number box where the child types the total they added up.
+ * On Sale day (`sale.saleDay`) a tag shows the price before the discount and a "25% off" badge, and the child types the bill: the total of
+ * the prices after the discounts, which the till does not show.
  *
  * @param {{
  *   sale: import('../logic/saleGenerator.js').Sale,
@@ -21,11 +23,15 @@ import { formatMoney } from '../logic/currency.js';
  */
 export function createCounter({ sale, currency, showTotal, onSubmitTotal }) {
   const money = (n) => formatMoney(n, currency);
+  const onSale = sale.saleDay === true;
   const items = el('ul', { class: 'counter__items' }, ...sale.items.map((item) => el('li', {
-    class: 'item', attrs: { 'aria-label': `${item.name}, ${money(item.price)}` },
+    class: 'item',
+    attrs: { 'aria-label': item.sale ? `${item.name}, ${money(item.sale.marked)}, ${item.sale.percentOff}% off` : `${item.name}, ${money(item.price)}` },
   }, el('span', { class: 'item__icon', text: item.icon, attrs: { 'aria-hidden': 'true' } }),
   el('span', { class: 'item__name', text: item.name, attrs: { 'aria-hidden': 'true' } }),
-  el('span', { class: 'item__price', text: money(item.price), attrs: { 'aria-hidden': 'true' } }))));
+  // On Sale day the tag is the price before the discount; what the customer pays is for the child to work out.
+  el('span', { class: 'item__price', text: money(item.sale ? item.sale.marked : item.price), attrs: { 'aria-hidden': 'true' } }),
+  item.sale ? el('span', { class: 'item__off', text: `${item.sale.percentOff}% off`, attrs: { 'aria-hidden': 'true' } }) : null)));
 
   const till = el('div', { class: 'till' });
   const message = el('p', { class: 'till__message', attrs: { role: 'status' } });
@@ -46,7 +52,10 @@ export function createCounter({ sale, currency, showTotal, onSubmitTotal }) {
       on: { keydown: (event) => { if (event.key === 'Enter') { event.preventDefault(); submit(); } } },
     });
     till.append(
-      el('label', { class: 'till__label', attrs: { for: 'till-total' }, text: `Add up the prices. What is the total (${currency.symbol})?` }),
+      el('label', {
+        class: 'till__label', attrs: { for: 'till-total' },
+        text: onSale ? `Take the discount off each price, then add up. What is the bill (${currency.symbol})?` : `Add up the prices. What is the total (${currency.symbol})?`,
+      }),
       el('div', { class: 'till__entry' }, el('span', { class: 'till__symbol', text: currency.symbol, attrs: { 'aria-hidden': 'true' } }), input,
         createButton({ label: 'Check total', variant: 'primary', onClick: submit })),
       el('p', { class: 'till__help', attrs: { id: 'till-help' }, text: 'Type the number and press Enter or "Check total".' }));

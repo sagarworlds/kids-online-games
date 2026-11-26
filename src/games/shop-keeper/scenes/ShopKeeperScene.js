@@ -6,8 +6,9 @@ import { Scene } from '../../../engine/Scene.js';
  *   status: import('../logic/scoring.js').SaleStatus, smart: boolean, pieces: number, fewest: number|null, score: number
  * }} SaleResult
  * @typedef {{
- *   levelId: 'easy'|'medium'|'hard', sales: import('../logic/saleGenerator.js').Sale[], index: number, results: SaleResult[]
+ *   levelId: 'easy'|'medium'|'hard', saleDay?: boolean, sales: import('../logic/saleGenerator.js').Sale[], index: number, results: SaleResult[]
  * }} Round
+ * `saleDay`: the round is a Sale day one (every item has a percent off, and the child works out the bill).
  * @typedef {{
  *   menu: () => void,
  *   play: (round: Round) => void,

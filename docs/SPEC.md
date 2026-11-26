@@ -516,7 +516,13 @@ The child runs a small shop: customers buy items, pay with notes, and the child 
 - [ ] Currency loads from JSON; swapping the file changes the coins with no code edits
 - [ ] Round of 6 customers shows stars and "Smart change" count
 
-**Stretch ideas:** discount day (10% off); shopping-list mode where the child is the customer with a budget.
+**Sale day** (a menu choice): every item has a percent off (Easy: half price; Medium: 10%, 25% or 50%; Hard: also 20%). A tag shows the price before the discount and the percent off; the child takes the discount off each price, adds up the bill and types it (the till never shows it), then gives change from the bill. A wrong bill is helped with the discount (the second miss works the first tag out). Prices are whole rupees: the marked price is chosen so that its discount comes out whole (a multiple of 10 for a tenth, 5 for a fifth, 4 for a quarter, 2 for a half), never rounded. There are no exact payments, so no "No change needed". Stars are kept under `sale-<level>`.
+
+- [ ] On Sale day every item's price is its marked price less a whole-rupee discount of one of the level's percents, the bill is their sum, and change is always due (unit-tested on 1,000 sales per level)
+- [ ] Sale day's stars are kept apart from the other days' (`sale-<level>`), the menu shows and suggests the ones for the choice, and Play again stays on Sale day (browser check)
+- [ ] The tags show the price before the discount and the percent off; a wrong bill gets a hint about the discount, the second miss works the first tag out (browser check)
+
+**Stretch ideas:** shopping-list mode where the child is the customer with a budget. (Done: Sale day, above.)
 
 ## Game 4 — Times-Table Racing (`times-table-racing`)
 
