@@ -4,6 +4,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { after, before, describe, it } from 'node:test';
+import { LEAST_SCALE } from '../../src/games/food-chain-builder/logic/fit.js';
 import { launchBrowser } from '../support/browser.mjs';
 import { scenario } from '../support/scenario.mjs';
 import { startSite } from '../support/site.mjs';
@@ -55,6 +56,22 @@ function wordsThatDoNotFit() {
   return problems;
 }
 
+/**
+ * The long name has been fitted as far as the game allows. A word that is still too wide is only acceptable when its name has been shrunk to
+ * the smallest size it may have (a machine whose font is very wide cannot fit every long word), so this does not depend on which font the
+ * machine has, and it still fails for a name that was not shrunk enough.
+ *
+ * @param {import('playwright').Page} page
+ * @param {number} naturalSize What the stylesheet draws a name at on this board, in pixels.
+ * @param {string} when Said in the failure message.
+ */
+async function expectFitted(page, naturalSize, when) {
+  const problems = await page.evaluate(wordsThatDoNotFit);
+  if (problems.length === 0) return;
+  const size = await page.locator('.board .card__name').first().evaluate((name) => parseFloat(getComputedStyle(name).fontSize));
+  assert.ok(size <= naturalSize * LEAST_SCALE + 0.5, `${when}: ${problems.join('; ')}, and the name is ${size.toFixed(1)}px when it may go down to ${(naturalSize * LEAST_SCALE).toFixed(1)}px`);
+}
+
 describe('the cards on the board', () => {
   const env = /** @type {{ site: Awaited<ReturnType<typeof startSite>>, browser: import('playwright').Browser }} */ ({});
 
@@ -88,13 +105,14 @@ describe('the cards on the board', () => {
     // The board is laid out again when its size changes. It stops growing at 940px, so the window has to get narrower than that.
     await page.setViewportSize({ width: 900, height: 800 });
     await settle(page);
-    assert.deepEqual(await page.evaluate(wordsThatDoNotFit), [], 'the long name fits after the board was laid out again');
     assert.ok(await sizeOf(0) < stylesheetSize, 'it was shrunk, not left at the stylesheet size');
+    await expectFitted(page, stylesheetSize, 'the long name after the board was laid out again');
     assert.equal(await sizeOf(1), stylesheetSize, 'a name that fits is left at the stylesheet size');
 
     await page.setViewportSize({ width: 390, height: 844 });
     await eventually(() => page.locator('.board').evaluate((board) => board.classList.contains('board--vertical')), { message: 'the board to turn to the phone layout' });
     await settle(page);
-    assert.deepEqual(await page.evaluate(wordsThatDoNotFit), [], 'and fits on the phone layout, where the cards and the text are smaller');
+    await expectFitted(page, await sizeOf(1), 'and on the phone layout, where the cards and the text are smaller');
+    assert.ok(await sizeOf(0) < await sizeOf(1), 'it is still smaller than the names that fit');
   }));
 });
